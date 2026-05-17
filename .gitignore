@@ -19,7 +19,6 @@ coverage/
 vendor/
 backend/vendor/
 
-!**/.env.example
 .phpunit.result.cache
 **/.phpunit.cache/
 auth.json
@@ -34,7 +33,7 @@ backend/storage/framework/cache/data/*
 backend/storage/framework/sessions/*
 backend/storage/framework/views/*
 backend/bootstrap/cache/*.php
-backend/database/marketDB.sqlite
+
 
 # Optional root-level Laravel if ever added
 /storage/*.key
@@ -49,7 +48,9 @@ backend/database/marketDB.sqlite
 # Database files (SQLite)
 # --------------------------
 Use ** so nested dirs (e.g. database/sqlite/*.db) are ignored, not only top-level *.db
-
+backend/database/**/*.db
+backend/database/**/*.db-shm
+backend/database/**/*.db-wal
 
 frontend/node_modules/
 frontend/dist/
