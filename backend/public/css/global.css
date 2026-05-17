@@ -1,6 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&family=Iansui&family=Indie+Flower&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Annie+Use+Your+Telescope&family=Iansui&family=Indie+Flower&display=swap");
 
 :root {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+
+  /* Theme Colors from React Frontend */
   --bgPrimary: #F5EFE8;
   --bgSecondary: #FDFAF7;
   --bgTertiary: #EDE5DB;
@@ -16,13 +27,16 @@
   --infoBg: #F4DAE2;
   --infoText: #7A2E44;
   --coral: #5580A8;
-  --coralHover: #A84B65;
-  --coralLight: #F4DAE2;
+  --coralHover: #446C8F;
+  --coralLight: #E8F0F7;
   --darkNavy: #3D2B24;
   --sidebarBorder: #D5C9BE;
   --filterBg: #FDFAF7;
   --filterBorder: #EDE5DB;
   --scrollbarTrack: #EDE5DB;
+  --iconCoral: #5580A8;
+  --iconMuted: #BEB0A5;
+  
   --radius: 12px;
   --shadow: 0 4px 12px rgba(46, 32, 24, 0.1);
 }
@@ -30,6 +44,8 @@
 body {
   background-color: var(--bgPrimary);
   color: var(--textPrimary);
+  margin: 0;
+  padding: 0;
 }
 
 * {
@@ -43,4 +59,16 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar Global */
+.custom-scrollbar::-webkit-scrollbar { width: 3px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: var(--scrollbarTrack); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--coral); border-radius: 10px; }
+
+/* Pulse animation for skeletons */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
