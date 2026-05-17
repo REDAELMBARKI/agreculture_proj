@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Providers;
+
+use App\Models\Category;
+use App\Models\Favorite;
+use App\Models\Product;
+use App\Models\Review;
+use App\Models\User;
+use App\Policies\AnnouncementPolicy;
+use Illuminate\Support\Facades\Gate;
+use App\Observers\CategoryObserver;
+use App\Observers\FavoriteObserver;
+use App\Observers\ProductObserver;
+use App\Observers\ReviewObserver;
+use App\Observers\UserObserver;
+use App\Repositories\Admin\AdminDashboardRepository;
+use App\Repositories\Admin\AdminDashboardRepositoryInterface;
+use App\Repositories\Home\HomepageRepository;
+use App\Repositories\Home\HomepageRepositoryInterface;
+use App\Repositories\ProductRepository;
+use App\Repositories\ProductRepositoryInterface;
+use App\Services\Admin\AdminDashboardService;
+use App\Services\Admin\AdminDashboardServiceInterface;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        $this->app->bind(HomepageRepositoryInterface::class, HomepageRepository::class);
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(AdminDashboardRepositoryInterface::class, AdminDashboardRepository::class);
+        $this->app->bind(AdminDashboardServiceInterface::class, AdminDashboardService::class);
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Gate::policy(Product::class, AnnouncementPolicy::class);
+
+        Gate::define('view-my-announcements', function (User $user, User $targetUser) {
+            return $user->id === $targetUser->id;
+        });
+
+        Product::observe(ProductObserver::class);
+        Review::observe(ReviewObserver::class);
+        Category::observe(CategoryObserver::class);
+        User::observe(UserObserver::class);
+        Favorite::observe(FavoriteObserver::class);
+    }
+}

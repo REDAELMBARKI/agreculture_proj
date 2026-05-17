@@ -1,0 +1,119 @@
+# --------------------------
+# Node / NPM / frontend
+# --------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+coverage/
+.nyc_output/
+.turbo/
+*.tsbuildinfo
+.pnpm-store/
+*docker*
+# --------------------------
+# Laravel / PHP (monorepo: app is under backend/)
+# --------------------------
+vendor/
+backend/vendor/
+.env
+**/.env
+**/.env.*
+!**/.env.example
+.phpunit.result.cache
+**/.phpunit.cache/
+auth.json
+Homestead.json
+Homestead.yaml
+
+# Runtime / secrets under backend (root-level /storage/* would not match this layout)
+backend/storage/*.key
+backend/storage/debugbar/
+backend/storage/logs/*.log
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*.php
+backend/database/marketDB.sqlite
+
+# Optional root-level Laravel if ever added
+/storage/*.key
+/storage/debugbar/*
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*.php
+
+# --------------------------
+# Database files (SQLite)
+# --------------------------
+Use ** so nested dirs (e.g. database/sqlite/*.db) are ignored, not only top-level *.db
+backend/database/**/*.db
+backend/database/**/*.db-shm
+backend/database/**/*.db-wal
+database/*.db
+*.sqbpro
+*.sqlite
+*.sqlite3
+
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# --------------------------
+# Vite / frontend caches (can grow large)
+# --------------------------
+.vite/
+.cache/
+
+# --------------------------
+# Laravel public build artifacts (also in backend/.gitignore)
+# --------------------------
+backend/public/build/
+backend/public/hot/
+backend/public/storage/
+
+# Accidental duplicate storage tree (should not be versioned)
+backend/storage 2/
+
+# --------------------------
+# Local QA / screenshots (often large binaries)
+# --------------------------
+testing/
+
+
+# --------------------------
+# OS / Editor / IDE files
+# --------------------------
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# --------------------------
+# Archives & DB dumps (often huge — never commit)
+# --------------------------
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.sql
+*.dump
+
+# --------------------------
+# Optional: compiled / cache files
+# --------------------------
+*.class
+*.pyc
+*.pyo
+*.log
+
