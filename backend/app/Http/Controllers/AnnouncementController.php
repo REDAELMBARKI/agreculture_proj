@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Review;
 use App\Models\Offer;
-use App\Http\Resources\ProductResource;
+use App\Models\Media;
 use App\Services\AnnouncementService;
 use App\Services\ProductService;
 use App\Services\ReviewService;
@@ -17,7 +17,7 @@ use App\Http\Requests\OfferRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-// Unified controller for managing both donations and sales announcements
+// Unified controller for managing marketplace announcements
 class AnnouncementController extends Controller
 {
      function __construct(
@@ -36,13 +36,38 @@ class AnnouncementController extends Controller
             $userId = Auth::id() ?? 1;
             $res = $this->productService->toggleFavorite($userId, $announcement->id);
 
-            return response()->json($res);
+            return back()->with('success', $res['message'] ?? 'Favorite status updated');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function index(Request $request)
+    {
+        $initData = $this->announcementService->getMarketplaceInitData();
+        $filters = $request->all();
+        
+        $listings = $this->announcementService->getMarketplaceListings(
+            $filters, 
+            $request->input('per_page', 12)
+        );
+
+        return view('marketplace', [
+            'initData' => $initData,
+            'listings' => $listings,
+            'filters' => $filters
+        ]);
+    }
+
+    public function show(Request $request, Product $announcement)
+    {
+        $announcement->load(['user', 'category', 'thumbnail', 'gallery', 'superCategory', 'subCategories', 'items', 'address']);
+        $reviews = $announcement->reviews()->with('reviewer')->latest()->get();
+
+        return view('products.show', [
+            'product' => $announcement,
+            'reviews' => $reviews
+        ]);
     }
 
     /**
@@ -50,16 +75,8 @@ class AnnouncementController extends Controller
      */
     function getMarketplaceInitData()
     {
-        try {
-            $data = $this->announcementService->getMarketplaceInitData();
-
-            return response()->json(array_merge(['status' => 'success'], $data));
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $data = $this->announcementService->getMarketplaceInitData();
+        return view('marketplace.init', $data);
     }
 
     /**
@@ -67,25 +84,39 @@ class AnnouncementController extends Controller
      */
      function getMarketplaceListings(Request $request)
     {
-        try {
-            $filters = $request->all();
-            $filters['free_only'] = $request->boolean('free_only');
-            
-            $listings = $this->announcementService->getMarketplaceListings(
-                $filters, 
-                $request->input('per_page', 12)
-            );
+        $filters = $request->all();
+        
+        $listings = $this->announcementService->getMarketplaceListings(
+            $filters, 
+            $request->input('per_page', 12)
+        );
 
-            return response()->json([
-                'status' => 'success',
-                'data' => ProductResource::collection($listings)->response()->getData(true)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+        return view('marketplace.listings', [
+            'listings' => $listings,
+            'filters' => $filters
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new announcement.
+     */
+    public function create()
+    {
+        $initData = $this->announcementService->getMarketplaceInitData();
+        return view('user.add-announcement', $initData);
+    }
+
+    /**
+     * Show the form for editing the specified announcement.
+     */
+    public function edit(Product $announcement)
+    {
+        if ($announcement->user_id !== Auth::id()) {
+            abort(403);
         }
+        $initData = $this->announcementService->getMarketplaceInitData();
+        $announcement->load(['subCategories', 'thumbnail', 'gallery', 'address']);
+        return view('user.edit-announcement', array_merge($initData, ['announcement' => $announcement]));
     }
 
     /**
@@ -95,38 +126,33 @@ class AnnouncementController extends Controller
     {
         try {
             $data = $request->validated();
+            $data['user_id'] = Auth::id();
+
+            // Handle file uploads if present
+            if ($request->hasFile('images')) {
+                $mediaIds = $data['media_ids'] ?? [];
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('products', 'public');
+                    $media = Media::create([
+                        'disk' => 'public',
+                        'path' => $path,
+                        'url' => asset('storage/' . $path),
+                        'file_name' => $image->getClientOriginalName(),
+                        'mime_type' => $image->getMimeType(),
+                        'size' => $image->getSize(),
+                        'collection' => 'gallery',
+                        'is_temporary' => false,
+                    ]);
+                    $mediaIds[] = $media->id;
+                }
+                $data['media_ids'] = $mediaIds;
+            }
+
             $product = $this->announcementService->createAnnouncement($data);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Annonce créée avec succès !',
-                'product' => new ProductResource($product)
-            ], 201);
+            return redirect()->route('user.listings')->with('success', 'Announcement created successfully!');
         } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Erreur lors de la création de l\'annonce: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Display the specified announcement.
-     */
-     function show(Product $announcement)
-    {
-        try {
-            $announcement->load(['user', 'thumbnail', 'gallery', 'superCategory', 'subCategories', 'items', 'address']);
-            
-            return response()->json([
-                'status'  => 'success',
-                'product' => new ProductResource($announcement),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Announcement not found',
-            ], 404);
+            return back()->withInput()->with('error', 'Error creating announcement: ' . $e->getMessage());
         }
     }
 
@@ -137,16 +163,14 @@ class AnnouncementController extends Controller
     {
         try {
             $announcement->load(['user', 'thumbnail', 'gallery', 'superCategory', 'subCategories', 'items', 'address']);
+            $reviews = $announcement->reviews()->with('reviewer')->latest()->get();
             
-            return response()->json([
-                'status'  => 'success',
-                'product' => new ProductResource($announcement),
+            return view('products.show', [
+                'product' => $announcement,
+                'reviews' => $reviews
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Announcement not found',
-            ], 404);
+            abort(404, 'Announcement not found');
         }
     }
 
@@ -156,26 +180,16 @@ class AnnouncementController extends Controller
     function update(ProductRequest $request, User $user, Product $announcement)
     {
         try {
-            if ($announcement->user_id !== $user->id) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Unauthorized: Announcement does not belong to this user',
-                ], 403);
+            if ($announcement->user_id !== Auth::id()) {
+                return back()->with('error', 'Unauthorized: Announcement does not belong to you');
             }
 
             $data = $request->validated();
             $product = $this->announcementService->updateAnnouncement($announcement->id, $data);
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Announcement updated successfully',
-                'product' => new ProductResource($product),
-            ]);
+            return redirect()->route('user.listings')->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed to update announcement: ' . $e->getMessage(),
-            ], 500);
+            return back()->withInput()->with('error', 'Failed to update announcement: ' . $e->getMessage());
         }
     }
 
@@ -185,24 +199,15 @@ class AnnouncementController extends Controller
      function destroy(User $user, Product $announcement)
     {
         try {
-            if ($announcement->user_id !== $user->id) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Unauthorized: Announcement does not belong to this user',
-                ], 403);
+            if ($announcement->user_id !== Auth::id()) {
+                return back()->with('error', 'Unauthorized: Announcement does not belong to you');
             }
 
             $this->productService->deleteAnnouncement($announcement->id);
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Announcement deleted successfully',
-            ]);
+            return back()->with('success', 'Announcement deleted successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed to delete announcement: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to delete announcement: ' . $e->getMessage());
         }
     }
 
@@ -213,71 +218,30 @@ class AnnouncementController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'required|string|in:reserved,sold,donated,closed,draft'
+                'status' => 'required|string|in:reserved,sold,closed,published,draft'
             ]);
 
             $announcement->update(['status' => $request->status]);
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Status updated successfully',
-                'product' => new ProductResource($announcement),
-            ]);
+            return back()->with('success', 'Status updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed to update status: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to update status: ' . $e->getMessage());
         }
     }
 
     /**
-     * Fetch donations for a specific user.
+     * Fetch announcements for a specific user.
      */
-     function getUserDonations(User $user)
-    {
-        $products = Product::with(['superCategory', 'thumbnail', 'user'])
-            ->where('user_id', $user->id)
-            ->where('listing_mode', 'donate')
-            ->orderByDesc('created_at')
-            ->get();
-
-        return response()->json([
-            'status'   => 'success',
-            'products' => ProductResource::collection($products),
-        ]);
-    }
-
-    /**
-     * Fetch sales for a specific user.
-     */
-     function getUserSales(User $user)
-    {
-        $products = Product::with(['superCategory', 'thumbnail', 'user'])
-            ->where('user_id', $user->id)
-            ->where('listing_mode', 'sell')
-            ->orderByDesc('created_at')
-            ->get();
-
-        return response()->json([
-            'status'   => 'success',
-            'products' => ProductResource::collection($products)->resolve(),
-        ]);
-    }
-
-    /**
-     * Fetch announcements for a specific user by slug.
-     */
-    public function getUserAnnouncementsBySlug(Request $request, User $user)
+    public function getUserAnnouncements(Request $request, User $user)
     {
         $products = Product::with(['superCategory', 'thumbnail', 'user'])
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->get();
             
-        return response()->json([
-            'status'   => 'success',
-            'products' => ProductResource::collection($products)->resolve(),
+        return view('user.listings', [
+            'listings' => $products,
+            'user' => $user
         ]);
     }
 
@@ -287,32 +251,12 @@ class AnnouncementController extends Controller
      function getAllAnnouncements()
     {
         $products = Product::with(['superCategory', 'thumbnail', 'user'])
-            ->whereIn('status', ['sell', 'donate'])
+            ->where('status', 'published')
             ->orderByDesc('created_at')
             ->get();
 
-        return response()->json([
-            'status'   => 'success',
-            'products' => ProductResource::collection($products)->resolve(),
-        ]);
-    }
-
-    /**
-     * Fetch announcements for a specific charity.
-     */
-     function getCharityAnnouncements($charityId)
-    {
-        $products = Product::with(['categories', 'thumbnail', 'gallery', 'user'])
-            ->whereHas('categories', function ($query) use ($charityId) {
-                $query->where('categories.id', $charityId);
-            })
-            ->whereIn('status', ['sell', 'donate'])
-            ->orderByDesc('created_at')
-            ->get();
-
-        return response()->json([
-            'status'     => 'success',
-            'products'   => ProductResource::collection($products)->resolve(),
+        return view('marketplace', [
+            'listings' => $products
         ]);
     }
 
@@ -325,9 +269,8 @@ class AnnouncementController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return response()->json([
-            'status'   => 'success',
-            'products' => ProductResource::collection($products)->resolve(),
+        return view('admin.announcements', [
+            'products' => $products
         ]);
     }
 
@@ -337,9 +280,9 @@ class AnnouncementController extends Controller
     public function getReviews(Product $announcement)
     {
         $reviews = $announcement->reviews()->with('user')->orderByDesc('created_at')->get();
-        return response()->json([
-            'status' => 'success',
+        return view('products.reviews', [
             'reviews' => $reviews,
+            'product' => $announcement
         ]);
     }
 
@@ -353,12 +296,9 @@ class AnnouncementController extends Controller
             $data['user_id'] = Auth::id();
             $review = $announcement->reviews()->create($data);
 
-            return response()->json([
-                'status' => 'success',
-                'review' => $review->load('user'),
-            ]);
+            return back()->with('success', 'Review added successfully');
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -368,9 +308,9 @@ class AnnouncementController extends Controller
     public function getOffers(Product $announcement)
     {
         $offers = $announcement->offers()->with('user')->orderByDesc('created_at')->get();
-        return response()->json([
-            'status' => 'success',
+        return view('products.offers', [
             'offers' => $offers,
+            'product' => $announcement
         ]);
     }
 
@@ -384,12 +324,9 @@ class AnnouncementController extends Controller
             $data['user_id'] = Auth::id();
             $offer = $announcement->offers()->create($data);
 
-            return response()->json([
-                'status' => 'success',
-                'offer' => $offer->load('user'),
-            ]);
+            return back()->with('success', 'Offer made successfully');
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return back()->with('error', $e->getMessage());
         }
     }
 }

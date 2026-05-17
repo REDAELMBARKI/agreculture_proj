@@ -5,28 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Conversation;
 use App\Models\Product;
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     private function userId(): int
     {
-        return (int) auth('api')->id();
+        return (int) auth()->id();
     }
 
-    public function stats(): JsonResponse
+    public function stats()
     {
         $userId = $this->userId();
 
-        $totalDonated = Product::query()
-            ->where('user_id', $userId)
-            ->where('listing_mode', 'donate')
-            ->count();
-
         $totalSold = Product::query()
             ->where('user_id', $userId)
-            ->where('listing_mode', 'sell')
             ->whereIn('status', ['sold', 'closed'])
             ->count();
 
@@ -38,15 +31,10 @@ class DashboardController extends Controller
             ->where('seller_id', $userId)
             ->count();
 
-        return response()->json([
-            'total_donated' => $totalDonated,
-            'total_sold' => $totalSold,
-            'total_views' => $totalViews,
-            'total_clicks' => $totalClicks,
-        ]);
+        return view('user.dashboard.stats', compact('totalSold', 'totalViews', 'totalClicks'));
     }
 
-    public function activity(): JsonResponse
+    public function activity()
     {
         $userId = $this->userId();
         $start = Carbon::today()->subDays(29);
@@ -59,29 +47,19 @@ class DashboardController extends Controller
             ->map(fn ($group) => $group->count())
             ->all();
 
-        $donationsRaw = Product::query()
-            ->where('user_id', $userId)
-            ->where('listing_mode', 'donate')
-            ->whereDate('created_at', '>=', $start)
-            ->get(['created_at'])
-            ->groupBy(fn ($row) => $row->created_at?->format('Y-m-d'))
-            ->map(fn ($group) => $group->count())
-            ->all();
-
         $data = [];
         for ($i = 0; $i < 30; $i++) {
             $date = $start->copy()->addDays($i)->format('Y-m-d');
             $data[] = [
                 'date' => $date,
-                'donations' => (int) ($donationsRaw[$date] ?? 0),
                 'announcements' => (int) ($announcementsRaw[$date] ?? 0),
             ];
         }
 
-        return response()->json($data);
+        return view('user.dashboard.activity', compact('data'));
     }
 
-    public function topAnnouncements(): JsonResponse
+    public function topAnnouncements()
     {
         $userId = $this->userId();
 
@@ -114,10 +92,10 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        return response()->json($rows);
+        return view('user.dashboard.top-announcements', ['data' => $rows]);
     }
 
-    public function categories(): JsonResponse
+    public function categories()
     {
         $userId = $this->userId();
 
@@ -143,42 +121,22 @@ class DashboardController extends Controller
             }
         }
 
-        return response()->json([
+        $data = [
             ['category' => 'Clothes', 'count' => $counts['Clothes']],
             ['category' => 'Shoes', 'count' => $counts['Shoes']],
             ['category' => 'Accessories', 'count' => $counts['Accessories']],
-        ]);
+        ];
+
+        return view('user.dashboard.categories', compact('data'));
     }
 
-    public function status(): JsonResponse
+    public function status()
     {
         $userId = $this->userId();
 
-        $donationProducts = Product::query()
-            ->where('user_id', $userId)
-            ->where('listing_mode', 'donate')
-            ->get(['status']);
-
         $salesProducts = Product::query()
             ->where('user_id', $userId)
-            ->where('listing_mode', 'sell')
             ->get(['status']);
-
-        $donationStatus = [
-            'pending' => 0,
-            'scheduled' => 0,
-            'completed' => 0,
-        ];
-
-        foreach ($donationProducts as $product) {
-            if (in_array($product->status, ['reserved'], true)) {
-                $donationStatus['scheduled']++;
-            } elseif (in_array($product->status, ['donated', 'closed'], true)) {
-                $donationStatus['completed']++;
-            } else {
-                $donationStatus['pending']++;
-            }
-        }
 
         $salesStatus = [
             'available' => 0,
@@ -196,9 +154,10 @@ class DashboardController extends Controller
             }
         }
 
-        return response()->json([
-            'donations' => $donationStatus,
+        $data = [
             'sales' => $salesStatus,
-        ]);
+        ];
+
+        return view('user.dashboard.status', compact('data'));
     }
 }

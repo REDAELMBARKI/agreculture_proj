@@ -19,9 +19,6 @@ class AnnouncementSeeder extends Seeder
 {
     public function run(): void
     {
-        // Disable foreign key checks temporarily
-        DB::statement('PRAGMA foreign_keys=OFF');
-
         // Clear existing data
         $this->clearExistingData();
 
@@ -31,12 +28,6 @@ class AnnouncementSeeder extends Seeder
         $this->createProducts();
         $this->createReviews();
         $this->createFavorites();
-
-        // Verify no empty sections
-        // $this->verifyDataIntegrity();
-
-        // Re-enable foreign key checks
-        DB::statement('PRAGMA foreign_keys=ON');
 
         $this->command->info('Announcement data seeded successfully!');
     }
@@ -67,13 +58,13 @@ class AnnouncementSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            User::factory()->create([
+            $user = User::factory()->create([
                 'name' => $userData['name'],
                 'slug' => $userData['slug'],
                 'email' => $userData['email'],
                 'rating' => $userData['rating'],
-                'role_id' => $userData['role_id'],
             ]);
+            $user->roles()->attach($userData['role_id']);
         }
     }
 
@@ -200,7 +191,7 @@ class AnnouncementSeeder extends Seeder
     private function createProducts(): void
     {
         $categories = Category::whereNotNull('parent_id')->get();
-        $users = User::whereIn("id" , [1,6])->get();
+        $users = User::all();
 
         // Realistic Moroccan kids product names
         $productNames = [
@@ -214,20 +205,18 @@ class AnnouncementSeeder extends Seeder
             'Vêtement Sport Enfant', 'Livre Coloriage Maroc'
         ];
 
-        // Create 20 products distributed across categories
+        // Create products distributed across categories
         foreach ($productNames as $index => $productName) {
             $category = $categories[$index % $categories->count()];
             $user = $users[$index % $users->count()];
             $parentCategory = Category::find($category->parent_id);
 
-            $mode = fake()->randomElement(['sell', 'donate']);
             $product = Product::factory()->create([
                 'title' => $productName,
                 'slug' => Str::slug($productName),
                 'description' => 'Produit de qualité pour enfants au Maroc. ' . fake()->sentence(),
                 'price' => fake()->randomFloat(2, 50, 500),
-                'listing_mode' => $mode,
-                'status' => 'draft', // Set status to draft by default
+                'status' => 'published',
                 'user_id' => $user->id,
                 'super_category_id' => $parentCategory->id,
                 'views_count' => fake()->numberBetween(10, 1000),
@@ -242,11 +231,13 @@ class AnnouncementSeeder extends Seeder
 
             // Create Moroccan address
             $randomCity = \App\Models\City::inRandomOrder()->first();
-            $product->address()->create([
-                'city_id' => $randomCity->id,
-                'district' => fake()->word(),
-                'address_line' => fake()->streetAddress(),
-            ]);
+            if ($randomCity) {
+                $product->address()->create([
+                    'city_id' => $randomCity->id,
+                    'district' => fake()->word(),
+                    'address_line' => fake()->streetAddress(),
+                ]);
+            }
 
             // Create thumbnail
             Media::factory()->create([
@@ -331,31 +322,6 @@ class AnnouncementSeeder extends Seeder
                         'product_id' => $product->id,
                     ]);
                 }
-            }
-        }
-    }
-
-    private function verifyDataIntegrity(): void
-    {
-        // Verify minimum data requirements
-        if (User::count() < 5) {
-            throw new Exception('Insufficient users seeded');
-        }
-        if (Category::count() < 8) {
-            throw new Exception('Insufficient categories seeded');
-        }
-        if (Product::count() < 20) {
-            throw new Exception('Insufficient products seeded');
-        }
-        if (Review::count() < 60) {
-            throw new Exception('Insufficient reviews seeded');
-        }
-        
-        // Verify each category has products
-        $categories = Category::all();
-        foreach ($categories as $category) {
-            if ($category->products()->count() < 2) {
-                throw new Exception("Category {$category->name} has insufficient products");
             }
         }
     }

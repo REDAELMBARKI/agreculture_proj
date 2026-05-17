@@ -19,37 +19,34 @@ class OpenAIController extends Controller
         // checks if API key is set
         $apiKey = env('OPENAI_API_KEY');
         if (!$apiKey) {
-            return response()->json([
-                'answer' => 'api key is missing.'
-            ], 500);
+            return back()->with('error', 'API key is missing.');
         }
 
         try {
             $client = \OpenAI::client($apiKey);
 
             $faqContext = "
-            FAQ for LetUsDonate:
-            1. What makes LetUsDonate Different?
-            - Eco-friendly donations.
-            - Choose collection or drop-off.
-            - Track your impact.
+            FAQ for Kids Marketplace:
+            1. How do I sell an item?
+            - Create an account.
+            - Click on 'Add Announcement'.
+            - Fill in the details and upload images.
 
-            2. What can I donate?
-            - Clothing, shoes, handbags, belts, etc.
+            2. What can I sell?
+            - Toys, clothes, books, and anything related to kids.
 
-            3. How do I book a collection?
-            - Create account.
-            - Fill donation form.
-            - Choose date/time/location.
+            3. How do I contact a seller?
+            - Go to the product page.
+            - Use the chat feature or call the provided phone number.
 
-            4. How much goes to charity?
-            - 100% of profits go to chosen charity.
+            4. Is it free to list?
+            - Yes, listing items is completely free.
             ";
 
             $response = $client->chat()->create([
                 'model' => 'gpt-3.5-turbo-0125',
                 'messages' => [
-                    ['role' => 'system', 'content' => 'You are a FAQs bot.'],
+                    ['role' => 'system', 'content' => 'You are a FAQs bot for a Kids Marketplace.'],
                     ['role' => 'system', 'content' => $faqContext],
                     ['role' => 'user', 'content' => $question],
                 ],
@@ -58,19 +55,15 @@ class OpenAIController extends Controller
             $answer = $response->choices[0]->message->content ?? 
                       "Sorry, I could not generate a response.";
 
-            return response()->json(['answer' => $answer]);
+            return view('faq.answer', compact('answer'));
 
         } catch (\OpenAI\Exceptions\RateLimitException $e) {
             Log::warning('Openai rate limit exceeded: '.$e->getMessage());
-            return response()->json([
-                'answer' => 'Please try again later.'
-            ], 429);
+            return back()->with('error', 'Please try again later.');
         
         } catch (\Exception $e) {
             Log::error('Openai general error: '.$e->getMessage());
-            return response()->json([
-                'answer' => 'Service error: '.$e->getMessage()
-            ], 500);
+            return back()->with('error', 'Service error: '.$e->getMessage());
         }
     }
 }

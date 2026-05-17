@@ -19,8 +19,8 @@ class Role extends Model
     /**
      * Get the users for the role.
      */
-    public function users(): HasMany
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 }

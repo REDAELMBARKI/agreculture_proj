@@ -17,32 +17,18 @@ class DemoUserSeeder extends Seeder
                 'name' => 'Demo User',
                 'slug' => 'demo-user',
                 'password' => Hash::make('password123'),
-                'role_id' => 2,
             ]
         );
+        $demoUser->roles()->sync([2]);
 
-        Product::factory()->count(5)->create([
+        Product::factory()->count(10)->create([
             'user_id' => $demoUser->id,
-            'listing_mode' => 'sell',
-            'status' => 'sell',
+            'status' => 'published',
         ]);
 
         Product::factory()->count(5)->create([
             'user_id' => $demoUser->id,
-            'listing_mode' => 'donate',
-            'status' => 'donate',
-        ]);
-
-        Product::factory()->count(3)->create([
-            'user_id' => $demoUser->id,
-            'listing_mode' => 'sell',
             'status' => 'sold',
-        ]);
-
-        Product::factory()->count(4)->create([
-            'user_id' => $demoUser->id,
-            'listing_mode' => 'donate',
-            'status' => 'donated',
         ]);
     }
 }

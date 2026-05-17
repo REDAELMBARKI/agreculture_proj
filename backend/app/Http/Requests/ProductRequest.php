@@ -26,8 +26,6 @@ class ProductRequest extends FormRequest
 
         return [
             'super_category_id' => "$required|exists:categories,id",
-            'listing_mode'      => "$required|in:sell,donate",
-            'listing_type'      => "$required|in:single,collection",
             'title'             => "$required|string|max:255",
             'description'       => 'nullable|string',
             'price'             => 'nullable|numeric|min:0',
@@ -48,7 +46,9 @@ class ProductRequest extends FormRequest
             'sub_category_ids.*' => 'exists:categories,id',
             'media_ids'         => 'nullable|array',
             'media_ids.*'       => 'exists:media,id',
-            'user_id'           => 'required|exists:users,id',
+            'images'            => 'nullable|array|max:5',
+            'images.*'          => 'image|max:4096',
+            'user_id'           => 'nullable|exists:users,id',
         ];
     }
 

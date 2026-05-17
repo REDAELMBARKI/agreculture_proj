@@ -11,37 +11,14 @@ use Illuminate\Support\Collection;
 
 class AdminDashboardRepository implements AdminDashboardRepositoryInterface
 {
-    public function getDonationProducts(): Collection
-    {
-        return Product::query()
-            ->where('listing_mode', 'donate')
-            ->where('status', '!=', 'draft')
-            ->with(['user', 'categories', 'items', 'address', 'thumbnail'])
-            ->orderByDesc('created_at')
-            ->get();
-    }
-
     public function getAllUsers(): Collection
     {
-        return User::query()->get();
+        return User::with('roles')->get();
     }
 
     public function countAllProducts(): int
     {
         return Product::query()->count();
-    }
-
-    public function countTotalDonatedItems(): int
-    {
-        return Product::query()->where('listing_mode', 'donate')->count();
-    }
-
-    public function countDonatedProducts(): int
-    {
-        return Product::query()
-            ->where('listing_mode', 'donate')
-            ->whereIn('status', ['donated', 'approved'])
-            ->count();
     }
 
     public function countAllUsers(): int
@@ -52,23 +29,8 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
     public function countActiveProducts(): int
     {
         return Product::query()
-            ->whereIn('listing_mode', ['donate', 'sell'])
-            ->where('status', 'draft')
+            ->where('status', 'published')
             ->count();
-    }
-
-    public function getRecentDonationsDates(int $limit = 10): array
-    {
-        return Product::query()
-            ->where('listing_mode', 'donate')
-            ->where('status', 'donated')
-            ->orderByDesc('created_at')
-            ->take($limit)
-            ->pluck('created_at')
-            ->map(fn ($date) => $date?->format('Y-m-d'))
-            ->filter()
-            ->values()
-            ->all();
     }
 
     public function getRecentUserRegistrationDates(int $limit = 10): array
@@ -90,16 +52,6 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
             ->get();
     }
 
-    public function getSustainabilityStats(): array
-    {
-        $donatedProducts = $this->countDonatedProducts();
-
-        return [
-            'items_reused' => $donatedProducts,
-            'co2_reduced' => round($donatedProducts * 1.5, 1),
-        ];
-    }
-
     public function countTotalAnnouncements(): int
     {
         return Product::query()->count();
@@ -107,168 +59,89 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
 
     public function countActiveAnnouncements(): int
     {
-        return Product::query()
-            ->whereIn('status', ['sell', 'donate', 'reserved'])
-            ->count();
+        return Product::query()->where('status', 'published')->count();
     }
 
     public function countPendingModeration(): int
     {
-        return Product::query()
-            ->where('status', 'draft')
-            ->count();
+        // For now, assuming draft or a specific moderation status
+        return Product::query()->where('status', 'draft')->count();
     }
 
     public function countNewUsersToday(): int
     {
-        return User::query()
-            ->whereDate('created_at', Carbon::today())
-            ->count();
+        return User::query()->whereDate('created_at', Carbon::today())->count();
     }
 
-    public function countDonationAnnouncements(): int
+    public function getUserTrend(): array
     {
-        return Product::query()->where('listing_mode', 'donate')->count();
-    }
+        $start = Carbon::today()->subDays(6);
+        $counts = User::query()
+            ->whereDate('created_at', '>=', $start)
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
+            ->groupBy('date')
+            ->pluck('count', 'date');
 
-    public function countSaleAnnouncements(): int
-    {
-        return Product::query()->where('listing_mode', 'sell')->count();
+        $data = [];
+        for ($i = 0; $i < 7; $i++) {
+            $date = $start->copy()->addDays($i)->format('Y-m-d');
+            $data[] = $counts[$date] ?? 0;
+        }
+        return $data;
     }
 
     public function getAnnouncementFunnelCounts(): array
     {
-        $posted = Product::query()->where('status', '!=', 'draft')->count();
-        $active = Product::query()->whereIn('status', ['sell', 'donate', 'reserved'])->count();
-        $contacted = Product::query()
-            ->whereExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from('conversations')
-                    ->whereColumn('conversations.product_id', 'products.id');
-            })
-            ->count();
-        $closed = Product::query()->whereIn('status', ['sold', 'donated', 'closed'])->count();
-
         return [
-            'posted' => $posted,
-            'active' => $active,
-            'contacted' => $contacted,
-            'closed' => $closed,
+            'posted' => Product::query()->count(),
+            'active' => Product::query()->where('status', 'published')->count(),
+            'contacted' => DB::table('conversations')->distinct('product_id')->count(),
+            'closed' => Product::query()->whereIn('status', ['sold', 'closed'])->count(),
         ];
     }
 
-    public function getTopCategories(int $limit = 6): array
+    public function getTopCategories(): array
     {
-        return Product::query()
+        return DB::table('products')
             ->join('categories', 'products.super_category_id', '=', 'categories.id')
-            ->select('categories.name as category', DB::raw('COUNT(products.id) as count'))
+            ->select('categories.name as category', DB::raw('count(*) as count'))
             ->groupBy('categories.id', 'categories.name')
             ->orderByDesc('count')
-            ->limit($limit)
+            ->limit(5)
             ->get()
-            ->map(fn ($row) => [
-                'category' => (string) $row->category,
-                'count' => (int) $row->count,
-            ])
+            ->map(fn($row) => (array)$row)
             ->all();
     }
 
     public function getUserRetentionStatsForCurrentMonth(): array
     {
-        $startOfMonth = Carbon::now()->startOfMonth();
+        $now = Carbon::now();
+        $start = $now->copy()->startOfMonth();
+        
+        $totalUsers = User::query()->where('created_at', '<', $start)->count();
+        if ($totalUsers === 0) return ['returning' => 0, 'new' => 100];
 
-        $newUsers = User::query()
-            ->whereDate('created_at', '>=', $startOfMonth)
-            ->count();
+        $returningUsers = User::query()
+            ->where('created_at', '<', $start)
+            ->whereHas('products', function($q) use ($start) {
+                $q->where('created_at', '>=', $start);
+            })->count();
 
-        $returningUsers = Product::query()
-            ->whereDate('created_at', '>=', $startOfMonth)
-            ->whereIn('user_id', function ($query) use ($startOfMonth) {
-                $query->select('id')
-                    ->from('users')
-                    ->whereDate('created_at', '<', $startOfMonth);
-            })
-            ->distinct('user_id')
-            ->count('user_id');
-
+        $returningPercent = round(($returningUsers / $totalUsers) * 100);
+        
         return [
-            'new_users' => $newUsers,
-            'returning_users' => $returningUsers,
+            'returning' => $returningPercent,
+            'new' => 100 - $returningPercent,
         ];
-    }
-
-    public function getHourlyActivityForToday(): array
-    {
-        $rows = Product::query()
-            ->whereDate('created_at', Carbon::today())
-            ->get(['created_at']);
-
-        $activity = array_fill(0, 24, 0);
-
-        foreach ($rows as $row) {
-            $hour = (int) $row->created_at?->format('H');
-            $activity[$hour] += 1;
-        }
-
-        return $activity;
     }
 
     public function getPendingModerationAnnouncements(int $limit = 5): Collection
     {
         return Product::query()
             ->where('status', 'draft')
-            ->with(['addresses'])
+            ->with(['user', 'superCategory', 'thumbnail'])
             ->orderByDesc('created_at')
-            ->limit($limit)
+            ->take($limit)
             ->get();
-    }
-
-    public function getDonationTrend(int $months = 6): array
-    {
-        $fromDate = Carbon::now()->startOfMonth()->subMonths($months - 1);
-
-        $rows = Product::query()
-            ->whereDate('created_at', '>=', $fromDate)
-            ->where('listing_mode', 'donate')
-            ->get(['created_at'])
-            ->groupBy(fn ($row) => $row->created_at?->format('Y-m'))
-            ->map(fn ($group) => $group->count())
-            ->all();
-
-        $trend = [];
-        for ($i = $months - 1; $i >= 0; $i--) {
-            $monthDate = Carbon::now()->startOfMonth()->subMonths($i);
-            $monthKey = $monthDate->format('Y-m');
-            $trend[] = [
-                'label' => $monthDate->format('M'),
-                'count' => (int) ($rows[$monthKey] ?? 0),
-            ];
-        }
-
-        return $trend;
-    }
-
-    public function getUserTrend(int $months = 6): array
-    {
-        $fromDate = Carbon::now()->startOfMonth()->subMonths($months - 1);
-
-        $rows = User::query()
-            ->whereDate('created_at', '>=', $fromDate)
-            ->get(['created_at'])
-            ->groupBy(fn ($row) => $row->created_at?->format('Y-m'))
-            ->map(fn ($group) => $group->count())
-            ->all();
-
-        $trend = [];
-        for ($i = $months - 1; $i >= 0; $i--) {
-            $monthDate = Carbon::now()->startOfMonth()->subMonths($i);
-            $monthKey = $monthDate->format('Y-m');
-            $trend[] = [
-                'label' => $monthDate->format('M'),
-                'count' => (int) ($rows[$monthKey] ?? 0),
-            ];
-        }
-
-        return $trend;
     }
 }

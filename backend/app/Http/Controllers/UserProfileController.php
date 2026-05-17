@@ -3,50 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class UserProfileController extends Controller
 {
-    public function show(Request $request, int $id): JsonResponse
+    public function show(Request $request, int $id)
     {
-        if ((int) $id !== (int) $request->user('api')?->id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Forbidden',
-            ], 403);
+        if ((int) $id !== (int) Auth::id()) {
+            abort(403);
         }
 
         $user = User::find($id);
 
         if (! $user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User not found',
-            ], 404);
+            abort(404);
         }
 
-        $avatarUrl = $user->avatar_path
-            ? asset('storage/'.ltrim($user->avatar_path, '/'))
-            : null;
-
-        return response()->json([
-            'status' => 'success',
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar_url' => $avatarUrl,
-            ],
-        ]);
+        return view('user.profile', compact('user'));
     }
 
-    public function uploadAvatar(Request $request): JsonResponse
+    public function uploadAvatar(Request $request)
     {
-        $user = $request->user('api');
+        $user = Auth::user();
         if (! $user instanceof User) {
-            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+            return redirect()->route('login');
         }
 
         $request->validate([
@@ -62,28 +45,19 @@ class UserProfileController extends Controller
         $user->avatar_path = $path;
         $user->save();
 
-        return response()->json([
-            'status' => 'success',
-            'avatar_url' => asset('storage/'.$path),
-        ]);
+        return back()->with('success', 'Avatar updated successfully');
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id)
     {
-        if ((int) $id !== (int) $request->user('api')?->id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Forbidden',
-            ], 403);
+        if ((int) $id !== (int) Auth::id()) {
+            abort(403);
         }
 
         $user = User::find($id);
 
         if (! $user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User not found',
-            ], 404);
+            abort(404);
         }
 
         $request->validate([
@@ -103,12 +77,6 @@ class UserProfileController extends Controller
 
         $user->save();
 
-        return response()->json([
-            'status' => 'success',
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-        ]);
+        return back()->with('success', 'Profile updated successfully');
     }
 }

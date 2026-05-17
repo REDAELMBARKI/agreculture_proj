@@ -30,8 +30,6 @@ class Product extends Model
     protected $fillable = [
         'user_id',
         'super_category_id',
-        'listing_mode',
-        'listing_type',
         'title',
         'slug',
         'description',

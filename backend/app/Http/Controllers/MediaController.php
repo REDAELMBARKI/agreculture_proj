@@ -22,10 +22,7 @@ class MediaController extends Controller
             ]);
 
             if (!$request->hasFile('image')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No image file provided.',
-                ], 400);
+                return back()->with('error', 'No image file provided.');
             }
 
             $image = $request->file('image');
@@ -40,7 +37,7 @@ class MediaController extends Controller
             }
             
             // Create temporary media record
-            $media = Media::create([
+            Media::create([
                 'mediable_id' => null, 
                 'mediable_type' => null, 
                 'disk' => 'public',
@@ -54,48 +51,29 @@ class MediaController extends Controller
                 'is_temporary' => true, 
             ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Image uploaded successfully.',
-                'mediaId' => $media->id,
-                'url' => $media->url,
-            ], 201);
+            return back()->with('success', 'Image uploaded successfully.');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return back()->with('error', $e->getMessage());
         }
     }
 
     // Upload multiple images at once
     public function uploadMultiple(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'images' => ['required', 'array', 'max:8'],
             'images.*' => ['required', 'image', 'max:4096'],
         ]);
 
         if (!$request->hasFile('images')) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'No image files provided.',
-            ], 400);
+            return back()->with('error', 'No image files provided.');
         }
 
-        $uploadedMedia = [];
-        
         foreach ($request->file('images') as $index => $image) {
             $path = $image->store('temp_media', 'public');
             
-            $media = Media::create([
+            Media::create([
                 'mediable_id' => null,
                 'mediable_type' => null,
                 'disk' => 'public',
@@ -108,19 +86,9 @@ class MediaController extends Controller
                 'sort_order' => $index,
                 'is_temporary' => true, // Mark as temporary initially
             ]);
-
-            $uploadedMedia[] = [
-                'mediaId' => $media->id,
-                'url' => $media->url,
-                'fileName' => $media->file_name,
-            ];
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Images uploaded successfully.',
-            'media' => $uploadedMedia,
-        ], 201);
+        return back()->with('success', 'Images uploaded successfully.');
     }
 
     /**
@@ -145,10 +113,7 @@ class MediaController extends Controller
             ]);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Media linked successfully.',
-        ]);
+        return back()->with('success', 'Media linked successfully.');
     }
 
     // Delete temporary media
@@ -159,10 +124,7 @@ class MediaController extends Controller
             ->first();
 
         if (!$media) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Temporary media not found or already linked.',
-            ], 404);
+            return back()->with('error', 'Temporary media not found or already linked.');
         }
 
         // Delete file from storage
@@ -173,10 +135,7 @@ class MediaController extends Controller
         // Delete media record
         $media->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Temporary media deleted successfully.',
-        ]);
+        return back()->with('success', 'Temporary media deleted successfully.');
     }
 
     // Clean up old temporary media (can be called by a scheduled job)
@@ -194,9 +153,6 @@ class MediaController extends Controller
             $media->delete();
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => "Cleaned up {$oldMedia->count()} old temporary media files.",
-        ]);
+        return back()->with('success', "Cleaned up {$oldMedia->count()} old temporary media files.");
     }
 }

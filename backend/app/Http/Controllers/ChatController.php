@@ -21,6 +21,26 @@ class ChatController extends Controller
         $this->chatService = $chatService;
     }
 
+    public function index()
+    {
+        $user = Auth::user();
+        $conversations = $this->chatService->getUserConversations($user);
+        return view('chat.index', compact('user', 'conversations'));
+    }
+
+    public function show(Conversation $conversation)
+    {
+        $user = Auth::user();
+        if ($conversation->buyer_id !== $user->id && $conversation->seller_id !== $user->id) {
+            abort(403);
+        }
+        $conversations = $this->chatService->getUserConversations($user);
+        $messages = $this->chatService->getMessages($conversation);
+        $conversation->load(['product.thumbnail', 'buyer', 'seller']);
+        
+        return view('chat.index', compact('user', 'conversations', 'conversation', 'messages'));
+    }
+
     /**
      * Get or create a conversation between buyer and seller for a product.
      */
@@ -31,18 +51,12 @@ class ChatController extends Controller
 
         // Can't chat with yourself
         if ($buyerId === $sellerId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Cannot chat with yourself',
-            ], 422);
+            return back()->with('error', 'Cannot chat with yourself');
         }
 
         $conversation = $this->chatService->getOrCreateConversation($product);
 
-        return response()->json([
-            'status' => 'success',
-            'conversation' => $conversation,
-        ]);
+        return redirect()->route('chat.show', $conversation);
     }
 
     /**
@@ -53,25 +67,14 @@ class ChatController extends Controller
         // Verify user is part of this conversation
         $userId = Auth::id();
         if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 403);
+            abort(403);
         }
 
         $messages = $this->chatService->getMessages($conversation);
+        $user = Auth::user();
+        $conversations = $this->chatService->getUserConversations($user);
 
-        return response()->json([
-            'status' => 'success',
-            'messages' => $messages,
-            'conversation' => $conversation->load([
-                'product' => function ($query) {
-                    $query->select('id', 'title', 'slug')->with('thumbnail');
-                },
-                'buyer:id,name,avatar_path',
-                'seller:id,name,avatar_path'
-            ]),
-        ]);
+        return view('chat.index', compact('user', 'conversations', 'conversation', 'messages'));
     }
 
     /**
@@ -86,18 +89,12 @@ class ChatController extends Controller
         // Verify user is part of this conversation
         $userId = Auth::id();
         if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 403);
+            abort(403);
         }
 
-        $message = $this->chatService->sendMessage($conversation, $request->input('content'));
+        $this->chatService->sendMessage($conversation, $request->input('content'));
 
-        return response()->json([
-            'status' => 'success',
-            'message' => $message,
-        ], 201);
+        return back()->with('success', 'Message sent');
     }
 
     /**
@@ -105,12 +102,10 @@ class ChatController extends Controller
      */
     public function getUserConversations()
     {
-        $conversations = $this->chatService->getUserConversations();
+        $user = Auth::user();
+        $conversations = $this->chatService->getUserConversations($user);
 
-        return response()->json([
-            'status' => 'success',
-            'conversations' => $conversations,
-        ]);
+        return view('chat.index', compact('user', 'conversations'));
     }
 
     /**
@@ -121,17 +116,11 @@ class ChatController extends Controller
         $userId = Auth::id();
 
         if ($conversation->buyer_id !== $userId && $conversation->seller_id !== $userId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 403);
+            abort(403);
         }
 
         $this->chatService->markAsRead($conversation);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Messages marked as read',
-        ]);
+        return back()->with('success', 'Messages marked as read');
     }
 }

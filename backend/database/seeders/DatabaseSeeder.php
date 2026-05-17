@@ -26,21 +26,21 @@ class DatabaseSeeder extends Seeder
         ]);
         
         // Create admin user
-        User::factory()->create([
+        $admin = User::factory()->create([
             'name' => 'Admin User',
             'slug' => 'admin-user',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'role_id' => 1, // Admin role
         ]);
+        $admin->roles()->attach(1);
         
         // Create regular user
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Test User',
             'slug' => 'test-user',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role_id' => 2, // User role
         ]);
+        $user->roles()->attach(2);
     }
 }

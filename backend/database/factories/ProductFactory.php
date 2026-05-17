@@ -18,9 +18,7 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $listingModes = ['sell', 'donate'];
-        $listingTypes = ['single', 'collection'];
-        $statuses = ['sell', 'donate', 'reserved', 'sold', 'donated'];
+        $statuses = ['published', 'draft', 'reserved', 'sold', 'closed'];
         $conditions = ['new', 'like_new', 'good', 'fair'];
         $genders = ['boy', 'girl', 'unisex'];
         $ageRanges = ['0-3m', '3-6m', '6-12m', '1-2y', '2-3y', '3-5y', '5-7y', '7-10y', '10-12y'];
@@ -28,16 +26,11 @@ class ProductFactory extends Factory
         $seasons = ['spring', 'summer', 'autumn', 'winter'];
         $handoverMethods = ['pickup', 'delivery', 'both'];
 
-        $listingMode = fake()->randomElement($listingModes);
-        $price = $listingMode === 'sell' ? fake()->randomFloat(2, 5, 150) : null;
-
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'listing_mode' => $listingMode,
-            'listing_type' => fake()->randomElement($listingTypes),
             'title' => fake()->words(3, true) . ' - ' . fake()->randomElement(['Kids', 'Children', 'Baby', 'Toddler']),
             'description' => fake()->sentences(3, true),
-            'price' => $price,
+            'price' => fake()->randomFloat(2, 5, 150),
             'currency' => 'MAD',
             'price_negotiable' => fake()->boolean(30),
             'handover_method' => fake()->randomElement($handoverMethods),
@@ -62,19 +55,7 @@ class ProductFactory extends Factory
     public function sell(): static
     {
         return $this->state(fn (array $attributes) => [
-            'listing_mode' => 'sell',
             'price' => fake()->randomFloat(2, 5, 150),
-        ]);
-    }
-
-    /**
-     * Create a donate listing
-     */
-    public function donate(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'listing_mode' => 'donate',
-            'price' => null,
         ]);
     }
 
@@ -84,7 +65,7 @@ class ProductFactory extends Factory
     public function active(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => $attributes['listing_mode'] === 'donate' ? 'donate' : 'sell',
+            'status' => 'published',
         ]);
     }
 

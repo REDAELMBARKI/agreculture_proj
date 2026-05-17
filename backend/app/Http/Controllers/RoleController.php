@@ -13,12 +13,12 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::all();
-        return response()->json($roles);
+        return view('roles.index', compact('roles'));
     }
     //get a specific role by ID
     public function show($id)
     {
         $role = Role::with('users')->findOrFail($id);
-        return response()->json($role);
+        return view('roles.show', compact('role'));
     }
 }

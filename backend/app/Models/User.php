@@ -35,13 +35,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Product::class);
     }
 
-
-
-    public function charity(): HasOne
-    {
-        return $this->hasOne(Charity::class);
-    }
-
     /**
      * Get the reviews written by the user.
      */
@@ -67,11 +60,11 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the role for the user.
+     * Get the roles for the user.
      */
-    public function role(): BelongsTo
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class);
     }
 
     /**
@@ -84,7 +77,6 @@ class User extends Authenticatable implements JWTSubject
         'slug',
         'email',
         'password',
-        'role_id',
         'avatar_path',
     ];
 
@@ -120,7 +112,6 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role_id' => 'integer',
         ];
     }
 

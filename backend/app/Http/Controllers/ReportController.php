@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use App\Models\Conversation;
 use App\Models\Product;
 use App\Models\User;
@@ -12,32 +11,23 @@ use App\Models\Category;
 
 class ReportController extends Controller
 {
-    private function success(array $data): JsonResponse
+    public function all()
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return view('admin.reports');
     }
 
-    public function donations(): JsonResponse
+    public function sales()
     {
         $rows = Product::query()
-            ->where('listing_mode', 'donate')
-            ->get(['created_at'])
-            ->groupBy(fn ($product) => $product->created_at?->format('Y-m-d'))
-            ->map(fn ($group, $date) => [
-                'date' => $date,
-                'donations_count' => $group->count(),
-            ])
-            ->sortBy('date')
-            ->values()
-            ->all();
-
-        return $this->success($rows);
+            ->whereIn('status', ['sold', 'closed'])
+            ->with(['user', 'category'])
+            ->latest()
+            ->get();
+            
+        return view('admin.reports.sales', ['data' => $rows]);
     }
 
-    public function users(): JsonResponse
+    public function users()
     {
         $rows = User::query()
             ->orderByDesc('created_at')
@@ -51,18 +41,16 @@ class ReportController extends Controller
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.users', ['data' => $rows]);
     }
 
-    public function topUsers(): JsonResponse
+    public function topUsers()
     {
         $rows = User::query()
             ->leftJoin('products', 'users.id', '=', 'products.user_id')
             ->select(
                 'users.id',
                 'users.name',
-                DB::raw("SUM(CASE WHEN products.listing_mode = 'sell' THEN 1 ELSE 0 END) as sales_count"),
-                DB::raw("SUM(CASE WHEN products.listing_mode = 'donate' THEN 1 ELSE 0 END) as donations_count"),
                 DB::raw("COUNT(products.id) as total_listings")
             )
             ->groupBy('users.id', 'users.name')
@@ -72,18 +60,15 @@ class ReportController extends Controller
             ->map(fn ($row) => [
                 'user_id' => (int) $row->id,
                 'name' => (string) $row->name,
-                'sales_count' => (int) $row->sales_count,
-                'donations_count' => (int) $row->donations_count,
                 'total_listings' => (int) $row->total_listings,
-                'best_type' => ((int) $row->sales_count >= (int) $row->donations_count) ? 'seller' : 'donater',
             ])
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.top-users', ['data' => $rows]);
     }
 
-    public function userActivity(): JsonResponse
+    public function userActivity()
     {
         $rows = User::query()
             ->leftJoin('products', 'users.id', '=', 'products.user_id')
@@ -91,8 +76,6 @@ class ReportController extends Controller
                 'users.id',
                 'users.name',
                 DB::raw("COUNT(products.id) as total_posts"),
-                DB::raw("SUM(CASE WHEN products.listing_mode = 'sell' THEN 1 ELSE 0 END) as sales_posts"),
-                DB::raw("SUM(CASE WHEN products.listing_mode = 'donate' THEN 1 ELSE 0 END) as donation_posts"),
                 DB::raw("COALESCE(SUM(products.views_count), 0) as total_views"),
                 DB::raw("MAX(products.created_at) as last_posted_at")
             )
@@ -103,18 +86,16 @@ class ReportController extends Controller
                 'user_id' => (int) $row->id,
                 'name' => (string) $row->name,
                 'total_posts' => (int) $row->total_posts,
-                'sales_posts' => (int) $row->sales_posts,
-                'donation_posts' => (int) $row->donation_posts,
                 'total_views' => (int) $row->total_views,
                 'last_posted_at' => $row->last_posted_at,
             ])
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.user-activity', ['data' => $rows]);
     }
 
-    public function usersByCity(): JsonResponse
+    public function usersByCity()
     {
         $userAddressType = (new User())->getMorphClass();
 
@@ -138,13 +119,12 @@ class ReportController extends Controller
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.users-by-city', ['data' => $rows]);
     }
 
-    public function sales(): JsonResponse
+    public function sales()
     {
         $rows = Product::query()
-            ->where('listing_mode', 'sell')
             ->get(['created_at'])
             ->groupBy(fn ($product) => $product->created_at?->format('Y-m-d'))
             ->map(fn ($group, $date) => [
@@ -155,10 +135,10 @@ class ReportController extends Controller
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.sales', ['data' => $rows]);
     }
 
-    public function listingsPerformance(): JsonResponse
+    public function listingsPerformance()
     {
         $contactCounts = Conversation::query()
             ->select('product_id', DB::raw('COUNT(*) as contacts'))
@@ -177,10 +157,10 @@ class ReportController extends Controller
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.listings-performance', ['data' => $rows]);
     }
 
-    public function inventoryByCategory(): JsonResponse
+    public function inventoryByCategory()
     {
         $rows = Category::query()
             ->leftJoin('products', 'categories.id', '=', 'products.super_category_id')
@@ -198,10 +178,10 @@ class ReportController extends Controller
             ->values()
             ->all();
 
-        return $this->success($rows);
+        return view('admin.reports.inventory-by-category', ['data' => $rows]);
     }
 
-    public function timeBased(): JsonResponse
+    public function timeBased()
     {
         $products = Product::query()->get(['created_at']);
 
@@ -228,7 +208,7 @@ class ReportController extends Controller
         $bestHour = collect($hourly)->sortByDesc('posts_count')->first();
         $bestDay = collect($daily)->first();
 
-        return $this->success([
+        return view('admin.reports.time-based', [
             'summary' => [
                 'best_hour' => $bestHour['hour'] ?? null,
                 'best_hour_posts' => $bestHour['posts_count'] ?? 0,
@@ -240,18 +220,8 @@ class ReportController extends Controller
         ]);
     }
 
-    public function all(): JsonResponse
+    public function all()
     {
-        return $this->success([
-            'users_report' => $this->users()->getData(true)['data'],
-            'top_users_report' => $this->topUsers()->getData(true)['data'],
-            'user_activity_report' => $this->userActivity()->getData(true)['data'],
-            'location_report' => $this->usersByCity()->getData(true)['data'],
-            'sales_report' => $this->sales()->getData(true)['data'],
-            'donations_report' => $this->donations()->getData(true)['data'],
-            'listings_performance_report' => $this->listingsPerformance()->getData(true)['data'],
-            'inventory_report' => $this->inventoryByCategory()->getData(true)['data'],
-            'time_based_report' => $this->timeBased()->getData(true)['data'],
-        ]);
+        return view('admin.reports.all');
     }
 }

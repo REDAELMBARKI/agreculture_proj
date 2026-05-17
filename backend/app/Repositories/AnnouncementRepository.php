@@ -16,7 +16,7 @@ class AnnouncementRepository
     protected function prepareProductData(array $data): array
     {
         $fields = [
-            'user_id', 'super_category_id', 'listing_mode', 'listing_type',
+            'user_id', 'super_category_id',
             'title', 'description', 'price', 'currency', 'price_negotiable',
             'status', 'condition', 'gender', 'age_range', 'brand', 'season',
             'sizes', 'colors', 'handover_method', 'contact_phone'
@@ -61,8 +61,7 @@ class AnnouncementRepository
     public function getMarketplaceListings(array $filters, int $perPage = 12): LengthAwarePaginator
     {
         $query = Product::with(['user', 'thumbnail', 'gallery', 'superCategory', 'subCategories', 'address'])
-            ->whereIn('listing_mode', ['sell', 'donate'])
-            ->whereIn('status', ['published', 'draft', 'sell', 'donate']);
+            ->whereIn('status', ['published', 'draft', 'reserved', 'sold', 'closed']);
 
         // Search filter
         if (!empty($filters['search'])) {
@@ -85,10 +84,6 @@ class AnnouncementRepository
             $query->where('super_category_id', $filters['category']);
         }
 
-        // Listing mode filter (sell/donate)
-        if (!empty($filters['mode']) && $filters['mode'] !== 'all') {
-            $query->where('listing_mode', $filters['mode']);
-        }
 
         // Age range filter
         if (!empty($filters['age_range'])) {
@@ -111,9 +106,6 @@ class AnnouncementRepository
         }
         if (!empty($filters['max_price'])) {
             $query->where('price', '<=', $filters['max_price']);
-        }
-        if (!empty($filters['free_only']) && $filters['free_only'] === true) {
-            $query->where('listing_mode', 'donate');
         }
 
         // Sorting
