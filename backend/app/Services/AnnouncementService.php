@@ -115,15 +115,25 @@ class AnnouncementService
     public function getMarketplaceInitData(): array
     {
         $categories = Category::whereNull('parent_id')
+            ->with(['children' => function($query) {
+                $query->where('is_active', true)->orderBy('sort_order');
+            }])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get(['id', 'name', 'icon', 'slug'])
             ->map(fn($category) => [
                 'id' => (string) $category->id,
+                'name' => $category->name,
                 'label' => $category->name,
                 'value' => (string) $category->id,
                 'icon' => $category->icon,
                 'slug' => $category->slug,
+                'children' => $category->children->map(fn($child) => [
+                    'id' => (string) $child->id,
+                    'name' => $child->name,
+                    'label' => $child->name,
+                    'value' => (string) $child->id,
+                ]),
             ]);
 
         $attributes = $this->filterAttributeRepository->getAllGrouped();

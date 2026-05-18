@@ -316,10 +316,15 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       try {
         const response = await api.get(ziggyRoute('marketplace.init-data'));
         if (response.data.status === "success") {
-          setCategories((response.data.categories || []).map((cat: any) => ({
+          const processedCategories = (response.data.categories || []).map((cat: any) => ({
             ...cat,
-            id: Number(cat.id)
-          })));
+            id: Number(cat.id),
+            children: (cat.children || []).map((child: any) => ({
+              ...child,
+              id: Number(child.id)
+            }))
+          }));
+          setCategories(processedCategories);
           setAttributes({
             cities: (response.data.cities || []).map((city: any) => ({
               ...city,
@@ -394,10 +399,48 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   const currentStepNumber = stepIndex + 1;
   const isLastStep = currentStepNumber === visibleSteps.length;
 
-  const selectedCategory = useMemo(() => 
-    categories.find(c => c.id === form.super_category_id), 
-    [categories, form.super_category_id]
-  );
+  const selectedCategory = useMemo(() => {
+    const allCats = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
+    let found = allCats.find(c => c.id === form.super_category_id);
+    
+    if (!found && form.super_category_name) {
+      found = allCats.find(c => c.name === form.super_category_name);
+    }
+    return found;
+  }, [form.super_category_id, form.super_category_name, categories]);
+
+  // Sync super_category_id when API data loads and matches by name
+  useEffect(() => {
+    if (categories.length > 0 && selectedCategory && selectedCategory.id !== form.super_category_id) {
+      // Check if this selectedCategory is actually from the API list
+      if (categories.some(c => c.id === selectedCategory.id)) {
+        updateField("super_category_id", selectedCategory.id);
+      }
+    }
+  }, [categories, selectedCategory, form.super_category_id]);
+
+  const subcategoryOptions = useMemo(() => {
+    if (!selectedCategory) return [];
+    
+    // 1. Check if category has children from API
+    if (selectedCategory.children && selectedCategory.children.length > 0) {
+      return selectedCategory.children.map((child: any) => ({
+        id: child.id,
+        label: child.name,
+        value: child.name,
+        icon: <Shapes size={16} />
+      }));
+    }
+    
+    // 2. Fallback to hardcoded map using the name
+    const fallbackNames = SUB_CATEGORIES_MAP[selectedCategory.name] || [];
+    return fallbackNames.map((name, index) => ({
+      id: `${selectedCategory.id}-${index}`,
+      label: name,
+      value: name,
+      icon: <Shapes size={16} />
+    }));
+  }, [selectedCategory]);
 
   const updateField = (key: keyof FormState, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
   
@@ -638,34 +681,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       setStatus({ type: "error", message: errorMessage });
     }
   };
-
-  const selectedCategory = useMemo(() => {
-    const allCats = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
-    return allCats.find(c => c.id === form.super_category_id);
-  }, [form.super_category_id, categories]);
-
-  const subcategoryOptions = useMemo(() => {
-    if (!selectedCategory) return [];
-    
-    // 1. Check if category has children from API
-    if (selectedCategory.children && selectedCategory.children.length > 0) {
-      return selectedCategory.children.map((child: any) => ({
-        id: child.id,
-        label: child.name,
-        value: child.name,
-        icon: <Shapes size={16} />
-      }));
-    }
-    
-    // 2. Fallback to hardcoded map using the name
-    const fallbackNames = SUB_CATEGORIES_MAP[selectedCategory.name] || [];
-    return fallbackNames.map((name, index) => ({
-      id: `${selectedCategory.id}-${index}`,
-      label: name,
-      value: name,
-      icon: <Shapes size={16} />
-    }));
-  }, [selectedCategory]);
 
   const renderStep = () => {
     switch (stepKey) {
