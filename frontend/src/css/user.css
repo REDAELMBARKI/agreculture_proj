@@ -42,7 +42,7 @@
 }
 
 .links {
-  background-color: #ea580c;
+  background-color: #1A4D2E;
   width: 200px;
   display: flex;
   flex-direction: column;
@@ -98,7 +98,7 @@
 
 .logout-btn {
   border: none;
-  background-color: #ea580c;
+  background-color: #1A4D2E;
   color: #fff;
   padding: 10px 20px;
   border-radius: 4px;
@@ -107,7 +107,7 @@
   font-size: 1.1rem;
 }
 .logout-btn:hover {
-  background-color: #fb923c;
+  background-color: #144023;
 }
 /* User Dashboard */
 .dashboard-main {
@@ -184,7 +184,7 @@
 }
 
 .donation-history th {
-  background-color: #c2410c;
+  background-color: #144023;
   color: #fff;
   font-weight: 600;
   padding: 1rem;

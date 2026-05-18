@@ -276,7 +276,7 @@
 }
 
 .aa-thumb.main {
-  border-color: #f59e0b;
+  border-color: #1A4D2E;
 }
 
 .aa-thumb-delete {
@@ -439,8 +439,8 @@
   position: absolute;
   left: 8px;
   bottom: 8px;
-  background: #f59e0b;
-  color: #111827;
+  background: #1A4D2E;
+  color: #ffffff;
   border-radius: 999px;
   padding: 2px 8px;
   font-size: 12px;
@@ -721,8 +721,8 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  background: #f59e0b;
-  color: #111827;
+  background: #1A4D2E;
+  color: #ffffff;
   font-size: 12px;
   font-weight: 700;
   border-radius: 999px;

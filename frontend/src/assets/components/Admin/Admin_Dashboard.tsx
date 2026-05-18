@@ -45,7 +45,7 @@ type PendingItem = {
 type PendingResponse = { items: PendingItem[]; total: number };
 
 const donutColors = {
-  sale: "#f59e0b",
+  sale: "#16a34a",
   newUser: "#7c3aed",
   returningUser: "#a78bfa",
 };

@@ -38,13 +38,17 @@ export default function User_Dashboard() {
     const uid = (user?.id || user?.user_ID) as number | undefined;
     const userSlug = (user?.slug as string | undefined) ?? undefined;
     const userKey = userSlug || (uid ? String(uid) : "");
+    console.log("=== User Dashboard - userKey:", userKey);
+    console.log("=== User Dashboard - user object:", user);
     if (!userKey) return;
 
     setLoadingListings(true);
     api
       .get(`/api/user/${userKey}/announcements`)
       .then((res) => {
+        console.log("=== User Dashboard - API response:", res.data);
         const products = res.data?.products?.data || res.data?.products || [];
+        console.log("=== User Dashboard - products:", products);
         setAllListings(Array.isArray(products) ? products : []);
       })
       .catch((err) => console.error("Listings fetch error:", err))
