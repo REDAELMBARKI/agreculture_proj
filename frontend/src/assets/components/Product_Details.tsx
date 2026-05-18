@@ -58,17 +58,26 @@ const Product_Details: React.FC = () => {
   console.log("Product_Details mounted, announcementSlug:", announcementSlug);
 
   const handleChatWithSeller = async () => {
+    console.log('=== handleChatWithSeller called, product:', product);
+    console.log('=== product.id:', product.id);
+    console.log('=== product.slug:', product.slug);
+    
     if (!product) return;
     
     try {
       // Get or create conversation
+      console.log('=== Calling API /api/announcements/', product.slug, '/conversation');
       const res = await api.post(`/api/announcements/${product.slug}/conversation`);
+      console.log('=== API response:', res.data);
+      
       if (res.data.status === 'success') {
         const conversationSlug = res.data.conversation.slug;
+        console.log('=== Navigating to /chat/', conversationSlug);
         navigate(`/chat/${conversationSlug}`);
       }
     } catch (err: any) {
       console.error("Failed to start conversation:", err);
+      console.error("Error details:", err.response?.data);
       const errorMessage = err.response?.data?.message || "Failed to start conversation. Please try again.";
       alert(errorMessage);
     }

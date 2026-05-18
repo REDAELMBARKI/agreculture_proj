@@ -38,7 +38,7 @@ a:visited {
 }
 
 .brand_logo i {
-  color: #ea580c;
+  color: #1A4D2E;
   margin-left: 4px;
 }
 
@@ -79,12 +79,12 @@ a:visited {
 }
 
 .post_btn {
-  background: #ef4444;
+  background: #1A4D2E;
   color: #ffffff !important;
 }
 
 .post_btn:hover {
-  background: #dc2626;
+  background: #144023;
 }
 
 .search_row {
@@ -119,7 +119,7 @@ a:visited {
 
 .search_cta {
   border-radius: 999px;
-  background: #ea580c;
+  background: #1A4D2E;
   color: #ffffff !important;
   padding: 10px 22px;
   font-weight: 600;
@@ -128,7 +128,7 @@ a:visited {
 }
 
 .search_cta:hover {
-  background: #c2410c;
+  background: #144023;
 }
 
 h1 {
@@ -145,7 +145,7 @@ h1 {
 }
 
 .header-small {
-  background: linear-gradient(120deg, #7c2d12 0%, #ea580c 55%, #fb923c 100%);
+  background: linear-gradient(120deg, #0F3320 0%, #1A4D2E 55%, #2A6B40 100%);
   border-bottom: none;
 }
 

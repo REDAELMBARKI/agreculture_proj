@@ -192,6 +192,7 @@ const FALLBACK_CATEGORIES = [
 ];
 
 interface FilterAttributes {
+  cities?: any[];
   regions: string[];
   quantityUnits: string[];
   harvestSeasons: string[];
@@ -280,7 +281,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   const [mainPhotoIndex, setMainPhotoIndex] = useState<number>(0);
   const isUploading = useMemo(() => uploadSlots.some(s => s.status === 'uploading'), [uploadSlots]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [attributes, setAttributes] = useState<FilterAttributes>({
+  const [attributes, setAttributes] = useState<FilterAttributes & { cities?: any[] }>({
     cities: [],
     ageRanges: [],
     clothingSizes: [],
@@ -328,6 +329,8 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     const fetchInitData = async () => {
       try {
         const response = await api.get(ziggyRoute('marketplace.init-data'));
+        console.log('=== MARKETPLACE INIT DATA RESPONSE ===');
+        console.log(response.data);
         if (response.data.status === "success") {
           const processedCategories = (response.data.categories || []).map((cat: any) => ({
             ...cat,
@@ -338,7 +341,10 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
             }))
           }));
           setCategories(processedCategories);
+          console.log('=== SETTING ATTRIBUTES ===');
+          console.log('response.data.cities:', response.data.cities);
           setAttributes({
+            cities: response.data.cities || [],
             regions: response.data.regions || [],
             quantityUnits: response.data.quantityUnits || [],
             harvestSeasons: response.data.harvestSeasons || [],
@@ -1113,6 +1119,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
 
             {/* Ville - Single row alone */}
             <Box sx={{ width: '100%' }}>
+              {console.log('=== CITY SELECT: attributes.cities ===', attributes.cities)}
               <CustomSelect
                 label="Ville"
                 options={attributes.cities}

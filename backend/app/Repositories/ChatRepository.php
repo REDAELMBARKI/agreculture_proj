@@ -13,8 +13,12 @@ class ChatRepository
     /**
      * Find a conversation by its participants and product.
      */
-    public function findConversationByParticipants(int $productId, int $buyerId, int $sellerId): ?Conversation
+    public function findConversationByParticipants(?int $productId, int $buyerId, int $sellerId): ?Conversation
     {
+        if (empty($productId)) {
+            throw new \InvalidArgumentException('Product ID cannot be null');
+        }
+        
         return Conversation::where('product_id', $productId)
             ->where('buyer_id', $buyerId)
             ->where('seller_id', $sellerId)

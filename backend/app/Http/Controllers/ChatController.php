@@ -24,10 +24,15 @@ class ChatController extends Controller
     /**
      * Get or create a conversation between buyer and seller for a product.
      */
-    public function getOrCreateConversation(Product $product)
+    public function getOrCreateConversation(Product $announcement)
     {
+        \Log::info('=== ChatController.getOrCreateConversation called ===');
+        \Log::info('Product (announcement) ID:', ['id' => $announcement->id]);
+        \Log::info('Product (announcement) slug:', ['slug' => $announcement->slug]);
+        \Log::info('Product (announcement):', $announcement->toArray());
+        
         $buyerId = Auth::id();
-        $sellerId = $product->user_id;
+        $sellerId = $announcement->user_id;
 
         // Can't chat with yourself
         if ($buyerId === $sellerId) {
@@ -37,7 +42,7 @@ class ChatController extends Controller
             ], 422);
         }
 
-        $conversation = $this->chatService->getOrCreateConversation($product);
+        $conversation = $this->chatService->getOrCreateConversation($announcement);
 
         return response()->json([
             'status' => 'success',

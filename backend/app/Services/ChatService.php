@@ -25,6 +25,15 @@ class ChatService
      */
     public function getOrCreateConversation(Product $product): Conversation
     {
+        \Log::info('=== ChatService.getOrCreateConversation called ===');
+        \Log::info('Product object:', $product->toArray());
+        \Log::info('Product id:', ['id' => $product->id]);
+        \Log::info('Product user_id:', ['user_id' => $product->user_id]);
+        
+        if (empty($product->id)) {
+            throw new \InvalidArgumentException('Product ID cannot be null');
+        }
+        
         $buyerId = Auth::id();
         $sellerId = $product->user_id;
 
