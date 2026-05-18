@@ -6,9 +6,9 @@ interface CategoryBreakdownProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Clothes: "#c2410c",
+  Clothes: "#1A4D2E",
   Shoes: "#5dcaa5",
-  Accessories: "#ef9f27",
+  Accessories: "#2d6a4f",
 };
 
 export default function CategoryBreakdown({ categories }: CategoryBreakdownProps) {
@@ -41,7 +41,7 @@ export default function CategoryBreakdown({ categories }: CategoryBreakdownProps
                   {categories.map((item) => (
                     <Cell
                       key={item.category}
-                      fill={categoryColors[item.category] || "#ea580c"}
+                      fill={categoryColors[item.category] || "#1A4D2E"}
                     />
                   ))}
                 </Pie>

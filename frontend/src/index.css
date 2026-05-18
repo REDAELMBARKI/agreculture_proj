@@ -18,15 +18,15 @@
   --primary: #2563eb;
   --primaryHover: #1d4ed8;
   --success: #2e7d32;
-  --warning: #f59e0b;
+  --warning: #1A4D2E;
   --danger: #dc2626;
   --infoBg: #e8f1ff;
   --infoText: #1e40af;
   --cb-bg: light-dark(#fffefc, #2c2c2c);
   --cb-border: light-dark(#ccc, #444);
   --cb-text: light-dark(#333, #ddd);
-  --cb-accent: #ea580c;
-  --cb-accent-hover: #619a6f;
+  --cb-accent: #1A4D2E;
+  --cb-accent-hover: #144023;
   --cb-user: light-dark(#e6ede9, #2a4b38);
   --cb-bot: light-dark(#f1f5f9, #3a3a3a);
   --cb-muted: light-dark(#6b7280, #b0b0b0);

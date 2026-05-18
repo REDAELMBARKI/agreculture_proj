@@ -40,11 +40,11 @@ main {
   width: 112px;
   height: 112px;
   border-radius: 50%;
-  border: 3px solid #ea580c;
+  border: 3px solid #1A4D2E;
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  background: #fff7ed;
+  background: #e8f3ec;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +64,7 @@ main {
 .profile-avatar-placeholder {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #c2410c;
+  color: #1A4D2E;
 }
 
 .profile-avatar-hint {

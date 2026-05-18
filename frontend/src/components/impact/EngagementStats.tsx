@@ -21,8 +21,8 @@ export default function EngagementStats({ stats }: EngagementStatsProps) {
       : "—";
 
   const barData = [
-    { name: "Views", value: stats.total_views, fill: "#ea580c" },
-    { name: "Contact clicks", value: stats.total_clicks, fill: "#ef9f27" },
+    { name: "Views", value: stats.total_views, fill: "#1A4D2E" },
+    { name: "Contact clicks", value: stats.total_clicks, fill: "#2d6a4f" },
   ];
 
   return (

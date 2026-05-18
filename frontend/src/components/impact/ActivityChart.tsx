@@ -2,7 +2,7 @@
               type="monotone"
               dataKey="announcements"
               name="Announcements created per day"
-              stroke="#ef9f27"
+              stroke="#1A4D2E"
               strokeWidth={2}
               dot={false}
             />

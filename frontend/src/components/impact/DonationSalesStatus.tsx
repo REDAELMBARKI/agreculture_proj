@@ -84,9 +84,9 @@ function StatusPanel({
 
 export default function SalesStatus({ status }: SalesStatusProps) {
   const salesItems: StatusItem[] = [
-    { key: "available", label: "Available", count: status.sales.available, fill: "#eab308" },
-    { key: "reserved", label: "Reserved", count: status.sales.reserved, fill: "#f97316" },
-    { key: "sold", label: "Sold", count: status.sales.sold, fill: "#22c55e" },
+    { key: "available", label: "Available", count: status.sales.available, fill: "#40916c" },
+    { key: "reserved", label: "Reserved", count: status.sales.reserved, fill: "#2d6a4f" },
+    { key: "sold", label: "Sold", count: status.sales.sold, fill: "#1A4D2E" },
   ];
 
   const salesChart = salesItems.map((i) => ({

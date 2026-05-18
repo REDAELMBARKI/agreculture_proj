@@ -164,33 +164,157 @@ export default function User_Dashboard() {
               </div>
 
               <div style={{ padding: "1.5rem 2rem" }}>
-                <h3 style={{ margin: "0 0 0.75rem" }}>Recent activity</h3>
+                <h3 style={{ margin: "0 0 1rem", fontSize: "1.2rem", fontWeight: 700 }}>Recent activity</h3>
                 {loadingListings ? (
-                  <p>Loading activity...</p>
+                  <p style={{ color: "#64748b" }}>Loading activity...</p>
                 ) : stats.latest.length > 0 ? (
-                  <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {stats.latest.map((p) => {
                       const slug = (p.slug as string | undefined) ?? "";
                       const title = (p.title as string | undefined) ?? "—";
                       const created = p.created_at ? new Date(String(p.created_at)).toLocaleDateString() : "—";
                       const status = (p.status as string | undefined) ?? "—";
+                      const listingMode = (p.listing_mode as string | undefined) ?? "sell";
+                      const getStatusColor = (s: string) => {
+                        const statusLower = s.toLowerCase();
+                        if (statusLower === "published" || statusLower === "sell") return "#1A4D2E";
+                        if (statusLower === "sold") return "#16a34a";
+                        if (statusLower === "reserved") return "#ca8a04";
+                        if (statusLower === "donated") return "#059669";
+                        if (statusLower === "closed") return "#64748b";
+                        return "#1A4D2E";
+                      };
+                      const getStatusBg = (s: string) => {
+                        const statusLower = s.toLowerCase();
+                        if (statusLower === "published" || statusLower === "sell") return "#e8f3ec";
+                        if (statusLower === "sold") return "#dcfce7";
+                        if (statusLower === "reserved") return "#fef9c3";
+                        if (statusLower === "donated") return "#d1fae5";
+                        if (statusLower === "closed") return "#f1f5f9";
+                        return "#e8f3ec";
+                      };
+                      const getModeText = (m: string) => {
+                        const modeLower = m.toLowerCase();
+                        if (modeLower === "sell") return "For Sale";
+                        if (modeLower === "donate") return "For Donation";
+                        return "Listing";
+                      };
+                      const getModeIcon = (m: string) => {
+                        const modeLower = m.toLowerCase();
+                        if (modeLower === "sell") return "fa-solid fa-tag";
+                        if (modeLower === "donate") return "fa-solid fa-heart";
+                        return "fa-solid fa-list";
+                      };
                       return (
-                        <li key={String(p.id)}>
-                          <span style={{ fontWeight: 600 }}>{title}</span>{" "}
-                          <span style={{ color: "#64748b" }}>({status}, {created})</span>{" "}
-                          {slug ? (
-                            <Link to={`/announcements/${slug}`} style={{ marginLeft: 6 }}>
-                              View
-                            </Link>
-                          ) : null}
-                        </li>
+                        <Link 
+                          key={String(p.id)} 
+                          to={`/announcements/${slug}`}
+                          style={{
+                            textDecoration: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "1rem",
+                            padding: "1rem",
+                            backgroundColor: "#fff",
+                            border: "1px solid #e2e8f0",
+                            borderRadius: "12px",
+                            transition: "all 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = "none";
+                            e.currentTarget.style.transform = "translateY(0)";
+                          }}
+                        >
+                          <div style={{
+                            width: "48px",
+                            height: "48px",
+                            borderRadius: "12px",
+                            backgroundColor: "#e8f3ec",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#1A4D2E",
+                            fontSize: "1.25rem",
+                          }}>
+                            <i className={getModeIcon(listingMode)}></i>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
+                              <p style={{
+                                margin: 0,
+                                fontWeight: 600,
+                                fontSize: "0.95rem",
+                                color: "#1e293b",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}>
+                                {title}
+                              </p>
+                              <span style={{
+                                padding: "0.25rem 0.75rem",
+                                borderRadius: "999px",
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                                color: getStatusColor(status),
+                                backgroundColor: getStatusBg(status),
+                                whiteSpace: "nowrap",
+                              }}>
+                                {status}
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "1rem", fontSize: "0.875rem", color: "#64748b" }}>
+                              <span><i className="fa-solid fa-tag" style={{ marginRight: "0.375rem" }}></i>{getModeText(listingMode)}</span>
+                              <span><i className="fa-solid fa-calendar" style={{ marginRight: "0.375rem" }}></i>{created}</span>
+                            </div>
+                          </div>
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "8px",
+                            backgroundColor: "#f1f5f9",
+                            color: "#64748b",
+                          }}>
+                            <i className="fa-solid fa-arrow-right"></i>
+                          </div>
+                        </Link>
                       );
                     })}
-                  </ul>
+                  </div>
                 ) : (
-                  <p>
-                    No activity yet. <Link to="/add_announcement">Post your first announcement</Link>.
-                  </p>
+                  <div style={{
+                    padding: "2rem",
+                    textAlign: "center",
+                    backgroundColor: "#f8fafc",
+                    borderRadius: "12px",
+                    border: "1px dashed #cbd5e1",
+                  }}>
+                    <p style={{ margin: "0 0 0.75rem", color: "#64748b" }}>No activity yet.</p>
+                    <Link 
+                      to="/add_announcement" 
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        padding: "0.625rem 1.25rem",
+                        backgroundColor: "#1A4D2E",
+                        color: "#fff",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <i className="fa-solid fa-plus"></i>
+                      Post your first announcement
+                    </Link>
+                  </div>
                 )}
               </div>
             </main>

@@ -58,7 +58,7 @@
   background: #fff;
   border-radius: 12px;
   padding: 1.25rem 1.35rem;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.12);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.18);
   border: 1px solid rgba(234, 88, 12, 0.2);
 }
 
@@ -86,22 +86,22 @@
   background: #fff;
   border-radius: 12px;
   padding: 1.1rem 1.2rem;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.12);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.18);
   border: 1px solid rgba(234, 88, 12, 0.22);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .impact-metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.18);
+  box-shadow: 0 6px 16px rgba(26, 77, 46, 0.18);
 }
 
 .impact-metric-card__icon {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: rgba(251, 146, 60, 0.25);
-  color: #c2410c;
+  background: rgba(26, 77, 46, 0.25);
+  color: #1A4D2E;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,7 +188,7 @@
   border-radius: 10px;
   padding: 0.9rem 1rem;
   background: linear-gradient(135deg, #f4faf6 0%, #eef5f0 100%);
-  border-left: 4px solid #ea580c;
+  border-left: 4px solid #1A4D2E;
 }
 
 .impact-stat-pill__label {
@@ -228,7 +228,7 @@
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: #c2410c;
+  background: #1A4D2E;
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -341,7 +341,7 @@
   margin: 0 0 0.75rem;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #9a3412;
+  color: #1A4D2E;
 }
 
 .impact-status-rows {
@@ -394,7 +394,7 @@
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #ea580c;
+  color: #1A4D2E;
   padding: 0.5rem 0;
   list-style: none;
 }
@@ -422,7 +422,7 @@
 
 .impact-verify-table th {
   background: #eef5f0;
-  color: #9a3412;
+  color: #1A4D2E;
   font-weight: 600;
 }
 
