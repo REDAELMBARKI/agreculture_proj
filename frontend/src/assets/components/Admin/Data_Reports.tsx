@@ -13,7 +13,6 @@ export function Data_Reports() {
     userActivity: [],
     location: [],
     sales: [],
-    donations: [],
     listingsPerformance: [],
     inventory: [],
     timeBased: null,
@@ -41,7 +40,6 @@ export function Data_Reports() {
           userActivityRes,
           locationRes,
           salesRes,
-          donationsRes,
           listingsPerformanceRes,
           inventoryRes,
           timeBasedRes,
@@ -51,7 +49,6 @@ export function Data_Reports() {
           api.get("/api/reports/user-activity"),
           api.get("/api/reports/location"),
           api.get("/api/reports/sales"),
-          api.get("/api/reports/donations"),
           api.get("/api/reports/listings-performance"),
           api.get("/api/reports/inventory"),
           api.get("/api/reports/time-based"),
@@ -63,7 +60,6 @@ export function Data_Reports() {
           userActivity: userActivityRes.data.data || [],
           location: locationRes.data.data || [],
           sales: salesRes.data.data || [],
-          donations: donationsRes.data.data || [],
           listingsPerformance: listingsPerformanceRes.data.data || [],
           inventory: inventoryRes.data.data || [],
           timeBased: timeBasedRes.data.data || null,
@@ -106,10 +102,6 @@ export function Data_Reports() {
     downloadCsv(reportsData.sales, "05_sales_report.csv");
   };
 
-  const generateDonationsReport = () => {
-    downloadCsv(reportsData.donations, "06_donations_report_day_by_day.csv");
-  };
-
   const generateListingsPerformanceReport = () => {
     downloadCsv(reportsData.listingsPerformance, "07_listings_performance_report.csv");
   };
@@ -148,7 +140,6 @@ export function Data_Reports() {
     generateUserActivityReport();
     generateLocationReport();
     generateSalesReport();
-    generateDonationsReport();
     generateListingsPerformanceReport();
     generateInventoryReport();
     generateTimeBasedReport();
@@ -193,7 +184,7 @@ export function Data_Reports() {
 
               <tr>
                 <td>2 - Top Users Report</td>
-                <td>Best sellers / best donaters by listing activity.</td>
+                <td>Best sellers by listing activity.</td>
                 <td>
                   <button onClick={generateTopUsersReport}>Download</button>
                 </td>
@@ -201,7 +192,7 @@ export function Data_Reports() {
 
               <tr>
                 <td>3 - User Activity Report</td>
-                <td>Posts, sales, donations, views, and latest activity by user.</td>
+                <td>Posts, sales, views, and latest activity by user.</td>
                 <td>
                   <button onClick={generateUserActivityReport}>Download</button>
                 </td>
@@ -224,15 +215,7 @@ export function Data_Reports() {
               </tr>
 
               <tr>
-                <td>6 - Donations Report</td>
-                <td>Number of donations day by day.</td>
-                <td>
-                  <button onClick={generateDonationsReport}>Download</button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>7 - Listings Performance Report</td>
+                <td>6 - Listings Performance Report</td>
                 <td>Product / Views / Contacts performance.</td>
                 <td>
                   <button onClick={generateListingsPerformanceReport}>Download</button>

@@ -27,13 +27,13 @@ export default function Header_alt({ size = "large" }) {
       <div className="navbar">
         <div className="logo">
           <h1 style={{ display: 'flex', alignItems: 'center' }}>
-            <a>LetUsDonate.uk</a> <Leaf size={28} weight="BoldDuotone" style={{ marginLeft: '8px' }} />
+            <a>TinyTrove Marketplace</a> <Leaf size={28} weight="BoldDuotone" style={{ marginLeft: '8px' }} />
           </h1>
           <div className="header_content">
-            <h2>Sell or donate — connect by phone</h2>
+            <h2>Buy and sell — connect by phone</h2>
             <h3>
-              LetUsDonateUK helps you list anything you want to sell or give away. Interested people call you
-              directly so you can agree pickup, price, or handover in minutes.
+              TinyTrove helps you list items for sale. Interested buyers contact you directly so you can agree
+              pickup, price, or handover in minutes.
             </h3>
           </div>
         </div>

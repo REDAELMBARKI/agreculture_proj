@@ -237,7 +237,7 @@ const Product_Details: React.FC = () => {
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
-              {product.listing_mode === 'sell' ? 'For Sale' : 'Free / Donation'}
+              For Sale
             </span>
             
             <div style={{ display: 'flex', gap: '15px' }}>

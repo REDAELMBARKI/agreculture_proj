@@ -106,14 +106,13 @@ function Header() {
       <div className="top_navbar" style={{ borderBottom: `1px solid ${colors.border}` }}>
         <div className="brand">
           <Link to="/" className="brand_logo" style={{ color: colors.textPrimary }}>
-            Donate&Sell<Leaf size={24} weight="BoldDuotone" style={{ marginLeft: '8px', color: colors.primary }} />
+            TinyTrove<Leaf size={24} weight="BoldDuotone" style={{ marginLeft: '8px', color: colors.primary }} />
           </Link>
         </div>
 
         <nav className="main_links" aria-label="Main navigation">
           <Link to="/" style={{ color: colors.textSecondary }}>Home</Link>
           <Link to="/announcements" style={{ color: colors.textSecondary }}>Marketplace</Link>
-          <Link to="/our_partners" style={{ color: colors.textSecondary }}>Our Partners</Link>
           <Link to="/faq" style={{ color: colors.textSecondary }}>FAQ</Link>
           <Link to="/faq_chatbot" style={{ color: colors.textSecondary }}>FAQ Chatbot</Link>
         </nav>

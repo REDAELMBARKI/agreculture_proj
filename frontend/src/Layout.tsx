@@ -12,7 +12,6 @@ const Home = lazy(() => import("./assets/components/Home"));
 const Sign_up = lazy(() => import("./assets/components/Sign_up"));
 const Login = lazy(() => import("./assets/components/Login"));
 const FAQ = lazy(() => import("./assets/components/FAQ"));
-const Our_Partners = lazy(() => import("./assets/components/Our_Partners"));
 const FAQChatBot = lazy(() => import("./assets/components/FAQChatBot"));
 const Marketplace = lazy(() => import("./assets/components/Marketplace"));
 const Product_Details = lazy(() => import("./assets/components/Product_Details"));
@@ -20,53 +19,15 @@ const ConversationsList = lazy(() => import("./assets/components/ConversationsLi
 const ChatPage = lazy(() => import("./assets/components/ChatPage"));
 
 // Admin
-const Admin_Dashboard = lazy(
-  () => import("./assets/components/Admin/Admin_Dashboard"),
-);
-const Add_Charity = lazy(
-  () => import("./assets/components/Admin/Add_Charity"),
-);
-const Data_Reports = lazy(
-  () => import("./assets/components/Admin/Data_Reports"),
-);
-const View_Users = lazy(
-  () => import("./assets/components/Admin/View_Users"),
-);
-const Admin_Inventory = lazy(
-  () => import("./assets/components/Admin/Admin_Inventory"),
-);
-const Admin_Donations = lazy(
-  () => import("./assets/components/Admin/Admin_Donations"),
-);
-const Manage_Charity = lazy(
-  () => import("./assets/components/Admin/Manage_Charity"),
-);
-
-// Charity
-const Charity_Dashboard = lazy(
-  () => import("./assets/components/Charity/Charity_Dashboard"),
-);
-const Approve_Donations = lazy(
-  () => import("./assets/components/Charity/Approve_Donations"),
-);
-const Distribution_Records = lazy(
-  () => import("./assets/components/Charity/Distribution_Records"),
-);
-const View_Donations = lazy(
-  () => import("./assets/components/Charity/View_Donations"),
-);
-const View_Inventory = lazy(
-  () => import("./assets/components/Charity/View_Inventory"),
-);
+const Admin_Inventory = lazy(() => import("./assets/components/Admin/Admin_Inventory"));
+const Admin_Dashboard = lazy(() => import("./assets/components/Admin/Admin_Dashboard"));
+const Data_Reports = lazy(() => import("./assets/components/Admin/Data_Reports"));
+const View_Users = lazy(() => import("./assets/components/Admin/View_Users"));
 
 // User
 const User_Dashboard = lazy(
   () => import("./assets/components/User/User_Dashboard"),
 );
-const My_Donations = lazy(
-  () => import("./assets/components/User/My_Donations"),
-);
-const My_Impact = lazy(() => import("./assets/components/User/My_Impact"));
 const My_Profile = lazy(
   () => import("./assets/components/User/My_Profile"),
 );
@@ -140,22 +101,12 @@ export default function Layout() {
   // Paths that use the alternative header
   const altHeaderPaths = [
     "/user_dashboard",
-    "/my_donations",
-    "/my_impact",
-    "/charity_dashboard",
-    "/view_inventory",
-    "/view_donations",
-    "/distribution_records",
-    "/approve_donations",
     "/admin_dashboard",
     "/view_users",
     "/data_reports",
     "/my_profile",
     "/add_announcement",
-    "/add_charity",
     "/admin_inventory",
-    "/admin_donations",
-    "/manage_charity",
     "/my_announcements",
   ];
 
@@ -185,31 +136,14 @@ export default function Layout() {
           <Route path="/announcements/:announcementSlug" element={<Product_Details />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/chat/:conversationSlug" element={<ChatPage />} />
-          <Route path="/our_partners" element={<Our_Partners />} />
-
           {/* Admin */}
           <Route path="/admin_dashboard" element={<Admin_Dashboard />} />
-          <Route path="/add_charity" element={<Add_Charity />} />
           <Route path="/data_reports" element={<Data_Reports />} />
           <Route path="/view_users" element={<View_Users />} />
           <Route path="/admin_inventory" element={<Admin_Inventory />} />
-          <Route path="/admin_donations" element={<Admin_Donations />} />
-          <Route path="/manage_charity" element={<Manage_Charity />} />
-
-          {/* Charity */}
-          <Route path="/charity_dashboard" element={<Charity_Dashboard />} />
-          <Route path="/view_inventory" element={<View_Inventory />} />
-          <Route path="/view_donations" element={<View_Donations />} />
-          <Route
-            path="/distribution_records"
-            element={<Distribution_Records />}
-          />
-          <Route path="/approve_donations" element={<Approve_Donations />} />
 
           {/* User */}
           <Route path="/user_dashboard" element={<User_Dashboard />} />
-          <Route path="/my_donations" element={<My_Donations />} />
-          <Route path="/my_impact" element={<My_Impact />} />
           <Route path="/my_profile" element={<My_Profile />} />
           <Route path="/my_announcements" element={<My_Announcements />} />
           <Route path="/add_announcement" element={<Add_Announcement />} />

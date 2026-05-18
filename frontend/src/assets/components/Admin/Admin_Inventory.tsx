@@ -63,7 +63,7 @@ export function Admin_Inventory() {
             condition: item.condition,
             recommended_age: item.recommended_age,
             gender: item.gender,
-            donation_date: item.created_at,
+            listed_date: item.created_at,
             image: item.image_url
           }));
           setInventory(items);
@@ -162,13 +162,13 @@ export function Admin_Inventory() {
           <table className="table">
             <thead>
               <tr>
-                <th>Donation ID</th>
-                <th>Donor ID</th>
+                <th>Listing ID</th>
+                <th>User ID</th>
                 <th>Item</th>
                 <th>Category</th>
                 <th>Size</th>
                 <th>Image</th>
-                <th>Date Donated</th>
+                <th>Date Listed</th>
               </tr>
             </thead>
 
@@ -203,8 +203,8 @@ export function Admin_Inventory() {
                         )}
                       </td>
                       <td>
-                        {item.donation_date
-                          ? new Date(item.donation_date).toLocaleDateString()
+                        {item.listed_date
+                          ? new Date(item.listed_date).toLocaleDateString()
                           : "N/A"}
                       </td>
                     </tr>

@@ -55,7 +55,7 @@ export function Admin_Donations() {
 
   // Filter donations based on search, listing mode and status
   useEffect(() => {
-    const filtered = donations.filter((d) => {
+    const filtered = donations.filter((d) => (d.listing_mode || 'sell') !== 'donate').filter((d) => {
       const item = d.items?.[0] ?? {};
       const donorId = String(d?.donor?.user_ID || "");
       const itemName = (item?.item_name || "").toLowerCase();
@@ -114,7 +114,7 @@ export function Admin_Donations() {
       <div className="filter-bar">
         <input
           type="text"
-          placeholder="Search by item, category, or donor ID..."
+          placeholder="Search by item, category, or user ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="search-input"
@@ -125,8 +125,7 @@ export function Admin_Donations() {
           onChange={(e) => setModeFilter(e.target.value)}
           className="status-filter"
         >
-          <option value="">Donate / Sell</option>
-          <option value="donate">Donate</option>
+          <option value="">All modes</option>
           <option value="sell">Sell</option>
         </select>
 
@@ -151,7 +150,7 @@ export function Admin_Donations() {
           <thead>
             <tr>
               <th>Announcement ID</th>
-              <th>Donor ID</th>
+              <th>User ID</th>
               <th>Item</th>
               <th>Category</th>
               <th>Image</th>
@@ -205,7 +204,7 @@ export function Admin_Donations() {
               })
             ) : (
               <tr>
-                <td colSpan="8">No donations found.</td>
+                <td colSpan="8">No announcements found.</td>
               </tr>
             )}
           </tbody>

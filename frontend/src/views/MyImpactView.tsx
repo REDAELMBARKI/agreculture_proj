@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import ActivityChart from "../components/impact/ActivityChart";
 import CategoryBreakdown from "../components/impact/CategoryBreakdown";
-import DonationSalesStatus from "../components/impact/DonationSalesStatus";
 import EngagementStats from "../components/impact/EngagementStats";
 import ImpactStatsCards from "../components/impact/ImpactStatsCards";
 import TopAnnouncements from "../components/impact/TopAnnouncements";
@@ -74,11 +73,11 @@ export default function MyImpactView() {
 
       try {
         const [statsRes, activityRes, topRes, categoriesRes, statusRes] = await Promise.all([
-          api.get<DashboardStats>("/dashboard/stats"),
-          api.get<ActivityPoint[]>("/dashboard/activity"),
-          api.get<TopAnnouncement[]>("/dashboard/top-announcements"),
-          api.get<DashboardCategory[]>("/dashboard/categories"),
-          api.get<DashboardStatus>("/dashboard/status"),
+          api.get<DashboardStats>("/api/dashboard/stats"),
+          api.get<ActivityPoint[]>("/api/dashboard/activity"),
+          api.get<TopAnnouncement[]>("/api/dashboard/top-announcements"),
+          api.get<DashboardCategory[]>("/api/dashboard/categories"),
+          api.get<DashboardStatus>("/api/dashboard/status"),
         ]);
 
         setStats(statsRes.data);
@@ -87,7 +86,7 @@ export default function MyImpactView() {
         setCategories(categoriesRes.data);
         setStatusData(statusRes.data);
       } catch (_err) {
-        setError("Unable to load your impact data right now.");
+        setError("Unable to load your activity data right now.");
       } finally {
         setLoading(false);
       }
@@ -106,17 +105,17 @@ export default function MyImpactView() {
     );
   }
 
-  if (error || !stats || !statusData) {
+  if (error || !stats) {
     return (
       <div className="impact-root">
-        <div className="impact-error">{error || "Unable to render impact view."}</div>
+        <div className="impact-error">{error || "Unable to render activity view."}</div>
       </div>
     );
   }
 
   return (
     <div className="impact-root">
-      <h2 className="impact-section-title">My Impact</h2>
+      <h2 className="impact-section-title">My Activity</h2>
       <div className="impact-stack">
         <ImpactStatsCards stats={stats} />
         <ActivityChart activity={activity} />
@@ -125,7 +124,6 @@ export default function MyImpactView() {
           <TopAnnouncements announcements={topAnnouncements} />
           <CategoryBreakdown categories={categories} />
         </div>
-        <DonationSalesStatus status={statusData} />
       </div>
     </div>
   );

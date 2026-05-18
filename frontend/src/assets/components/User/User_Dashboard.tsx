@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../../../services/api";
 import route from "../../../utils/route";
+import { filterSellListings } from "../../../utils/sellOnly";
 import "../../../css/user.css";
-import MyImpactView from "../../../views/MyImpactView";
 
 type ProductRow = Record<string, unknown>;
 
@@ -13,10 +13,7 @@ export default function User_Dashboard() {
 
   const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [allListings, setAllListings] = useState<ProductRow[]>([]);
-  const [donationListings, setDonationListings] = useState<ProductRow[]>([]);
-  const [foundations, setFoundations] = useState<{ id: number; name: string; phone?: string }[]>([]);
-  const [loadingFoundations, setLoadingFoundations] = useState(true);
-  const [recentFilter, setRecentFilter] = useState<"all" | "donations" | "sale">("all");
+  const [recentFilter, setRecentFilter] = useState<"all" | "sale">("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
 
@@ -32,39 +29,22 @@ export default function User_Dashboard() {
     const uid = (user?.id || user?.user_ID) as number | undefined;
     if (!uid) return;
 
-    Promise.all([
-      api.get<{ status: string; products: ProductRow[] }>(route("user.announcements", { user: uid }).toString()),
-      api.get<{ status: string; products: ProductRow[] }>(route("user.donations", { user: uid }).toString()),
-    ])
-      .then(([annRes, donRes]) => {
-        const ann = annRes.data.status === "success" && Array.isArray(annRes.data.products) ? annRes.data.products : [];
-        const don = donRes.data.status === "success" && Array.isArray(donRes.data.products) ? donRes.data.products : [];
-        setAllListings(ann);
-        setDonationListings(don);
+    api
+      .get<{ status: string; products: ProductRow[] }>(route("user.announcements", { user: uid }).toString())
+      .then((annRes) => {
+        const ann =
+          annRes.data.status === "success" && Array.isArray(annRes.data.products)
+            ? annRes.data.products
+            : [];
+        setAllListings(filterSellListings(ann));
       })
       .catch((err) => console.error("Listings fetch error:", err));
   }, [user]);
 
-  useEffect(() => {
-    api
-      .get<{ status: string; foundations: { id: number; name: string; phone?: string }[] }>("/api/foundations")
-      .then((res) => {
-        if (res.data.status === "success" && Array.isArray(res.data.foundations)) {
-          setFoundations(res.data.foundations);
-        }
-      })
-      .catch(() => setFoundations([]))
-      .finally(() => setLoadingFoundations(false));
-  }, []);
-
   const displayedRows = useMemo(() => {
-    let rows: ProductRow[] = [];
-    if (recentFilter === "donations") {
-      rows = donationListings;
-    } else if (recentFilter === "sale") {
+    let rows = allListings;
+    if (recentFilter === "sale") {
       rows = allListings.filter((p) => p.listing_mode === "sell");
-    } else {
-      rows = allListings;
     }
     const sorted = [...rows].sort((a, b) => {
       const ta = a.created_at ? new Date(String(a.created_at)).getTime() : 0;
@@ -72,9 +52,9 @@ export default function User_Dashboard() {
       return tb - ta;
     });
     return sorted.slice(0, 8);
-  }, [recentFilter, allListings, donationListings]);
+  }, [recentFilter, allListings]);
 
-  const donationThumbUrl = (d: ProductRow) => {
+  const thumbUrl = (d: ProductRow) => {
     const thumb = d.thumbnail as { url?: string; file_path?: string; path?: string } | undefined;
     if (!thumb) return null;
     if (thumb.url && String(thumb.url).startsWith("http")) return String(thumb.url);
@@ -105,19 +85,15 @@ export default function User_Dashboard() {
               <ul>
                 <li>
                   <i className="fa-solid fa-gauge"></i>
-                  <Link to="/user_dashboard">My Impact</Link>
+                  <Link to="/user_dashboard">My Activity</Link>
                 </li>
                 <li>
                   <i className="fa-solid fa-shop"></i>
-                  <Link to="/marketplace">Marketplace</Link>
+                  <Link to="/announcements">Marketplace</Link>
                 </li>
                 <li>
                   <i className="fa-solid fa-list"></i>
                   <Link to="/my_announcements">My Announcements</Link>
-                </li>
-                <li>
-                  <i className="fa-solid fa-inbox"></i>
-                  <Link to="/my_donations">My Donations</Link>
                 </li>
                 <li>
                   <i className="fa-solid fa-user"></i>
@@ -134,25 +110,17 @@ export default function User_Dashboard() {
 
             <main className="dashboard-main">
               <h2>Welcome, {(user.name as string) ?? (user.user_name as string) ?? "Guest"}</h2>
-              <MyImpactView />
             </main>
           </div>
         </div>
 
         <div className="dashboard-right">
-          <div className="new-donation">
+          <div className="new-listing">
             <h3>Your marketplace</h3>
             <p>
-              Post anything you want to sell or give away. Buyers and donors connect with you directly by phone to
-              arrange pickup or delivery.
+              Post items you want to sell. Buyers contact you directly by phone to arrange pickup or
+              delivery.
             </p>
-            {loadingFoundations ? (
-              <p>Loading partner foundations…</p>
-            ) : (
-              <p>
-                {foundations.length} verified foundations you can support when you donate.
-              </p>
-            )}
             <Link to="/add_announcement" className="cta-link">
               Add announcement
             </Link>
@@ -160,18 +128,17 @@ export default function User_Dashboard() {
         </div>
       </div>
 
-      <div className="donation-history full-width">
+      <div className="listing-history full-width">
         <div className="recent-toolbar">
-          <h3>Recent announcements &amp; donations</h3>
+          <h3>Recent announcements</h3>
           <label className="recent-filter-label">
             <span>Show</span>
             <select
               className="recent-filter-select"
               value={recentFilter}
-              onChange={(e) => setRecentFilter(e.target.value as "all" | "donations" | "sale")}
+              onChange={(e) => setRecentFilter(e.target.value as "all" | "sale")}
             >
               <option value="all">All listings</option>
-              <option value="donations">Donations only</option>
               <option value="sale">For sale only</option>
             </select>
           </label>
@@ -197,9 +164,8 @@ export default function User_Dashboard() {
               displayedRows.map((d) => {
                 const rowId = d.id as number;
                 const title = (d.title as string) ?? "—";
-                const mode = (d.listing_mode as string) ?? "—";
                 const sizes = Array.isArray(d.sizes) ? (d.sizes as string[]).join(", ") : "—";
-                const url = donationThumbUrl(d);
+                const url = thumbUrl(d);
                 const created = d.created_at ? new Date(String(d.created_at)).toLocaleDateString() : "—";
                 const cat = (d.super_category as { name?: string } | undefined)?.name ?? "—";
                 const status = (d.status as string) ?? "—";
@@ -208,7 +174,7 @@ export default function User_Dashboard() {
 
                 return (
                   <tr key={rowId}>
-                    <td>{mode === "sell" ? "Sale" : "Donation"}</td>
+                    <td>Sale</td>
                     <td>{title}</td>
                     <td>{sizes}</td>
                     <td>

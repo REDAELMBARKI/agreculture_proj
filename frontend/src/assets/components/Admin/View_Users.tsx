@@ -48,8 +48,10 @@ export function View_Users() {
     }
   };
 
-  const normalizeRole = (roleName) =>
-    (roleName || "").toLowerCase() === "donor" ? "user" : (roleName || "").toLowerCase();
+  const normalizeRole = (roleName) => {
+    const role = (roleName || "").toLowerCase();
+    return role;
+  };
 
   useEffect(() => {
     let results = users;
@@ -190,11 +192,8 @@ export function View_Users() {
                       <td>{user.user_ID}</td>
                       <td>{user.user_name}</td>
                       <td>{user.user_email}</td>
-                      <td>{normalizeRole(user.role_name) === "user" ? "user" : user.role_name}</td>
+                      <td>{normalizeRole(user.role_name)}</td>
                       <td>
-                        {user.role_name === "charity_staff" && (
-                          <button onClick={() => handleEdit(user)}>Edit</button>
-                        )}
                         {user.role_name !== "admin" && (
                           <button onClick={() => handleDeleteClick(user)}>
                             Delete
@@ -213,37 +212,6 @@ export function View_Users() {
           )}
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {showEditModal && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Edit User: {selectedUser.user_name}</h3>
-            <form onSubmit={handleUpdateUser}>
-              {selectedUser.role_name === "charity_staff" && (
-                <>
-                  <div className="form-group">
-                    <label>Change role to Admin:</label>
-                    <select
-                      value={userRole}
-                      onChange={(e) => setUserRole(e.target.value)}
-                    >
-                      <option value="charity_staff">Charity Staff</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </>
-              )}
-              <div className="modal-actions">
-                <button type="submit">Save Changes</button>
-                <button type="button" onClick={() => setShowEditModal(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Delete Modal */}
       {showDeleteModal && userToDelete && (

@@ -7,12 +7,6 @@ interface ImpactStatsCardsProps {
 export default function ImpactStatsCards({ stats }: ImpactStatsCardsProps) {
   const cards = [
     {
-      title: "Total Items Donated",
-      value: stats.total_donated,
-      subtitle: "all time",
-      iconClass: "fa-solid fa-box-open",
-    },
-    {
       title: "Total Items Sold",
       value: stats.total_sold,
       subtitle: "all time",
@@ -34,7 +28,7 @@ export default function ImpactStatsCards({ stats }: ImpactStatsCardsProps) {
 
   return (
     <section className="impact-card">
-      <h3 className="impact-card__title">My Impact Overview</h3>
+      <h3 className="impact-card__title">My Activity Overview</h3>
       <div className="impact-metrics-grid">
         {cards.map((card) => (
           <article key={card.title} className="impact-metric-card">

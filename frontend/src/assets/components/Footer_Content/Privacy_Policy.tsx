@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../../../css/footer.css";
 
 export function Privacy_Policy() {
@@ -8,7 +8,7 @@ export function Privacy_Policy() {
         <div className="privacy-policy-container">
           <h2>Privacy Policy</h2>
           <p>
-            At Let Us Donate UK, we are committed to protecting your privacy.
+            At TinyTrove Marketplace, we are committed to protecting your privacy.
             This Privacy Policy outlines how we collect, use, and safeguard your
             personal information when you use our website.
           </p>
@@ -16,13 +16,13 @@ export function Privacy_Policy() {
           <h3>1. Information We Collect</h3>
           <p>
             We may collect personal information such as your name, email
-            address, and donation history when you create an account or make a
-            donation on our website.
+            address, and listing or purchase history when you create an account or use
+            our marketplace.
           </p>
 
           <h3>2. How We Use Your Information</h3>
           <p>
-            We use your personal information to process donations, manage your
+            We use your personal information to process listings and sales, manage your
             account, and communicate with you about our services and updates.
           </p>
 
@@ -35,7 +35,7 @@ export function Privacy_Policy() {
 
           <h3>4. Third-Party Services</h3>
           <p>
-            We may use third-party services to facilitate donations and manage
+            We may use third-party services to operate payments, messaging, and
             our website. These services are bound by their own privacy policies.
           </p>
 

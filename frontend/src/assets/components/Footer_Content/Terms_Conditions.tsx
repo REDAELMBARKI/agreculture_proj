@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../../../css/footer.css";
 
 export function Terms_Conditions() {
@@ -8,7 +8,7 @@ export function Terms_Conditions() {
         <div className="terms-conditions-container">
           <h2>Terms and Conditions</h2>
           <p>
-            Welcome to Let Us Donate UK. By accessing or using our website, you
+            Welcome to TinyTrove Marketplace. By accessing or using our website, you
             agree to comply with and be bound by the following terms and
             conditions. Please read them carefully.
           </p>
@@ -27,25 +27,25 @@ export function Terms_Conditions() {
             all activities that occur under your account.
           </p>
 
-          <h3>3. Donations</h3>
+          <h3>3. Listings and Sales</h3>
           <p>
-            By making a donation through our website, you agree to provide
-            accurate and complete information about the items you are donating.
-            We reserve the right to refuse or cancel any donation at our sole
+            By posting a listing or completing a sale through our website, you agree to provide
+            accurate and complete information about the items you sell.
+            We reserve the right to refuse or remove any listing at our sole
             discretion.
           </p>
 
           <h3>4. Intellectual Property</h3>
           <p>
             All content on the website, including text, graphics, logos, and
-            images, is the property of Let Us Donate UK and is protected by
+            images, is the property of TinyTrove Marketplace and is protected by
             intellectual property laws. You may not use any content from the
             website without our prior written permission.
           </p>
 
           <h3>5. Limitation of Liability</h3>
           <p>
-            To the fullest extent permitted by law, Let Us Donate UK shall not
+            To the fullest extent permitted by law, TinyTrove Marketplace shall not
             be liable for any direct, indirect, incidental, special,
             consequential, or punitive damages arising out of or related to your
             use of the website.
@@ -62,13 +62,12 @@ export function Terms_Conditions() {
           <h3>7. Governing Law</h3>
           <p>
             These terms and conditions shall be governed by and construed in
-            accordance with the laws of the United Kingdom.
+            accordance with applicable local laws.
           </p>
 
           <p>
             If you have any questions or concerns about these terms and
-            conditions, please contact us at
-            <a href=""></a>
+            conditions, please contact us through the marketplace support channels.
           </p>
         </div>
       </main>

@@ -142,7 +142,7 @@ main {
 }
 
 /* Buttons */
-.donation-button {
+.action-button {
   background-color: light-dark(#e9f7ea, #2a4d2a);
   border: 1px solid light-dark(#c4e3c6, #141e14);
   color: light-dark(#000000, #dceddd);
@@ -157,7 +157,7 @@ main {
   align-items: center;
 }
 
-.donation-button:hover {
+.action-button:hover {
   background-color: light-dark(#d4edda, #3b6040);
 }
 

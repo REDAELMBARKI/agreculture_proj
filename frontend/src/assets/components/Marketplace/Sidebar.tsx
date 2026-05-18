@@ -155,40 +155,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Type d'annonce */}
-        <div style={{ marginBottom: '20px' }}>
-          <SectionLabel>Type d'annonce</SectionLabel>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {initData?.listingTypes?.map((type: any) => {
-              const Icon = type.value === 'sell' ? Store : Gift;
-              const active = filters.mode?.includes(type.value);
-              return (
-                <div 
-                  key={type.value} 
-                  onClick={() => onToggleArrayFilter('mode', type.value)}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Icon size={20} weight="BoldDuotone" color={active ? colors.coral : colors.iconMuted} />
-                    <span style={{ fontSize: '14px', color: colors.textPrimary }}>{type.label}</span>
-                  </div>
-                  <div style={{ 
-                    width: '20px', 
-                    height: '20px', 
-                    borderRadius: '4px', 
-                    border: `1px solid ${active ? colors.coral : colors.border}`,
-                    backgroundColor: active ? colors.coral : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    {active && <Check size={14} color={colors.bgSecondary} strokeWidth={2} />}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Tranche d'âge */}
         <div style={{ marginBottom: '20px' }}>
@@ -349,16 +315,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                 style={{ width: '100%', padding: '8px 40px 8px 12px', borderRadius: '8px', border: `1px solid ${colors.border}`, fontSize: '13px', backgroundColor: colors.bgSecondary, color: colors.textPrimary }}
               />
               <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '11px', color: colors.textMuted }}>MAD</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '13px', color: colors.textPrimary }}>Gratuit uniquement</span>
-            {/* Simple toggle placeholder */}
-            <div 
-              onClick={() => onFilterChange('free_only', !filters.free_only)}
-              style={{ width: '36px', height: '20px', borderRadius: '10px', backgroundColor: filters.free_only ? colors.coral : colors.bgTertiary, position: 'relative', cursor: 'pointer' }}
-            >
-              <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: colors.bgSecondary, position: 'absolute', left: filters.free_only ? '18px' : '2px', top: '2px', transition: 'left 0.2s' }} />
             </div>
           </div>
         </div>

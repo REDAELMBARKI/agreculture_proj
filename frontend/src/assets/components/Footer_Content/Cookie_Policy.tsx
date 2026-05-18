@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../../../css/footer.css";
 
 export function Cookie_Policy() {
@@ -8,7 +8,7 @@ export function Cookie_Policy() {
         <div className="cookie-policy-container">
           <h2>Cookie Policy</h2>
           <p>
-            At Let Us Donate UK, we use cookies to enhance your browsing
+            At TinyTrove Marketplace, we use cookies to enhance your browsing
             experience on our website. This Cookie Policy explains what cookies
             are, how we use them, and your choices regarding their use.
           </p>

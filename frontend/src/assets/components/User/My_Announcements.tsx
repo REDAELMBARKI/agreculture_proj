@@ -21,7 +21,6 @@ const My_Announcements: React.FC = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [filter, setFilter] = useState<'all' | 'sell' | 'donate'>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const getImageUrl = (media: Product["thumbnail"]) => {
@@ -55,7 +54,11 @@ const My_Announcements: React.FC = () => {
           const productsArray = res.data.products?.data || res.data.products;
           console.log(productsArray);
     
-          setProducts(Array.isArray(productsArray) ? productsArray : []);
+          setProducts(
+            (Array.isArray(productsArray) ? productsArray : []).filter(
+              (p) => p.listing_mode !== "donate",
+            ),
+          );
         }
       })
       .catch((err) => {
@@ -91,7 +94,7 @@ const My_Announcements: React.FC = () => {
       <div className="records-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <div className="header-left">
           <h2 style={{ color: colors.textPrimary }}>My Announcements</h2>
-          <p className="subtitle" style={{ color: colors.textSecondary }}>Manage your items for sale and donation</p>
+          <p className="subtitle" style={{ color: colors.textSecondary }}>Manage your items for sale</p>
         </div>
 
         <div className="return-right">
@@ -104,20 +107,6 @@ const My_Announcements: React.FC = () => {
 
       <div className="filter-bar" style={{ display: 'flex', gap: '15px', marginBottom: '20px', padding: '15px', backgroundColor: colors.bgTertiary, borderRadius: '12px' }}>
         <div className="filter-group">
-          <label style={{ fontSize: '14px', fontWeight: '600', color: colors.textSecondary, marginBottom: '5px', display: 'block' }}>Listing Type</label>
-          <select 
-            className="status-filter" 
-            value={filter} 
-            onChange={(e) => setFilter(e.target.value as any)}
-            style={{ padding: '8px 12px', borderRadius: '6px', border: `1px solid ${colors.border}`, backgroundColor: colors.bgSecondary, color: colors.textPrimary }}
-          >
-            <option value="all">All Items</option>
-            <option value="sell">For Sale</option>
-            <option value="donate">For Donation</option>
-          </select>
-        </div>
-
-        <div className="filter-group">
           <label style={{ fontSize: '14px', fontWeight: '600', color: colors.textSecondary, marginBottom: '5px', display: 'block' }}>Status</label>
           <select 
             className="status-filter" 
@@ -127,11 +116,9 @@ const My_Announcements: React.FC = () => {
           >
             <option value="all">All statuses</option>
             <option value="sell">Sell (live)</option>
-            <option value="donate">Donate (live)</option>
             <option value="draft">Draft</option>
             <option value="reserved">Reserved</option>
             <option value="sold">Sold</option>
-            <option value="donated">Donated</option>
             <option value="closed">Closed</option>
           </select>
         </div>
@@ -145,7 +132,6 @@ const My_Announcements: React.FC = () => {
             <thead>
               <tr style={{ textAlign: 'left', borderBottom: `1px solid ${colors.border}`, color: colors.textSecondary, fontSize: '13px' }}>
                 <th style={{ padding: '12px' }}>Product</th>
-                <th style={{ padding: '12px' }}>Type</th>
                 <th style={{ padding: '12px' }}>Price</th>
                 <th style={{ padding: '12px' }}>Stats</th>
                 <th style={{ padding: '12px' }}>Status</th>
@@ -176,23 +162,7 @@ const My_Announcements: React.FC = () => {
                     </div>
                   </td>
                   <td style={{ padding: '12px' }}>
-                    <span className={`pill ${p.listing_mode}`} style={{ 
-                      padding: '4px 10px', 
-                      borderRadius: '20px', 
-                      fontSize: '12px', 
-                      fontWeight: '600',
-                      backgroundColor: p.listing_mode === 'sell' ? colors.successLight + '33' : colors.warningLight + '33',
-                      color: p.listing_mode === 'sell' ? colors.success : colors.warning
-                    }}>
-                      {p.listing_mode === 'sell' ? 'Selling' : 'Donating'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    {p.listing_mode === 'sell' ? (
                       <span style={{ fontWeight: '700', color: colors.textPrimary }}>{p.price} {p.currency}</span>
-                    ) : (
-                      <span style={{ color: colors.textMuted }}>Free</span>
-                    )}
                   </td>
                   {/* stats */}
                   <td style={{ padding: '12px' }}>
@@ -208,8 +178,8 @@ const My_Announcements: React.FC = () => {
                       borderRadius: '4px',
                       fontSize: '12px',
                       textTransform: 'capitalize',
-                      backgroundColor: ['sell', 'donate'].includes(p.status) ? colors.infoBg : colors.bgTertiary,
-                      color: ['sell', 'donate'].includes(p.status) ? colors.infoText : colors.textSecondary
+                      backgroundColor: p.status === 'sell' ? colors.infoBg : colors.bgTertiary,
+                      color: p.status === 'sell' ? colors.infoText : colors.textSecondary
                     }}>
                       {p.status}
                     </span>

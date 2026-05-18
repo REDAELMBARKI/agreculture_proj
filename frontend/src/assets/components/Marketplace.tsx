@@ -23,6 +23,7 @@ import { useTheme } from "../../context/ThemeContext";
 import Sidebar from "./Marketplace/Sidebar";
 import { Product } from "./User/announcement/types";
 import MarketplaceCard from "./MarketplaceCard";
+import { filterSellListings } from "../../utils/sellOnly";
 import CustomSelect from "./common/CustomSelect";
 
 // --- Types ---
@@ -115,7 +116,7 @@ const Marketplace: React.FC = () => {
         if (res.data.status === "success") {
           const productsArray = res.data.data.data || res.data.data;
           console.log(productsArray)
-          setProducts(Array.isArray(productsArray) ? productsArray : []);
+          setProducts(filterSellListings(Array.isArray(productsArray) ? productsArray : []));
         }
         setLoading(false);
         setListingsLoading(false);

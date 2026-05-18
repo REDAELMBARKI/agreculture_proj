@@ -59,7 +59,12 @@ const SUB_CATEGORIES_MAP: Record<string, string[]> = {
   "Chaussures": ["Baskets & Sneakers", "Bottes & Bottines", "Sandales & Tongs", "Chaussures de ville", "Chaussons"],
   "Jouets": ["Éveil & Premier âge", "Jeux de société", "Poupées & Figurines", "Véhicules & Circuits", "Jeux de construction", "Jeux d'imitation", "Peluches", "Plein air"],
   "Puériculture": ["Sommeil", "Repas", "Bain & Soins", "Sécurité", "Poussettes & Sièges auto", "Portage"],
+  "Bébé": ["Sommeil", "Repas", "Bain & Soins", "Sécurité", "Poussettes & Sièges auto", "Portage"],
   "Livres & Éveil": ["Albums illustrés", "Contes & Histoires", "Livres sonores", "Livres à toucher", "Activités & Coloriages"],
+  "Livres": ["Albums illustrés", "Contes & Histoires", "Livres sonores", "Livres à toucher", "Activités & Coloriages"],
+  "Mobilier": ["Lits bébé", "Chambres enfant", "Tables et chaises", "Rangements"],
+  "Jeux": ["Jeux de société", "Jeux d'extérieur", "Puzzles", "Jeux vidéo"],
+  "Activités": ["Peinture", "Musique", "Sport", "Loisirs créatifs"],
   "Autre": ["Mobilier", "Décoration", "Matériel de sport", "Divers"]
 };
 
@@ -291,7 +296,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     colors: [],
     season: "",
     material: "",
-    listing_mode: "donate",
+    listing_mode: "sell",
     price: "",
     currency: "MAD",
     price_negotiable: false,
@@ -311,9 +316,16 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       try {
         const response = await api.get(ziggyRoute('marketplace.init-data'));
         if (response.data.status === "success") {
-          setCategories(response.data.categories || []);
+          setCategories((response.data.categories || []).map((cat: any) => ({
+            ...cat,
+            id: Number(cat.id)
+          })));
           setAttributes({
-            cities: response.data.cities || [],
+            cities: (response.data.cities || []).map((city: any) => ({
+              ...city,
+              id: String(city.id),
+              value: String(city.value || city.id)
+            })),
             ageRanges: response.data.ageRanges || [],
             clothingSizes: response.data.clothingSizes || [],
             shoeSizes: response.data.shoeSizes || [],
@@ -341,7 +353,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
               colors: product.colors || [],
               season: product.season || "",
               material: "", // Missing in product?
-              listing_mode: product.listing_mode,
+              listing_mode: "sell",
               price: String(product.price),
               currency: product.currency,
               price_negotiable: product.price_negotiable,
@@ -401,9 +413,17 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   };
 
   const handleSubCategoryChange = (selectedNames: string[]) => {
+    // Find IDs from subcategoryOptions
+    const selectedIds = selectedNames.map(name => {
+      const option = subcategoryOptions.find(opt => opt.value === name);
+      const idNum = Number(option?.id);
+      return isNaN(idNum) ? null : idNum;
+    }).filter(id => id !== null) as number[];
+
     setForm(prev => ({
       ...prev,
-      sub_category_names: selectedNames
+      sub_category_names: selectedNames,
+      sub_category_ids: selectedIds
     }));
     clearFieldError('sub_category_names');
   };
@@ -433,7 +453,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       if (!form.colors.length) errors.colors = "Sélectionnez au moins une couleur.";
       if (!form.season) errors.season = "Choisissez une saison.";
     }
-    if (targetStepKey === "price" && form.listing_mode === "sell" && !String(form.price).trim()) {
+    if (targetStepKey === "price" && !String(form.price).trim()) {
       errors.price = "Le prix est obligatoire pour une vente.";
     }
     if (targetStepKey === "location") {
@@ -582,7 +602,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       ...form,
       user_id: user.id,
       city_id: form.city_id,
-      price: form.listing_mode === "donate" ? 0 : parseFloat(form.price) || 0,
+      price: parseFloat(form.price) || 0,
       currency: "MAD",
       media_ids: mediaIds,
     };
@@ -619,6 +639,34 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     }
   };
 
+  const selectedCategory = useMemo(() => {
+    const allCats = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
+    return allCats.find(c => c.id === form.super_category_id);
+  }, [form.super_category_id, categories]);
+
+  const subcategoryOptions = useMemo(() => {
+    if (!selectedCategory) return [];
+    
+    // 1. Check if category has children from API
+    if (selectedCategory.children && selectedCategory.children.length > 0) {
+      return selectedCategory.children.map((child: any) => ({
+        id: child.id,
+        label: child.name,
+        value: child.name,
+        icon: <Shapes size={16} />
+      }));
+    }
+    
+    // 2. Fallback to hardcoded map using the name
+    const fallbackNames = SUB_CATEGORIES_MAP[selectedCategory.name] || [];
+    return fallbackNames.map((name, index) => ({
+      id: `${selectedCategory.id}-${index}`,
+      label: name,
+      value: name,
+      icon: <Shapes size={16} />
+    }));
+  }, [selectedCategory]);
+
   const renderStep = () => {
     switch (stepKey) {
       case "category":
@@ -631,7 +679,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
               {(categories.length > 0 ? categories : FALLBACK_CATEGORIES).map((cat: any) => {
                 const isFromApi = categories.length > 0;
                 const Icon = isFromApi ? getCategoryIcon(cat.icon) : cat.icon;
-                const label = isFromApi ? cat.name : cat.name; // Both fallback and api use 'name' now
+                const label = cat.name;
                 const id = cat.id;
                 const isActive = form.super_category_id === id;
 
@@ -653,7 +701,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
               </Typography>
             )}
 
-            {form.super_category_name && (
+            {form.super_category_id && (
               <Box className="aa-subcategories-container" sx={{ mt: 6 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                   <Box sx={{ width: 4, height: 24, bgcolor: '#3b82f6', borderRadius: 1 }} />
@@ -665,12 +713,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
                 <CustomSelect
                   label="Sélectionner des sous-catégories"
                   multiple={true}
-                  options={(SUB_CATEGORIES_MAP[form.super_category_name] || []).map((name, index) => ({
-                    id: `${form.super_category_id}-${index}`,
-                    label: name,
-                    value: name,
-                    icon: <Shapes size={16} />
-                  }))}
+                  options={subcategoryOptions}
                   value={form.sub_category_names}
                   onChange={(val) => handleSubCategoryChange(val as string[])}
                   error={!!fieldErrors.sub_category_names}
@@ -1041,29 +1084,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
               Prix & Mode de transaction
             </Typography>
 
-            {/* Mode de transaction - Single row */}
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: '#475569' }}>Mode de transaction</Typography>
-              <Box sx={{ display: 'flex', gap: 1, bgcolor: '#f1f5f9', p: 0.5, borderRadius: 2, width: 'fit-content' }}>
-                <PillButton 
-                  active={form.listing_mode === "donate"} 
-                  onClick={() => updateField("listing_mode", "donate")}
-                  sx={{ px: 3, py: 1, borderRadius: 1.5, fontWeight: 600 }}
-                >
-                  Donner
-                </PillButton>
-                <PillButton 
-                  active={form.listing_mode === "sell"} 
-                  onClick={() => updateField("listing_mode", "sell")}
-                  sx={{ px: 3, py: 1, borderRadius: 1.5, fontWeight: 600 }}
-                >
-                  Vendre
-                </PillButton>
-              </Box>
-            </Box>
-
-            {form.listing_mode === "sell" && (
-              <>
                 {/* Price input - Single row alone */}
                 <Box sx={{ width: '100%' }}>
                   <TextField
@@ -1096,8 +1116,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
                     Le prix est négociable
                   </label>
                 </Box>
-              </>
-            )}
           </Box>
         );
 
@@ -1255,19 +1273,27 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
             />
 
             <Box sx={{ mt: 4, minHeight: '400px', width: '100%' }}>
-              {status && (
-                <Box sx={{ 
-                  p: 2, 
-                  mb: 3, 
-                  borderRadius: 2, 
-                  bgcolor: status.type === 'success' ? '#f0fdf4' : '#fef2f2',
-                  color: status.type === 'success' ? '#166534' : '#991b1b',
-                  border: `1px solid ${status.type === 'success' ? '#bbf7d0' : '#fecaca'}`
-                }}>
-                  {status.message}
+              {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+                  <CircularProgress />
                 </Box>
+              ) : (
+                <>
+                  {status && (
+                    <Box sx={{ 
+                      p: 2, 
+                      mb: 3, 
+                      borderRadius: 2, 
+                      bgcolor: status.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                      color: status.type === 'success' ? '#166534' : '#991b1b',
+                      border: `1px solid ${status.type === 'success' ? '#bbf7d0' : '#fecaca'}`
+                    }}>
+                      {status.message}
+                    </Box>
+                  )}
+                  {renderStep()}
+                </>
               )}
-              {renderStep()}
             </Box>
 
             <Box sx={{ mt: 6, display: 'flex', justifyContent: 'space-between' }}>
@@ -1365,7 +1391,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
                   position: 'absolute', 
                   top: 12, 
                   left: 12, 
-                  bgcolor: form.listing_mode === 'sell' ? '#3b82f6' : '#10b981', 
+                  bgcolor: '#3b82f6', 
                   color: '#fff', 
                   px: 1.5, 
                   py: 0.5, 
@@ -1375,7 +1401,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
                   boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                   textTransform: 'uppercase'
                 }}>
-                  {form.listing_mode === 'sell' ? `${form.price || 0} MAD` : 'GRATUIT'}
+                  {`${form.price || 0} MAD`}
                 </Box>
               </Box>
 

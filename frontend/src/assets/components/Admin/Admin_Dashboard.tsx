@@ -24,7 +24,6 @@ type StatsResponse = {
   active_announcements: number;
   pending_moderation: number;
   new_users_today: number;
-  donation_trends: TrendPoint[];
   user_trends: TrendPoint[];
 };
 type TypeSplitResponse = { donations: number; sales: number };
@@ -46,7 +45,6 @@ type PendingItem = {
 type PendingResponse = { items: PendingItem[]; total: number };
 
 const donutColors = {
-  donation: "#22c55e",
   sale: "#f59e0b",
   newUser: "#7c3aed",
   returningUser: "#a78bfa",
@@ -107,7 +105,7 @@ export function Admin_Dashboard() {
       if (splitRes.status === "fulfilled") {
         setTypeSplit(splitRes.value.data.data);
       } else {
-        nextErrors.typeSplit = "Unable to load donation vs sale split.";
+        nextErrors.typeSplit = "Unable to load listing type split.";
       }
 
       if (funnelRes.status === "fulfilled") {
@@ -149,7 +147,6 @@ export function Admin_Dashboard() {
 
   const typeSplitData = useMemo(
     () => [
-      { name: "Donations", value: typeSplit?.donations ?? 0, color: donutColors.donation },
       { name: "Sales", value: typeSplit?.sales ?? 0, color: donutColors.sale },
     ],
     [typeSplit],
@@ -197,10 +194,6 @@ export function Admin_Dashboard() {
           <li>
             <i className="fa-solid fa-database"></i>
             <Link to="/admin_inventory">View Inventory</Link>
-          </li>
-          <li>
-            <i className="fa-solid fa-hand-holding-heart"></i>
-            <Link to="/admin_donations">Announcements</Link>
           </li>
           <li>
             <i className="fa-solid fa-chart-line"></i>
@@ -267,13 +260,13 @@ export function Admin_Dashboard() {
       <div className="dashboard-sections">
         <div className="two-col-grid">
           <div className="chart-card">
-            <h3>Donation Trends</h3>
+            <h3>Listing activity</h3>
             <div className="chart-box">
               {loading ? (
                 <p>Loading chart...</p>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={stats?.donation_trends ?? []}>
+                  <AreaChart data={stats?.user_trends ?? []}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="label" />
                     <YAxis allowDecimals={false} />
@@ -318,49 +311,6 @@ export function Admin_Dashboard() {
         </div>
 
         <div className="two-col-grid">
-          <div className="chart-card">
-            <h3>Donation vs Sale Split</h3>
-            <div className="donut-layout">
-              <div className="donut-box">
-                {loading ? (
-                  <p>Loading chart...</p>
-                ) : (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={typeSplitData}
-                        dataKey="value"
-                        nameKey="name"
-                        innerRadius={50}
-                        outerRadius={80}
-                      >
-                        {typeSplitData.map((entry) => (
-                          <Cell key={entry.name} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                )}
-              </div>
-              <div className="chart-legend">
-                {typeSplitData.map((item) => {
-                  const total = (typeSplit?.donations ?? 0) + (typeSplit?.sales ?? 0);
-                  const pct = total > 0 ? Math.round((item.value / total) * 100) : 0;
-                  return (
-                    <div key={item.name} className="legend-item">
-                      <span className="legend-dot" style={{ background: item.color }} />
-                      <span>
-                        {item.name}: {item.value} ({pct}%)
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            {errors.typeSplit ? <CardError message={errors.typeSplit} /> : null}
-          </div>
-
           <div className="chart-card">
             <h3>New vs Returning Users</h3>
             <div className="donut-layout">
@@ -494,9 +444,9 @@ export function Admin_Dashboard() {
                 <div key={item.id} className="pending-item">
                   <div className="pending-left">
                     <span
-                      className={item.type === "donate" ? "tag-donation" : "tag-sale"}
+                      className="tag-sale"
                     >
-                      {item.type === "donate" ? "Donation" : "Sale"}
+                      Sale
                     </span>
                     <div>
                       <p>{item.title}</p>
@@ -509,9 +459,6 @@ export function Admin_Dashboard() {
             )}
           </div>
           <div className="pending-footer">
-            <Link to="/admin_donations">
-              {pendingMore} more in queue -&gt;
-            </Link>
           </div>
           {errors.pending ? <CardError message={errors.pending} /> : null}
         </div>

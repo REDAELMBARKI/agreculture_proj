@@ -228,7 +228,7 @@ export default function My_Profile() {
                 style={{ width: "100%", padding: "0.65rem" }}
               />
             </label>
-            <button type="submit" className="donation-button">
+            <button type="submit" className="action-button">
               Change password
             </button>
           </form>

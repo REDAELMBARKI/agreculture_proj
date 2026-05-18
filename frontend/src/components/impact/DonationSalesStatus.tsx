@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { DashboardStatus } from "./types";
 
-interface DonationSalesStatusProps {
+interface SalesStatusProps {
   status: DashboardStatus;
 }
 
@@ -82,24 +82,12 @@ function StatusPanel({
   );
 }
 
-export default function DonationSalesStatus({ status }: DonationSalesStatusProps) {
-  const donationItems: StatusItem[] = [
-    { key: "pending", label: "Pending", count: status.donations.pending, fill: "#eab308" },
-    { key: "scheduled", label: "Scheduled pickup", count: status.donations.scheduled, fill: "#3b82f6" },
-    { key: "completed", label: "Completed", count: status.donations.completed, fill: "#22c55e" },
-  ];
-
+export default function SalesStatus({ status }: SalesStatusProps) {
   const salesItems: StatusItem[] = [
     { key: "available", label: "Available", count: status.sales.available, fill: "#eab308" },
     { key: "reserved", label: "Reserved", count: status.sales.reserved, fill: "#f97316" },
     { key: "sold", label: "Sold", count: status.sales.sold, fill: "#22c55e" },
   ];
-
-  const donationChart = donationItems.map((i) => ({
-    name: i.label,
-    value: i.count,
-    fill: i.fill,
-  }));
 
   const salesChart = salesItems.map((i) => ({
     name: i.label,
@@ -109,9 +97,8 @@ export default function DonationSalesStatus({ status }: DonationSalesStatusProps
 
   return (
     <section className="impact-card">
-      <h3 className="impact-card__title">Donation &amp; sales status</h3>
+      <h3 className="impact-card__title">Sales status</h3>
       <div className="impact-status-grid">
-        <StatusPanel title="Donations" items={donationItems} chartData={donationChart} />
         <StatusPanel title="Sales" items={salesItems} chartData={salesChart} />
       </div>
     </section>

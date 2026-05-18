@@ -77,12 +77,12 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
       <div onClick={handleCardClick} style={{ display: 'flex', backgroundColor: colors.bgSecondary, borderRadius: '20px', overflow: 'hidden', textDecoration: 'none', color: 'inherit', boxShadow: '0 4px 12px rgba(0,0,0,0.04)', transition: 'transform 0.2s', cursor: 'pointer' }}>
         <div style={{ width: '280px', height: '210px', position: 'relative', flexShrink: 0 }}>
           <img src={allImages[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', top: '15px', left: '15px', padding: '5px 12px', borderRadius: '8px', backgroundColor: product.listing_mode === 'sell' ? colors.primary : colors.success, color: colors.bgSecondary, fontSize: '11px', fontWeight: '900' }}>
-            {product.listing_mode === 'sell' ? 'À VENDRE' : 'GRATUIT'}
+          <div style={{ position: 'absolute', top: '15px', left: '15px', padding: '5px 12px', borderRadius: '8px', backgroundColor: colors.primary, color: colors.bgSecondary, fontSize: '11px', fontWeight: '900' }}>
+            À VENDRE
           </div>
         </div>
-        <div style={{ padding: '25px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ 
                 width: '32px', 
@@ -113,8 +113,8 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
             <span style={{ padding: '5px 12px', backgroundColor: colors.bgTertiary, borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: colors.textSecondary }}>{product.age_range}</span>
           </div>
           <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '900', color: product.listing_mode === 'sell' ? colors.coral : colors.success }}>
-              {product.listing_mode === 'sell' ? `${Math.floor(Number(product.price))} MAD` : 'GRATUIT'}
+            <div style={{ fontSize: '24px', fontWeight: '900', color: colors.coral }}>
+              {`${Math.floor(Number(product.price))} MAD`}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: colors.textMuted, fontSize: '13px' }}>
@@ -228,7 +228,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
         />
         
         <div style={{ position: 'absolute', top: '12px', left: '12px', padding: '5px 10px', borderRadius: '8px', backgroundColor: product.listing_mode === 'sell' ? colors.primary : colors.success, color: colors.bgSecondary, fontSize: '10px', fontWeight: '900' }}>
-          {product.listing_mode === 'sell' ? 'À VENDRE' : 'GRATUIT'}
+          À VENDRE
         </div>
         
         <button onClick={toggleFavorite} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '5px' }}>
@@ -262,7 +262,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
           <div style={{ fontSize: '20px', fontWeight: '900', color: product.listing_mode === 'sell' ? colors.coral : colors.success }}>
-            {product.listing_mode === 'sell' ? `${Math.floor(Number(product.price))} MAD` : 'GRATUIT'}
+            {`${Math.floor(Number(product.price))} MAD`}
           </div>
           <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: colors.coral, color: colors.bgSecondary, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '800' }}>
             {product.user?.name?.charAt(0)}

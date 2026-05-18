@@ -14,8 +14,6 @@ import {
 } from "lucide-react";
 import {
   Shop as Store,
-  Gift,
-  Heart,
   Bag as ShoppingBag,
   MapPoint as MapPin,
   Gamepad,
@@ -32,6 +30,7 @@ import { Product } from "./User/announcement/types";
 import homeApi from "../../services/homeApi";
 import "../../css/home.css";
 import { useTheme } from "../../context/ThemeContext";
+import { filterSellListings } from "../../utils/sellOnly";
 
 interface User {
   id: number;
@@ -64,7 +63,6 @@ interface Review {
 interface Stats {
   total_products: number;
   total_users: number;
-  total_donations: number;
 }
 
 interface HeroSlide {
@@ -104,7 +102,6 @@ interface HomepageData {
   products_by_category: Record<number, Product[]>;
   recent_reviews: Review[];
   nearby_products: Product[];
-  free_items: Product[];
   hero_sliders: HeroSlide[];
   banners: Banner[];
 }
@@ -120,7 +117,6 @@ function Home() {
   const marketScrollRef = useRef<HTMLDivElement>(null);
   const collectionsScrollRef = useRef<HTMLDivElement>(null);
   const nearbyScrollRef = useRef<HTMLDivElement>(null);
-  const freeScrollRef = useRef<HTMLDivElement>(null);
   const categoryRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   // Hero Slider State
@@ -213,13 +209,6 @@ function Home() {
     container.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
   };
 
-  const scrollFree = (direction: 'left' | 'right') => {
-    const container = freeScrollRef.current;
-    if (!container) return;
-    const scrollAmount = 400;
-    container.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
-  };
-
   const getCategoryColor = (categoryId: number) => {
     const catColors = [colors.primary, colors.coral, colors.success || '#10b981', colors.warning || '#f59e0b', colors.error || '#ef4444', '#8b5cf6', '#3b82f6', '#ec4899'];
     return catColors[categoryId % catColors.length] || colors.primary;
@@ -256,28 +245,26 @@ function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  const popularProducts = useMemo<Product[]>(() => 
-    homepageData?.popular_products || [], 
-    [homepageData?.popular_products]
+  const popularProducts = useMemo<Product[]>(
+    () => filterSellListings(homepageData?.popular_products),
+    [homepageData?.popular_products],
   );
 
-  const newArrivals = useMemo<Product[]>(() => 
-    homepageData?.new_arrivals || [], 
-    [homepageData?.new_arrivals]
+  const newArrivals = useMemo<Product[]>(
+    () => filterSellListings(homepageData?.new_arrivals),
+    [homepageData?.new_arrivals],
   );
 
-  const nearbyProducts = useMemo<Product[]>(() => 
-    homepageData?.nearby_products || [], 
-    [homepageData?.nearby_products]
-  );
-
-  const freeItems = useMemo<Product[]>(() => 
-    homepageData?.free_items || [], 
-    [homepageData?.free_items]
+  const nearbyProducts = useMemo<Product[]>(
+    () => filterSellListings(homepageData?.nearby_products),
+    [homepageData?.nearby_products],
   );
 
   const productsByCategory = useMemo<Record<number, Product[]>>(() => {
-    return homepageData?.products_by_category || {};
+    const raw = homepageData?.products_by_category || {};
+    return Object.fromEntries(
+      Object.entries(raw).map(([id, products]) => [id, filterSellListings(products)]),
+    );
   }, [homepageData?.products_by_category]);
 
   if (loading) {
@@ -320,8 +307,8 @@ function Home() {
       <div className="sticky-season-wrap">
         <div className="season-pill-banner" style={{ backgroundColor: colors.bgSecondary }}>
           <span className="badge">Limited</span>
-          <p>Summer Drive: {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')} remaining</p>
-          <Link to="/donate" style={{ color: colors.coral }}>Join Now <ArrowRight size={14} /></Link>
+          <p>Summer Sale: {timeLeft.days}d {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')} remaining</p>
+          <Link to="/sign_up" style={{ color: colors.coral }}>Join Now <ArrowRight size={14} /></Link>
         </div>
       </div>
 
@@ -381,13 +368,7 @@ function Home() {
               <span>Active Parents</span>
             </div>
           </div>
-          <div className="stat-item">
-            <Heart size={24} iconContext={{ color: colors.coral }} />
-            <div>
-              <strong>{homepageData?.stats?.total_donations?.toLocaleString() || 0}</strong>
-              <span>Donations</span>
-            </div>
-          </div>
+          
         </div>
       </div>
 
@@ -598,31 +579,6 @@ function Home() {
         </section>
       )}
 
-      {/* Free Items */}
-      {freeItems.length > 0 && (
-        <section className="trending-row-section tt-container">
-          <div className="section-header-editorial with-nav">
-            <div>
-              <h2 className="editorial-title">Free for All</h2>
-              <p>Generous donations looking for a new home.</p>
-            </div>
-            <div className="row-nav">
-              <button onClick={() => scrollFree('left')}><ChevronLeft /></button>
-              <button onClick={() => scrollFree('right')}><ChevronRight /></button>
-            </div>
-          </div>
-          <div className="scroll-container no-scrollbar">
-            <div className="trending-scroll-row" ref={freeScrollRef}>
-              {freeItems.map((product) => (
-                <div key={product.id} className="home-card-wrapper">
-                  <MarketplaceCard product={product} view="grid" getImageUrl={getImageUrl} colors={colors} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Trust & Safety Band */}
       <section className="trust-band" style={{ backgroundColor: colors.bgSecondary }}>
         <div className="tt-container">
@@ -638,9 +594,9 @@ function Home() {
               <p>Verified sellers and community ratings ensure high quality.</p>
             </div>
             <div className="trust-item">
-              <Gift size={32} color={colors.coral} />
-              <h4>Giving Back</h4>
-              <p>Every donation directly supports local verified charities.</p>
+              <Zap size={32} color={colors.coral} />
+              <h4>Quick Local Deals</h4>
+              <p>Connect with buyers nearby and arrange pickup on your schedule.</p>
             </div>
           </div>
         </div>
@@ -674,7 +630,7 @@ function Home() {
           <div className="newsletter-box" style={{ backgroundColor: colors.primary, color: colors.bgPrimary }}>
             <div className="newsletter-content">
               <h2 className="editorial-title" style={{ color: colors.bgPrimary }}>Join the TinyTrove Newsletter</h2>
-              <p>Get weekly curated treasures and impact reports delivered to your inbox.</p>
+              <p>Get weekly curated treasures delivered to your inbox.</p>
               <form className="newsletter-form">
                 <div className="input-with-icon">
                   <Mail size={18} />
@@ -700,9 +656,8 @@ function Home() {
             </div>
             <div className="footer-links">
               <h4>Explore</h4>
-              <Link to="/marketplace">Marketplace</Link>
-              <Link to="/donate">Donations</Link>
-              <Link to="/categories">Categories</Link>
+              <Link to="/announcements">Marketplace</Link>
+              <Link to="/faq">Categories</Link>
             </div>
             <div className="footer-links">
               <h4>Support</h4>
@@ -712,9 +667,8 @@ function Home() {
             </div>
             <div className="footer-links">
               <h4>Connect</h4>
-              <Link to="/about">About Us</Link>
-              <Link to="/partners">Charity Partners</Link>
-              <Link to="/contact">Contact</Link>
+              <Link to="/faq">About Us</Link>
+              <Link to="/sign_up">Contact</Link>
             </div>
           </div>
           <div className="footer-bottom" style={{ borderTop: `1px solid ${colors.border}` }}>
