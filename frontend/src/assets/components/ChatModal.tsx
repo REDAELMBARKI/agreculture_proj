@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 import { X, Send } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 
@@ -32,13 +32,13 @@ const ChatModal: React.FC<ChatModalProps> = ({ product, currentUserId, onClose }
     setLoading(true);
     try {
       // 1. Get or create conversation
-      const convRes = await axios.post(`/api/announcements/${product.slug}/conversation`);
+      const convRes = await api.post(`/api/announcements/${product.slug}/conversation`);
       
       if (convRes.data.status === 'success') {
         const conversationSlug = convRes.data.conversation.slug;
         
         // 2. Send initial message
-        await axios.post(`/api/conversations/${conversationSlug}/messages`, {
+        await api.post(`/api/conversations/${conversationSlug}/messages`, {
           content: message.trim()
         });
         

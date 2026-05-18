@@ -38,7 +38,9 @@ class AuthController extends Controller
 
             $userData = [
                 'id' => $user->id,
+                'name' => $user->name,
                 'user_name' => $user->name,
+                'slug' => $user->slug,
                 'user_email' => $user->email,
                 'role_id' => $user->role_id,
                 'role' => $roleName,
@@ -107,6 +109,8 @@ class AuthController extends Controller
 
         $userData = [
             'id' => $user->id,
+            'name' => $user->name,
+            'slug' => $user->slug,
             'user_name' => $user->name,
             'user_email' => $user->email,
             'role_id' => $user->role_id,

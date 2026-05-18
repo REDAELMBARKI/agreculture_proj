@@ -55,9 +55,7 @@ const My_Announcements: React.FC = () => {
           console.log(productsArray);
     
           setProducts(
-            (Array.isArray(productsArray) ? productsArray : []).filter(
-              (p) => p.listing_mode !== "donate",
-            ),
+            (Array.isArray(productsArray) ? productsArray : []),
           );
         }
       })

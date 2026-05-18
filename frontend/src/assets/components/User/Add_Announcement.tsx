@@ -500,11 +500,9 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       if (!uploadSlots.some(s => s.status === 'done')) errors.photos = "Ajoutez au moins une photo.";
     }
     if (targetStepKey === "variants" && form.listing_type === "single") {
-      if (!form.sizes.length) errors.sizes = "Sélectionnez au moins une taille.";
-      if (!form.colors.length) errors.colors = "Sélectionnez au moins une couleur.";
       if (!form.season) errors.season = "Choisissez une saison.";
     }
-    if (targetStepKey === "price" && !String(form.price).trim()) {
+    if (targetStepKey === "price" && form.listing_mode === "sell" && !String(form.price).trim()) {
       errors.price = "Le prix est obligatoire pour une vente.";
     }
     if (targetStepKey === "location") {
@@ -552,7 +550,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       return;
     }
 
-    // Set slot to uploading
     setUploadSlots(prev => {
       const next = [...prev];
       next[index] = { ...next[index], status: 'uploading' };
@@ -563,14 +560,11 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       const formData = new FormData();
       formData.append('image', file);
       formData.append('mediable_type', 'product');
-      // Set collection based on slot index (0 is thumbnail, others gallery)
       formData.append('collection', index === 0 ? 'thumbnail' : 'gallery');
-      const token = localStorage.getItem("token");
 
       const response = await api.post(ziggyRoute('media.upload'), formData, {
         headers: {
           Accept: 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
 
@@ -610,10 +604,8 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     if (files.length === 0) return;
 
     if (slotIndex !== undefined) {
-      // Single slot upload
       await handleUpload(slotIndex, files[0]);
     } else {
-      // Multiple upload starting from first idle slot
       let currentFileIndex = 0;
       for (let i = 0; i < uploadSlots.length && currentFileIndex < files.length; i++) {
         if (uploadSlots[i].status === 'idle' || uploadSlots[i].status === 'error') {
@@ -622,7 +614,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
         }
       }
     }
-    // Clear input
     event.target.value = '';
   };
 
@@ -630,12 +621,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     const slot = uploadSlots[indexToRemove];
     if (slot.id) {
       try {
-        const token = localStorage.getItem("token");
-        await api.delete(ziggyRoute('media.delete-temporary', { mediaId: slot.id }), {
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
+        await api.delete(ziggyRoute('media.delete-temporary', { mediaId: slot.id }));
       } catch (error) {
         console.error('Failed to delete temporary media:', error);
       }
@@ -649,13 +635,22 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   };
 
   const submitAnnouncement = async () => {
+    console.log('=== SUBMIT ANNOUNCEMENT START ===');
     if (!user?.id) {
       setAuthDialogOpen(true);
       setStatus({ type: "error", message: "Connectez-vous d'abord." });
       return;
     }
 
+    console.log('Current stepKey:', stepKey);
+    console.log('All form data:', form);
+    console.log('Upload slots:', uploadSlots);
+    
     const submitErrors = validateStep("location");
+    console.log('=== SUBMIT ERRORS ===');
+    console.log(submitErrors);
+    console.log('=== FIELD ERRORS ===');
+    console.log(fieldErrors);
     if (Object.keys(submitErrors).length) {
       setFieldErrors(submitErrors);
       setStatus({ type: "error", message: "Veuillez corriger les erreurs avant publication." });
@@ -663,6 +658,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     }
 
     const mediaIds = uploadSlots.filter(s => s.id).map(s => s.id);
+    console.log('Media IDs:', mediaIds);
     if (mediaIds.length === 0) {
       setStatus({ type: 'error', message: 'Veuillez ajouter au moins une photo.' });
       return;
@@ -676,16 +672,29 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       currency: "MAD",
       media_ids: mediaIds,
     };
+    
+    console.log('=== PAYLOAD TO SEND ===');
+    console.log(payload);
+    console.log('=== FORM:', form);
 
     try {
       let response;
+      console.log('Is edit mode?', isEditMode);
+      
       if (isEditMode && product) {
+        console.log('PUT request to update', product.slug);
         response = await api.put(ziggyRoute('announcements.update', { 
           announcement: product.slug 
         }), payload);
       } else {
+        console.log('POST request to store');
         response = await api.post(ziggyRoute('announcements.store'), payload);
       }
+
+      console.log('=== RESPONSE ===');
+      console.log(response);
+      console.log('=== RESPONSE DATA ===');
+      console.log(response.data);
 
       if (response.data.status === "success") {
         setStatus({ type: "success", message: isEditMode ? "Annonce mise à jour avec succès." : "Annonce publiée avec succès." });
@@ -702,6 +711,10 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       }
       setStatus({ type: "error", message: response.data.message || "Erreur de validation." });
     } catch (error: any) {
+      console.error('=== ERROR IN SUBMIT ===');
+      console.error('Error object:', error);
+      console.error('Error response data:', error.response?.data);
+      
       const errorMessage = error.response?.data?.errors 
         ? Object.values(error.response.data.errors).flat().join(', ') 
         : (error.response?.data?.message || "Erreur réseau.");
@@ -726,7 +739,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
                 const isActive = form.super_category_id === id;
 
                 return (
-                  <Grid item xs={12} sm={4} key={label}>
+                  <Grid item xs={12} sm={4} key={id}>
                     <IconCardButton
                       icon={Icon}
                       title={label}

@@ -45,7 +45,7 @@ export default function User_Dashboard() {
       .get(`/api/user/${userKey}/announcements`)
       .then((res) => {
         const products = res.data?.products?.data || res.data?.products || [];
-        setAllListings(filterSellListings(Array.isArray(products) ? products : []));
+        setAllListings(Array.isArray(products) ? products : []);
       })
       .catch((err) => console.error("Listings fetch error:", err))
       .finally(() => setLoadingListings(false));

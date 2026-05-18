@@ -35,7 +35,7 @@ return [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
             // config pour sqlite //
-            'database' => 'C:/Users/OBLIVION/Desktop/agreculture_proj/backend/database/marketDB.sqlite',
+            'database' => env('DB_DATABASE') ? base_path(env('DB_DATABASE')) : database_path('database.sqlite'),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => null,

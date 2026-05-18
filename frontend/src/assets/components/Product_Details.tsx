@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../services/api";
 import { 
   MessageCircle, 
   Share2, 
@@ -17,8 +17,6 @@ import {
 import { Product, ApiResponse } from "./User/announcement/types";
 import { useTheme } from "../../context/ThemeContext";
 import OfferModal from "./OfferModal";
-// Configure axios baseURL for backend API
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
 
 // Current user ID (get from auth context or localStorage)
 const getCurrentUserId = () => {
@@ -64,7 +62,7 @@ const Product_Details: React.FC = () => {
     
     try {
       // Get or create conversation
-      const res = await axios.post(`/api/announcements/${product.slug}/conversation`);
+      const res = await api.post(`/api/announcements/${product.slug}/conversation`);
       if (res.data.status === 'success') {
         const conversationSlug = res.data.conversation.slug;
         navigate(`/chat/${conversationSlug}`);
@@ -81,7 +79,7 @@ const Product_Details: React.FC = () => {
     const newStatus = !isFavorited;
     setIsFavorited(newStatus);
     try {
-      await axios.post(`/api/announcements/${product.slug}/favorite`, { favorite: newStatus });
+      await api.post(`/api/announcements/${product.slug}/favorite`, { favorite: newStatus });
     } catch (err) {
       console.error("Favorite toggle error:", err);
     }
@@ -93,7 +91,7 @@ const Product_Details: React.FC = () => {
     
     setSubmittingReview(true);
     try {
-      const res = await axios.post(`/api/announcements/${product.slug}/reviews`, {
+      const res = await api.post(`/api/announcements/${product.slug}/reviews`, {
         rating: newRating,
         comment: newComment
       });
@@ -126,7 +124,7 @@ const Product_Details: React.FC = () => {
       
       try {
         console.log("Making API call to:", `/api/announcements/${announcementSlug}`);
-        const res = await axios.get(`/api/announcements/${announcementSlug}`, { timeout: 10000 });
+        const res = await api.get(`/api/announcements/${announcementSlug}`, { timeout: 10000 });
         console.log("API response received:", res.data);
         if (res.data.status === "success" && (res.data.product?.data || res.data.product)) {
           const productData = res.data.product?.data || res.data.product;
@@ -138,7 +136,7 @@ const Product_Details: React.FC = () => {
           
           // Fetch reviews for this product
           try {
-            const reviewsRes = await axios.get(`/api/announcements/${announcementSlug}/reviews`);
+            const reviewsRes = await api.get(`/api/announcements/${announcementSlug}/reviews`);
             if (reviewsRes.data.status === 'success') {
               setReviews(reviewsRes.data.reviews || []);
             }

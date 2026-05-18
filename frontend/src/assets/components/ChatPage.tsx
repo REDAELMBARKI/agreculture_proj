@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, ChevronRight, Check, CheckCheck, MessageCircle, Clock, Search } from 'lucide-react';
 import { Box as Package, Shop as Store } from '@solar-icons/react';
@@ -115,7 +115,7 @@ const ChatPage: React.FC = () => {
 
   const fetchConversations = async () => {
     try {
-      const res = await axios.get('/api/conversations');
+      const res = await api.get('/api/conversations');
       if (res.data.status === 'success') {
         setConversations(res.data.conversations);
       }
@@ -130,7 +130,7 @@ const ChatPage: React.FC = () => {
     if (!conversationSlug) return;
     if (showLoading) setMessagesLoading(true);
     try {
-      const res = await axios.get(`/api/conversations/${conversationSlug}/messages`);
+      const res = await api.get(`/api/conversations/${conversationSlug}/messages`);
       if (res.data.status === 'success') {
         setMessages(res.data.messages);
         setActiveConversation(res.data.conversation);
@@ -148,7 +148,7 @@ const ChatPage: React.FC = () => {
 
     setSending(true);
     try {
-      const res = await axios.post(`/api/conversations/${conversationSlug}/messages`, {
+      const res = await api.post(`/api/conversations/${conversationSlug}/messages`, {
         content: newMessage.trim(),
       });
 
