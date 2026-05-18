@@ -18,8 +18,9 @@ class AnnouncementRepository
         $fields = [
             'user_id', 'super_category_id', 'listing_mode', 'listing_type',
             'title', 'description', 'price', 'currency', 'price_negotiable',
-            'status', 'condition', 'gender', 'age_range', 'brand', 'season',
-            'sizes', 'colors', 'handover_method', 'contact_phone'
+            'status', 'condition', 'quantity', 'quantity_unit', 'harvest_date', 
+            'region', 'brand', 'season', 'sizes', 'colors', 'handover_method', 
+            'contact_phone'
         ];
 
         return array_intersect_key($data, array_flip($fields));
@@ -90,14 +91,19 @@ class AnnouncementRepository
             $query->where('listing_mode', $filters['mode']);
         }
 
-        // Age range filter
-        if (!empty($filters['age_range'])) {
-            $query->where('age_range', $filters['age_range']);
+        // Region filter
+        if (!empty($filters['regions'])) {
+            $query->whereIn('region', (array) $filters['regions']);
         }
 
-        // Gender filter
-        if (!empty($filters['gender'])) {
-            $query->where('gender', $filters['gender']);
+        // Harvest season filter
+        if (!empty($filters['harvest_season'])) {
+            $query->whereIn('season', (array) $filters['harvest_season']);
+        }
+
+        // Quantity unit filter
+        if (!empty($filters['quantity_unit'])) {
+            $query->where('quantity_unit', $filters['quantity_unit']);
         }
 
         // Condition filter

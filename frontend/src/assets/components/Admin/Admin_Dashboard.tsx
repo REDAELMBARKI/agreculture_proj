@@ -26,7 +26,7 @@ type StatsResponse = {
   new_users_today: number;
   user_trends: TrendPoint[];
 };
-type TypeSplitResponse = { donations: number; sales: number };
+type TypeSplitResponse = { sales: number };
 type FunnelResponse = {
   posted: number;
   active: number;
@@ -37,7 +37,7 @@ type CategoryPoint = { category: string; count: number };
 type UserRetentionResponse = { new_users: number; returning_users: number };
 type PendingItem = {
   id: number;
-  type: "donate" | "sell" | string;
+  type: "sell" | string;
   title: string;
   city: string;
   time_ago: string;

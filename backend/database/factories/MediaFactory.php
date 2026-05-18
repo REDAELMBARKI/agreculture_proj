@@ -19,26 +19,16 @@ class MediaFactory extends Factory
     {
         // Fake image URLs from placeholder services
         $imageUrls = [
-            'https://picsum.photos/seed/kidsclothes1/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes2/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes3/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes4/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes5/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes6/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes7/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes8/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes9/400/300.jpg',
-            'https://picsum.photos/seed/kidsclothes10/400/300.jpg',
-            'https://picsum.photos/seed/toys1/400/300.jpg',
-            'https://picsum.photos/seed/toys2/400/300.jpg',
-            'https://picsum.photos/seed/toys3/400/300.jpg',
-            'https://picsum.photos/seed/toys4/400/300.jpg',
-            'https://picsum.photos/seed/toys5/400/300.jpg',
-            'https://picsum.photos/seed/books1/400/300.jpg',
-            'https://picsum.photos/seed/books2/400/300.jpg',
-            'https://picsum.photos/seed/books3/400/300.jpg',
-            'https://picsum.photos/seed/games1/400/300.jpg',
-            'https://picsum.photos/seed/games2/400/300.jpg', 
+            'https://picsum.photos/seed/agriculture1/400/300.jpg',
+            'https://picsum.photos/seed/agriculture2/400/300.jpg',
+            'https://picsum.photos/seed/agriculture3/400/300.jpg',
+            'https://picsum.photos/seed/crops1/400/300.jpg',
+            'https://picsum.photos/seed/crops2/400/300.jpg',
+            'https://picsum.photos/seed/livestock1/400/300.jpg',
+            'https://picsum.photos/seed/livestock2/400/300.jpg',
+            'https://picsum.photos/seed/tractor1/400/300.jpg',
+            'https://picsum.photos/seed/farm1/400/300.jpg',
+            'https://picsum.photos/seed/seeds1/400/300.jpg',
         ];
 
         $collections = ['thumbnail', 'gallery'];

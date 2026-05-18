@@ -4,81 +4,77 @@ import "../../css/our_partners.css";
 function Our_Partners() {
   return (
     <section className="charities">
-      <h2>Charities We’re Proud to Work With</h2>
+      <h2>Partners We’re Proud to Work With</h2>
       <p className="charities_intro">
-        We collaborate with compassionate organizations across the UK to make
-        clothing donations more impactful and sustainable.
+        We collaborate with agricultural organizations across Morocco to build a 
+        more sustainable and connected farming community.
       </p>
 
       <div className="charity_grid">
         <div className="cont">
-          <h3>WearAgain Foundation England</h3>
+          <h3>Green Fields Cooperative</h3>
           <p>
-            Helps low-income families by providing gently used clothes for work,
-            school, and daily life. Working with thousands of families across
-            England, WearAgain ensures children have proper school uniforms,
-            parents can dress for job interviews, and households can meet basic
-            clothing needs with pride and dignity.
+            Supports small-scale farmers by providing access to modern equipment
+            and sustainable farming techniques. Working with thousands of farms across
+            the Gharb region, they ensure local producers can increase their yield
+            and reach new markets with pride and dignity.
           </p>
 
           <h4>How They Help:</h4>
           <ul>
-            <li>Delivers quality clothing across England.</li>
-            <li>Runs community clothing drives.</li>
-            <li>Empowers job seekers with workwear and interview outfits.</li>
-            <li>Builds stronger communities through volunteering.</li>
-            <li>Reaches thousands of families every year.</li>
+            <li>Distributes quality seeds and organic fertilizers.</li>
+            <li>Runs workshops on modern irrigation systems.</li>
+            <li>Empowers local farmers with market insights.</li>
+            <li>Builds stronger local food chains.</li>
+            <li>Reaches thousands of agricultural households every year.</li>
           </ul>
         </div>
 
         <div className="cont">
-          <h3>Threads of Hope UK</h3>
+          <h3>Sustainable Agri Network</h3>
           <p>
-            Supports refugees and homeless individuals with essential clothing
-            and footwear. Distributes coats, shoes, and everyday wear across the
-            UK to help people stay warm and feel confident.
+            Promotes eco-friendly farming practices and water conservation.
+            They help farmers implement drip irrigation and soil protection
+            strategies to ensure a sustainable future for Moroccan agriculture.
           </p>
 
           <h4>How They Help:</h4>
           <ul>
-            <li>Runs seasonal drives to meet summer and winter needs.</li>
-            <li>Helps refugees feel welcomed and included.</li>
-            <li>
-              Engages communities through fundraising and awareness events.
-            </li>
+            <li>Runs seasonal training on climate-resilient crops.</li>
+            <li>Helps farms transition to organic production.</li>
+            <li>Engages communities in water-saving initiatives.</li>
           </ul>
         </div>
 
         <div className="cont">
-          <h3>SecondChance Wardrobe</h3>
+          <h3>Atlas Farming Alliance</h3>
           <p>
-            Collects and redistributes quality fashion items to women’s shelters
-            and youth hostels — empowering vulnerable women and at-risk youth to
-            rebuild their lives with dignity and style.
-          </p>
-
-          <h4>How They Help:</h4>
-          <ul>
-            <li>Turns pre-loved fashion into new opportunities.</li>
-            <li>Supports job interviews and education access.</li>
-            <li>Promotes sustainable, circular fashion.</li>
-            <li>Encourages reuse and community compassion.</li>
-          </ul>
-        </div>
-
-        <div className="cont">
-          <h3>GreenStitch Collective</h3>
-          <p>
-            Focuses on textile recycling and sustainable fashion initiatives,
-            inspiring communities to embrace ethical fashion choices.
+            Connects mountain farmers with regional distributors, ensuring
+            fair prices for unique local products like saffron, honey, and nuts.
           </p>
 
           <h4>Initiatives Include:</h4>
           <ul>
-            <li>Community textile drop-off points.</li>
-            <li>Collaborations with ethical brands.</li>
-            <li>Workshops for repair and upcycling.</li>
-            <li>Events selling pre-loved clothes and fabrics.</li>
+            <li>Fair trade certifications for local cooperatives.</li>
+            <li>Logistics support for remote farming areas.</li>
+            <li>Promoting biodiversity in the Atlas mountains.</li>
+            <li>Encouraging traditional, chemical-free farming.</li>
+          </ul>
+        </div>
+
+        <div className="cont">
+          <h3>AgriTech Morocco</h3>
+          <p>
+            Focuses on digital transformation in the agricultural sector,
+            providing farmers with tools to track weather, soil health, and market prices.
+          </p>
+
+          <h4>Initiatives Include:</h4>
+          <ul>
+            <li>Free soil testing for registered cooperatives.</li>
+            <li>Collaborations with innovative agri-tech startups.</li>
+            <li>Workshops on precision agriculture.</li>
+            <li>Events connecting farmers with tech solutions.</li>
           </ul>
         </div>
       </div>

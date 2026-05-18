@@ -14,13 +14,14 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
 
             $table->string('item_name');
-            $table->string('item_condition')->nullable(); // new, like_new, good, fair, poor
-            $table->string('item_gender')->nullable();    // boy, girl, unisex
-            $table->string('recommended_age')->nullable();
+            $table->string('item_condition')->nullable(); // fresh, dried, processed
+            $table->decimal('item_quantity', 10, 2)->default(1);
+            $table->string('item_quantity_unit')->nullable();
+            $table->date('harvest_date')->nullable();
+            $table->string('region')->nullable();
             $table->string('item_brand')->nullable();
             $table->string('item_material')->nullable();
             $table->string('item_season')->nullable();
-            $table->unsignedInteger('item_quantity')->default(1);
 
             // JSON arrays (sizes and colors vary per item)
             $table->json('item_sizes')->nullable();   // ["XS","S","M"] or ["3-6M"]

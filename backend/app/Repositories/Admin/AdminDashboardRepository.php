@@ -96,7 +96,7 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
 
         return [
             'items_reused' => $donatedProducts,
-            'co2_reduced' => round($donatedProducts * 1.5, 1),
+            'co2_reduced' => round($donatedProducts * 2.5, 1), // Agriculture might have higher impact
         ];
     }
 

@@ -18,11 +18,11 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         $categories = [
-            'Clothing' => ['icon' => 'shirt', 'children' => ['Boys', 'Girls', 'Unisex', 'Newborn']],
-            'Toys & Games' => ['icon' => 'gamepad', 'children' => ['Educational', 'Outdoor', 'Indoor']],
-            'Furniture' => ['icon' => 'couch', 'children' => ['Cribs', 'Chairs', 'Tables', 'Storage']],
-            'Books & Media' => ['icon' => 'book', 'children' => ['Storybooks', 'Educational', 'Activity Books']],
-            'Sports & Play' => ['icon' => 'ball', 'children' => ['Bikes', 'Sports Equipment', 'Outdoor Play']],
+            'Crops' => ['icon' => 'leaf', 'children' => ['Cereals', 'Fruits', 'Vegetables', 'Legumes']],
+            'Livestock' => ['icon' => 'cow', 'children' => ['Cattle', 'Poultry', 'Sheep & Goats']],
+            'Equipment' => ['icon' => 'tractor', 'children' => ['Tractors', 'Harvesters', 'Tools']],
+            'Land' => ['icon' => 'map', 'children' => ['Farm Land', 'Orchards', 'Grazing Land']],
+            'Seeds' => ['icon' => 'sprout', 'children' => ['Crop Seeds', 'Vegetable Seeds']],
         ];
 
         $categoryName = fake()->randomElement(array_keys($categories));

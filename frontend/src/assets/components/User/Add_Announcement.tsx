@@ -10,17 +10,22 @@ import {
   Plus,
   X,
   ChevronRight,
+  Leaf,
+  Tractor,
+  Sprout,
+  Map,
+  Handshake,
+  FlaskConical as Flask,
+  Droplets as Water,
+  CheckCircle,
+  Wheat,
+  Beef as Cow,
+  Calendar,
+  Scale,
 } from "lucide-react";
 import {
-  UserRounded as Baby,
-  Book,
-  Walking as Footprints,
-  HandHeart,
-  Heart,
   MapPoint as MapPin,
   Box as Package,
-  TShirt as Shirt,
-  Gamepad as ToyBrick,
   Delivery as Truck,
 } from "@solar-icons/react";
 import {
@@ -55,17 +60,15 @@ import "../../../css/add_announcement.css";
 
 // Sub-categories data
 const SUB_CATEGORIES_MAP: Record<string, string[]> = {
-  "Vêtements": ["Hauts & T-shirts", "Pantalons & Jeans", "Robes & Jupes", "Pulls & Cardigans", "Manteaux & Vestes", "Ensembles", "Pyjamas & Maillots", "Sous-vêtements", "Accessoires"],
-  "Chaussures": ["Baskets & Sneakers", "Bottes & Bottines", "Sandales & Tongs", "Chaussures de ville", "Chaussons"],
-  "Jouets": ["Éveil & Premier âge", "Jeux de société", "Poupées & Figurines", "Véhicules & Circuits", "Jeux de construction", "Jeux d'imitation", "Peluches", "Plein air"],
-  "Puériculture": ["Sommeil", "Repas", "Bain & Soins", "Sécurité", "Poussettes & Sièges auto", "Portage"],
-  "Bébé": ["Sommeil", "Repas", "Bain & Soins", "Sécurité", "Poussettes & Sièges auto", "Portage"],
-  "Livres & Éveil": ["Albums illustrés", "Contes & Histoires", "Livres sonores", "Livres à toucher", "Activités & Coloriages"],
-  "Livres": ["Albums illustrés", "Contes & Histoires", "Livres sonores", "Livres à toucher", "Activités & Coloriages"],
-  "Mobilier": ["Lits bébé", "Chambres enfant", "Tables et chaises", "Rangements"],
-  "Jeux": ["Jeux de société", "Jeux d'extérieur", "Puzzles", "Jeux vidéo"],
-  "Activités": ["Peinture", "Musique", "Sport", "Loisirs créatifs"],
-  "Autre": ["Mobilier", "Décoration", "Matériel de sport", "Divers"]
+  "Crops": ["Cereals", "Fruits", "Vegetables", "Legumes"],
+  "Livestock": ["Cattle", "Poultry", "Sheep & Goats", "Honeybees"],
+  "Seeds": ["Crop Seeds", "Vegetable Seeds", "Fruit Seeds"],
+  "Equipment": ["Tractors", "Harvesters", "Plows", "Tools"],
+  "Land": ["Farm Land", "Orchards", "Grazing Land"],
+  "Services": ["Consulting", "Labor", "Transportation"],
+  "Fertilizers": ["Organic Fertilizers", "Chemical Fertilizers", "Pesticides"],
+  "Irrigation": ["Drip Systems", "Sprinklers", "Pumps"],
+  "Organic": ["Organic Produce", "Eco-friendly Supplies"]
 };
 
 // Color mapping for French names to Hex
@@ -112,8 +115,10 @@ interface FormState {
   price_negotiable: boolean;
   condition: string;
   material: string;
-  gender: string;
-  age_range: string;
+  quantity: string;
+  quantity_unit: string;
+  harvest_date: string;
+  region: string;
   brand: string;
   season: string;
   sizes: string[];
@@ -135,14 +140,17 @@ interface User {
 // Helper to get icon by category name
 const getCategoryIcon = (iconName: string): any => {
   const iconMap: Record<string, any> = {
-    'shirt': Shirt,
-    'footprints': Footprints,
-    'gamepad-2': ToyBrick,
-    'book-open': Book,
-    'baby': Baby,
-    'palette': Palette,
+    'leaf': Leaf,
+    'cow': Cow,
+    'sprout': Sprout,
+    'tractor': Tractor,
+    'map': Map,
+    'handshake': Handshake,
+    'flask': Flask,
+    'water': Water,
+    'check-circle': CheckCircle,
+    'wheat': Wheat,
     'package': Package,
-    'dice-5': ToyBrick,
   };
   return iconMap[iconName] || Package;
 };
@@ -166,29 +174,28 @@ interface UploadSlot {
 const BASE_STEPS = [
   { key: "category", label: "Catégorie" },
   { key: "product", label: "Produit & Média" },
-  { key: "variants", label: "Variantes" },
+  { key: "variants", label: "Spécifications" },
   { key: "price", label: "Prix" },
   { key: "location", label: "Localisation" },
 ];
 
 // Fallback categories while loading
 const FALLBACK_CATEGORIES = [
-  { id: 1001, name: "Vêtements", icon: Shirt },
-  { id: 1002, name: "Chaussures", icon: Footprints },
-  { id: 1003, name: "Jouets", icon: ToyBrick },
-  { id: 1004, name: "Puériculture", icon: Baby },
-  { id: 1005, name: "Livres & Éveil", icon: Book },
-  { id: 1006, name: "Autre", icon: Package },
+  { id: 1001, name: "Crops", icon: Leaf },
+  { id: 1002, name: "Livestock", icon: Cow },
+  { id: 1003, name: "Seeds", icon: Sprout },
+  { id: 1004, name: "Equipment", icon: Tractor },
+  { id: 1005, name: "Land", icon: Map },
+  { id: 1006, name: "Organic", icon: CheckCircle },
 ];
 
 interface FilterAttributes {
-  cities: string[];
-  ageRanges: string[];
-  clothingSizes: string[];
-  shoeSizes: string[];
+  regions: string[];
+  quantityUnits: string[];
+  harvestSeasons: string[];
+  soilTypes: string[];
   conditions: { label: string; value: string }[];
   listingTypes: string[];
-  materials: string[];
   colors: string[];
 }
 
@@ -288,8 +295,10 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     title: "",
     description: "",
     listing_type: "single",
-    gender: "",
-    age_range: "",
+    quantity: "",
+    quantity_unit: "kg",
+    harvest_date: "",
+    region: "",
     brand: "",
     condition: "",
     sizes: [],
@@ -326,17 +335,12 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
           }));
           setCategories(processedCategories);
           setAttributes({
-            cities: (response.data.cities || []).map((city: any) => ({
-              ...city,
-              id: String(city.id),
-              value: String(city.value || city.id)
-            })),
-            ageRanges: response.data.ageRanges || [],
-            clothingSizes: response.data.clothingSizes || [],
-            shoeSizes: response.data.shoeSizes || [],
+            regions: response.data.regions || [],
+            quantityUnits: response.data.quantityUnits || [],
+            harvestSeasons: response.data.harvestSeasons || [],
+            soilTypes: response.data.soilTypes || [],
             conditions: response.data.conditions || [],
             listingTypes: response.data.listingTypes || [],
-            materials: response.data.materials || [],
             colors: response.data.colors || []
           });
 
@@ -915,180 +919,81 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
         );
 
       case "variants":
-        const sizesOptions = (form.super_category_name === "Chaussures" ? attributes.shoeSizes : attributes.clothingSizes);
-        
         return (
           <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 4 }}>
             <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
-              Variantes & Caractéristiques
+              Spécifications de la Récolte
             </Typography>
 
-            {/* Collection Checkbox */}
-            <Box sx={{ width: '100%', p: 2.5, borderRadius: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <input 
-                  type="checkbox" 
-                  id="is_collection"
-                  checked={form.listing_type === "collection"}
-                  onChange={(e) => updateField("listing_type", e.target.checked ? "collection" : "single")}
-                  style={{ width: 24, height: 24, cursor: 'pointer' }}
+            {/* Quantity & Unit */}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={8}>
+                <TextField
+                  fullWidth
+                  label="Quantité"
+                  type="number"
+                  value={form.quantity}
+                  onChange={(e) => updateField("quantity", e.target.value)}
+                  error={!!fieldErrors.quantity}
+                  helperText={fieldErrors.quantity}
                 />
-                <Box>
-                  <label htmlFor="is_collection" style={{ cursor: 'pointer', fontWeight: 700, color: '#1e293b', fontSize: '1rem' }}>
-                    Vendez-vous une collection ou un article individuel ?
-                  </label>
-                  <Typography variant="body2" sx={{ color: '#64748b', mt: 0.5 }}>
-                    Cochez cette case si vous vendez un lot d'articles (les options de taille et couleur deviendront facultatives).
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Tailles */}
-            <Box sx={{ width: '100%' }}>
-              <CustomSelect
-                label={`Tailles ${form.listing_type === 'collection' ? '(Optionnel)' : ''}`}
-                multiple={true}
-                placeholder="Choisir les tailles..."
-                options={sizesOptions.map(o => (typeof o === 'string' ? { id: o, label: o, value: o } : o))}
-                value={form.sizes}
-                onChange={(val) => updateField("sizes", val)}
-                error={!!fieldErrors.sizes}
-                helperText={fieldErrors.sizes}
-                renderType="pills"
-              />
-            </Box>
-
-            {/* Couleurs */}
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: '#1e293b' }}>
-                Couleurs {form.listing_type === 'collection' ? '(Optionnel)' : ''}
-              </Typography>
-              
-              <CustomSelect
-                multiple={true}
-                options={attributes.colors.map(o => {
-                  const label = typeof o === 'string' ? o : (o as any).label;
-                  const value = typeof o === 'string' ? o : (o as any).value || (o as any).id;
-                  return {
-                    id: value,
-                    label: label,
-                    value: value,
-                    hex: COLOR_MAP[label] || value
-                  };
-                })}
-                value={form.colors}
-                onChange={(val) => updateField("colors", val)}
-                error={!!fieldErrors.colors}
-                helperText={fieldErrors.colors}
-                renderType="colors"
-              />
-
-              {/* Custom Color Picker */}
-              <Box sx={{ mt: 3, p: 2, borderRadius: 2, border: '1px dashed #cbd5e1', bgcolor: '#f8fafc' }}>
-                <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Palette size={18} /> Ajouter une couleur personnalisée
-                </Typography>
-                
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {/* List of custom colors being added */}
-                  {form.custom_colors.map((cc, idx) => (
-                    <Box key={idx} sx={{ display: 'flex', gap: 2, alignItems: 'center', bgcolor: '#fff', p: 1, borderRadius: 2, border: '1px solid #e2e8f0' }}>
-                      <Box sx={{ width: 32, height: 32, borderRadius: '50%', bgcolor: cc.hex, border: '1px solid #e2e8f0' }} />
-                      <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500 }}>{cc.name}</Typography>
-                      <IconButton size="small" onClick={() => {
-                        const nameToRemove = form.custom_colors[idx].name;
-                        const newCustomColors = form.custom_colors.filter((_, i) => i !== idx);
-                        updateField("custom_colors", newCustomColors);
-                        if (nameToRemove) {
-                          updateField("colors", form.colors.filter(c => c !== nameToRemove));
-                        }
-                      }}>
-                        <X size={18} />
-                      </IconButton>
-                    </Box>
-                  ))}
-
-                  {/* Add new custom color input */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', border: '2px solid #3b82f6', flexShrink: 0 }}>
-                      <input 
-                        type="color" 
-                        value={tempColorHex || "#3b82f6"}
-                        onChange={(e) => setTempColorHex(e.target.value)}
-                        style={{ 
-                          position: 'absolute',
-                          top: '-50%',
-                          left: '-50%',
-                          width: '200%',
-                          height: '200%',
-                          cursor: 'pointer',
-                          border: 'none',
-                          padding: 0
-                        }}
-                      />
-                      <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-                        <Plus size={20} color="#3b82f6" />
-                      </Box>
-                    </Box>
-                    <TextField
-                      size="small"
-                      placeholder="Nom de la couleur (min 3 car.)"
-                      value={tempColorName}
-                      onChange={(e) => setTempColorName(e.target.value)}
-                      sx={{ bgcolor: 'white' }}
-                    />
-                    <Button 
-                      variant="contained" 
-                      size="small"
-                      disabled={tempColorName.trim().length < 3}
-                      onClick={() => {
-                        const newName = tempColorName.trim();
-                        if (newName.length >= 3) {
-                          const newCustomColor = { name: newName, hex: tempColorHex || "#3b82f6" };
-                          updateField("custom_colors", [...form.custom_colors, newCustomColor]);
-                          
-                          // Add to main colors list
-                          if (!form.colors.includes(newName)) {
-                            updateField("colors", [...form.colors, newName]);
-                          }
-                          
-                          // Update dynamic map
-                          COLOR_MAP[newName] = newCustomColor.hex;
-                          
-                          // Reset temp
-                          setTempColorName("");
-                        }
-                      }}
-                      sx={{ textTransform: 'none', fontWeight: 600 }}
-                    >
-                      Ajouter
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Other fields */}
-            {[
-              { label: "Saison", field: "season", options: ["Toutes saisons", "Printemps / Été", "Automne / Hiver"], multiple: false },
-              { label: "Matière", field: "material", options: attributes.materials },
-              { label: "Âge recommandé", field: "age_range", options: attributes.ageRanges, multiple: false },
-            ].map((variant, idx) => (
-              <Box key={idx} sx={{ width: '100%' }}>
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <CustomSelect
-                  label={variant.label}
-                  multiple={variant.multiple !== false}
-                  placeholder="Choisir..."
-                  options={variant.options.map(o => (typeof o === 'string' ? { id: o, label: o, value: o } : o))}
-                  value={(form as any)[variant.field]}
-                  onChange={(val) => updateField(variant.field as keyof FormState, val)}
-                  error={!!(fieldErrors as any)[variant.field]}
-                  helperText={(fieldErrors as any)[variant.field]}
-                  icon={<ChevronRight size={16} />} 
+                  label="Unité"
+                  options={attributes.quantityUnits}
+                  value={form.quantity_unit}
+                  onChange={(val) => updateField("quantity_unit", val)}
+                  error={!!fieldErrors.quantity_unit}
+                  helperText={fieldErrors.quantity_unit}
                 />
-              </Box>
-            ))}
+              </Grid>
+            </Grid>
+
+            {/* Harvest Date */}
+            <Box sx={{ width: '100%' }}>
+              <TextField
+                fullWidth
+                label="Date de récolte"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={form.harvest_date}
+                onChange={(e) => updateField("harvest_date", e.target.value)}
+                error={!!fieldErrors.harvest_date}
+                helperText={fieldErrors.harvest_date}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Calendar size={20} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            {/* Region */}
+            <Box sx={{ width: '100%' }}>
+              <CustomSelect
+                label="Région de production"
+                options={attributes.regions}
+                value={form.region}
+                onChange={(val) => updateField("region", val)}
+                error={!!fieldErrors.region}
+                helperText={fieldErrors.region}
+              />
+            </Box>
+
+            {/* Season */}
+            <Box sx={{ width: '100%' }}>
+              <CustomSelect
+                label="Saison"
+                options={attributes.harvestSeasons}
+                value={form.season}
+                onChange={(val) => updateField("season", val)}
+                error={!!fieldErrors.season}
+                helperText={fieldErrors.season}
+              />
+            </Box>
           </Box>
         );
 

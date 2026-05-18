@@ -149,13 +149,13 @@ export default function User_Dashboard() {
             <tr>
               <th>Type</th>
               <th>Title</th>
-              <th>Size / notes</th>
+              <th>Quantity / Specs</th>
               <th>Image</th>
               <th>Date</th>
               <th>Category</th>
               <th>Phone</th>
               <th>Status</th>
-              <th>Pickup</th>
+              <th>Region / Pickup</th>
             </tr>
           </thead>
 
@@ -164,19 +164,19 @@ export default function User_Dashboard() {
               displayedRows.map((d) => {
                 const rowId = d.id as number;
                 const title = (d.title as string) ?? "—";
-                const sizes = Array.isArray(d.sizes) ? (d.sizes as string[]).join(", ") : "—";
+                const quantity = d.quantity ? `${d.quantity} ${d.quantity_unit || 'kg'}` : "—";
                 const url = thumbUrl(d);
                 const created = d.created_at ? new Date(String(d.created_at)).toLocaleDateString() : "—";
                 const cat = (d.super_category as { name?: string } | undefined)?.name ?? "—";
                 const status = (d.status as string) ?? "—";
-                const pickup = (d.pickup_address as string) ?? "—";
+                const pickup = (d.pickup_address as string) ?? (d.region as string) ?? "—";
                 const phone = (d.contact_phone as string) ?? "—";
 
                 return (
                   <tr key={rowId}>
                     <td>Sale</td>
                     <td>{title}</td>
-                    <td>{sizes}</td>
+                    <td>{quantity}</td>
                     <td>
                       {url ? (
                         <img

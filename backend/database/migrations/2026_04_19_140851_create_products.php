@@ -56,9 +56,11 @@ return new class extends Migration
                 'draft'
             ])->default('published');
 
-            $table->string('condition')->nullable();  // new, like_new, good, fair — for single items
-            $table->string('gender')->nullable();     // boy, girl, unisex — for single items
-            $table->string('age_range')->nullable();  // 0-3m, 3-6m, 1-3y — for single items
+            $table->string('condition')->nullable();  // fresh, dried, processed
+            $table->decimal('quantity', 10, 2)->nullable();
+            $table->string('quantity_unit')->nullable(); // kg, ton, hectare
+            $table->date('harvest_date')->nullable();
+            $table->string('region')->nullable();
             $table->string('brand')->nullable();
             $table->string('season')->nullable();
             $table->json('sizes')->nullable();

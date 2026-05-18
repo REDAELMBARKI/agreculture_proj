@@ -29,10 +29,10 @@ import CustomSelect from "./common/CustomSelect";
 // --- Types ---
 interface InitData {
   categories: any[];
+  regions: any[];
   cities: any[];
-  ageRanges: any[];
-  clothingSizes: any[];
-  shoeSizes: any[];
+  quantityUnits: any[];
+  harvestSeasons: any[];
   conditions: any[];
   listingTypes: any[];
 }
@@ -40,14 +40,14 @@ interface InitData {
 interface FilterState {
   search: string;
   category: string;
+  regions: number[];
   cities: number[];
   mode: string[];
-  age_range: string[];
-  gender: string;
+  harvest_season: string[];
+  quantity_unit: string;
   condition: string;
   min_price: string;
   max_price: string;
-  sizes: string[];
   free_only: boolean;
   with_media: boolean;
   sort: string;
@@ -65,14 +65,14 @@ const Marketplace: React.FC = () => {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     category: "",
+    regions: [],
     cities: [],
     mode: [],
-    age_range: [],
-    gender: "",
+    harvest_season: [],
+    quantity_unit: "",
     condition: "",
     min_price: "",
     max_price: "",
-    sizes: [],
     free_only: false,
     with_media: false,
     sort: "newest",
@@ -97,19 +97,19 @@ const Marketplace: React.FC = () => {
     const params: any = {
       search: filters.search,
       category: filters.category,
-      gender: filters.gender,
       condition: filters.condition,
       min_price: filters.min_price,
       max_price: filters.max_price,
       free_only: filters.free_only ? "1" : undefined,
       sort: filters.sort,
+      quantity_unit: filters.quantity_unit,
     };
     
     // Arrays
+    if (filters.regions.length > 0) params['regions'] = filters.regions;
     if (filters.cities.length > 0) params['cities'] = filters.cities;
     if (filters.mode.length > 0) params['mode'] = filters.mode;
-    if (filters.age_range.length > 0) params['age_range'] = filters.age_range;
-    if (filters.sizes.length > 0) params['sizes'] = filters.sizes;
+    if (filters.harvest_season.length > 0) params['harvest_season'] = filters.harvest_season;
 
     api.get(route('marketplace.listings', params).toString())
       .then(res => {
@@ -152,14 +152,14 @@ const Marketplace: React.FC = () => {
     setFilters({
       search: "",
       category: "",
+      regions: [],
       cities: [],
       mode: [],
-      age_range: [],
-      gender: "",
+      harvest_season: [],
+      quantity_unit: "",
       condition: "",
       min_price: "",
       max_price: "",
-      sizes: [],
       free_only: false,
       with_media: false,
       sort: "newest",

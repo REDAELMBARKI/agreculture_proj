@@ -13,50 +13,43 @@ class FilterAttributeSeeder extends Seeder
     public function run(): void
     {
         $attributes = [
-            'ageRanges' => [
-                ['id' => 1, 'label' => '0-1 ans', 'value' => '0-1 ans'],
-                ['id' => 2, 'label' => '1-3 ans', 'value' => '1-3 ans'],
-                ['id' => 3, 'label' => '3-6 ans', 'value' => '3-6 ans'],
-                ['id' => 4, 'label' => '6-10 ans', 'value' => '6-10 ans'],
-                ['id' => 5, 'label' => '10-14 ans', 'value' => '10-14 ans'],
+            'quantityUnits' => [
+                ['id' => 1, 'label' => 'Kilogramme (kg)', 'value' => 'kg'],
+                ['id' => 2, 'label' => 'Tonne (T)', 'value' => 'ton'],
+                ['id' => 3, 'label' => 'Hectare (Ha)', 'value' => 'hectare'],
+                ['id' => 4, 'label' => 'Litre (L)', 'value' => 'litre'],
+                ['id' => 5, 'label' => 'Unité', 'value' => 'unit'],
             ],
-            'clothingSizes' => [
-                ['id' => 1, 'label' => '3 mois', 'value' => '3m'],
-                ['id' => 2, 'label' => '6 mois', 'value' => '6m'],
-                ['id' => 3, 'label' => '1T', 'value' => '1t'],
-                ['id' => 4, 'label' => '2T', 'value' => '2t'],
-                ['id' => 5, 'label' => '4T', 'value' => '4t'],
+            'harvestSeasons' => [
+                ['id' => 1, 'label' => 'Printemps', 'value' => 'spring'],
+                ['id' => 2, 'label' => 'Été', 'value' => 'summer'],
+                ['id' => 3, 'label' => 'Automne', 'value' => 'autumn'],
+                ['id' => 4, 'label' => 'Hiver', 'value' => 'winter'],
+                ['id' => 5, 'label' => 'Toute l\'année', 'value' => 'year-round'],
             ],
-            'shoeSizes' => [
-                ['id' => 1, 'label' => '20 EU', 'value' => '20'],
-                ['id' => 2, 'label' => '24 EU', 'value' => '24'],
-                ['id' => 3, 'label' => '28 EU', 'value' => '28'],
-                ['id' => 4, 'label' => '32 EU', 'value' => '32'],
+            'soilTypes' => [
+                ['id' => 1, 'label' => 'Sableux', 'value' => 'sandy'],
+                ['id' => 2, 'label' => 'Argileux', 'value' => 'clayey'],
+                ['id' => 3, 'label' => 'Limoneux', 'value' => 'loamy'],
+                ['id' => 4, 'label' => 'Calcaire', 'value' => 'calcareous'],
             ],
             'conditions' => [
-                ['id' => 1, 'label' => 'Neuf', 'value' => 'Neuf', 'color' => '#00b894'],
-                ['id' => 2, 'label' => 'Très bon état', 'value' => 'Très bon état', 'color' => '#0984e3'],
-                ['id' => 3, 'label' => 'Bon état', 'value' => 'Bon état', 'color' => '#fdcb6e'],
-                ['id' => 4, 'label' => 'État correct', 'value' => 'État correct', 'color' => '#e17055'],
+                ['id' => 1, 'label' => 'Frais', 'value' => 'fresh', 'color' => '#00b894'],
+                ['id' => 2, 'label' => 'Séché', 'value' => 'dried', 'color' => '#0984e3'],
+                ['id' => 3, 'label' => 'Transformé', 'value' => 'processed', 'color' => '#fdcb6e'],
+                ['id' => 4, 'label' => 'Standard', 'value' => 'standard', 'color' => '#e17055'],
             ],
             'listingTypes' => [
                 ['id' => 1, 'label' => 'À vendre', 'icon' => '🛒', 'value' => 'sell'],
                 ['id' => 2, 'label' => 'À donner / Gratuit', 'icon' => '🎁', 'value' => 'donate'],
                 ['id' => 3, 'label' => 'Échange', 'icon' => '🔄', 'value' => 'swap'],
             ],
-            'cities' => [
-                ['id' => 1, 'label' => 'Casablanca', 'districts' => [['id' => 101, 'label' => 'Maarif'], ['id' => 102, 'label' => 'Anfa']]],
-                ['id' => 2, 'label' => 'Rabat', 'districts' => [['id' => 201, 'label' => 'Agdal'], ['id' => 202, 'label' => 'Hay Riad']]],
-                ['id' => 3, 'label' => 'Marrakech', 'districts' => [['id' => 301, 'label' => 'Gueliz'], ['id' => 302, 'label' => 'Hivernage']]],
-                ['id' => 4, 'label' => 'Agadir', 'districts' => [['id' => 401, 'label' => 'Cité Dakhla'], ['id' => 402, 'label' => 'Bensergao']]],
-                ['id' => 5, 'label' => 'Tanger', 'districts' => [['id' => 501, 'label' => 'Malabata'], ['id' => 502, 'label' => 'Marshane']]],
-            ],
-            'materials' => [
-                ['id' => 1, 'label' => 'Coton', 'value' => 'coton'],
-                ['id' => 2, 'label' => 'Laine', 'value' => 'laine'],
-                ['id' => 3, 'label' => 'Polyester', 'value' => 'polyester'],
-                ['id' => 4, 'label' => 'Soie', 'value' => 'soie'],
-                ['id' => 5, 'label' => 'Lin', 'value' => 'lin'],
+            'regions' => [
+                ['id' => 1, 'label' => 'Gharb-Chrarda-Beni Hssen', 'value' => 'gharb'],
+                ['id' => 2, 'label' => 'Souss-Massa', 'value' => 'souss'],
+                ['id' => 3, 'label' => 'Marrakech-Safi', 'value' => 'marrakech-safi'],
+                ['id' => 4, 'label' => 'Fès-Meknès', 'value' => 'fes-meknes'],
+                ['id' => 5, 'label' => 'Tanger-Tétouan-Al Hoceïma', 'value' => 'tanger'],
             ],
             'colors' => [
                 ['id' => 1, 'label' => 'Noir', 'value' => 'Noir', 'hex' => '#000000'],

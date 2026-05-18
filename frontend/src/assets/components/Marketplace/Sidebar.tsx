@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
 import { 
   Search, 
   ChevronRight, 
   Check,
   Camera,
   X,
-  ChevronDown
+  ChevronDown,
+  Leaf,
+  Calendar,
+  Map as MapIcon,
+  Scale
 } from 'lucide-react';
 import { 
   MapPoint as MapPin, 
@@ -41,7 +44,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   loading = false
 }) => {
   const { colors } = useTheme();
-  const [sizeTab, setSizeTab] = useState<'clothes' | 'shoes'>('clothes');
 
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     <div style={{
@@ -124,8 +126,35 @@ const Sidebar: React.FC<SidebarProps> = ({
             value={filters.category}
             onChange={(val) => onFilterChange('category', val)}
             placeholder="Choisir catégorie"
-            icon={<ShoppingBag size={18} weight="BoldDuotone" color={colors.iconCoral} />}
+            icon={<Leaf size={18} weight="bold" color={colors.iconCoral} />}
           />
+        </div>
+
+        {/* Région */}
+        <div style={{ marginBottom: '20px' }}>
+          <SectionLabel>Région</SectionLabel>
+          <CustomSelect 
+            multiple={true}
+            searchable={true}
+            options={initData?.regions || []}
+            value={filters.regions || []}
+            onChange={(val) => onFilterChange('regions', val)}
+            placeholder="Toutes les régions"
+            icon={<MapIcon size={18} weight="bold" color={colors.iconCoral} />}
+          />
+          {/* Selected region pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+            {(filters.regions || []).map((regionId: any) => {
+              const region = initData?.regions?.find((r: any) => r.id === regionId);
+              if (!region) return null;
+              return (
+                <div key={regionId} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px', border: `1px solid ${colors.infoText}`, backgroundColor: colors.infoBg, color: colors.infoText, fontSize: '11px', fontWeight: '600' }}>
+                  {region.label}
+                  <X size={12} style={{ cursor: 'pointer' }} onClick={() => onToggleArrayFilter('regions', regionId)} strokeWidth={2} />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Ville - Secteur */}
@@ -140,32 +169,19 @@ const Sidebar: React.FC<SidebarProps> = ({
             placeholder="Toutes les villes"
             icon={<MapPin size={18} weight="BoldDuotone" color={colors.iconCoral} />}
           />
-          {/* Selected city pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-            {(filters.cities || []).map((cityId: any) => {
-              const city = initData?.cities?.find((c: any) => c.id === cityId);
-              if (!city) return null;
-              return (
-                <div key={cityId} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px', border: `1px solid ${colors.infoText}`, backgroundColor: colors.infoBg, color: colors.infoText, fontSize: '11px', fontWeight: '600' }}>
-                  {city.label}
-                  <X size={12} style={{ cursor: 'pointer' }} onClick={() => onToggleArrayFilter('cities', cityId)} strokeWidth={2} />
-                </div>
-              );
-            })}
-          </div>
         </div>
 
 
-        {/* Tranche d'âge */}
+        {/* Saison de récolte */}
         <div style={{ marginBottom: '20px' }}>
-          <SectionLabel>Tranche d'âge</SectionLabel>
+          <SectionLabel>Saison de récolte</SectionLabel>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {initData?.ageRanges?.map((age: any) => {
-              const active = filters.age_range?.includes(age.value);
+            {initData?.harvestSeasons?.map((season: any) => {
+              const active = filters.harvest_season?.includes(season.value);
               return (
                 <button 
-                  key={age.value}
-                  onClick={() => onToggleArrayFilter('age_range', age.value)}
+                  key={season.value}
+                  onClick={() => onToggleArrayFilter('harvest_season', season.value)}
                   style={{ 
                     padding: '6px 12px', 
                     borderRadius: '20px', 
@@ -177,29 +193,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                     cursor: 'pointer'
                   }}
                 >
-                  {age.label}
+                  {season.label}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Genre */}
+        {/* Unité de quantité */}
         <div style={{ marginBottom: '20px' }}>
-          <SectionLabel>Genre</SectionLabel>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {['girl', 'boy', 'both'].map((g) => {
-              const active = filters.gender === g;
-              const labels: any = { girl: 'Fille', boy: 'Garçon', both: 'Mixte' };
-              const Icon = g === 'both' ? People : User;
+          <SectionLabel>Unité de quantité</SectionLabel>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {initData?.quantityUnits?.map((unit: any) => {
+              const active = filters.quantity_unit === unit.value;
               return (
                 <button 
-                  key={g}
-                  onClick={() => onFilterChange('gender', filters.gender === g ? "" : g)}
+                  key={unit.value}
+                  onClick={() => onFilterChange('quantity_unit', filters.quantity_unit === unit.value ? "" : unit.value)}
                   style={{ 
-                    flex: 1,
-                    padding: '8px 0', 
-                    borderRadius: '10px', 
+                    padding: '6px 12px', 
+                    borderRadius: '20px', 
                     border: active ? 'none' : `1px solid ${colors.border}`,
                     backgroundColor: active ? colors.coral : colors.bgSecondary,
                     color: active ? colors.bgSecondary : colors.textSecondary,
@@ -207,55 +220,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     fontWeight: '600',
                     cursor: 'pointer',
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     gap: '4px'
                   }}
                 >
-                  <Icon size={18} weight="BoldDuotone" color={active ? colors.bgSecondary : colors.iconMuted} />
-                  {labels[g]}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Taille */}
-        <div style={{ marginBottom: '20px' }}>
-          <SectionLabel>Taille</SectionLabel>
-          <div style={{ display: 'flex', borderBottom: `1px solid ${colors.border}`, marginBottom: '12px' }}>
-            <button 
-              onClick={() => setSizeTab('clothes')}
-              style={{ flex: 1, padding: '8px 0', background: 'none', border: 'none', borderBottom: sizeTab === 'clothes' ? `2px solid ${colors.coral}` : 'none', color: sizeTab === 'clothes' ? colors.coral : colors.textSecondary, fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
-            >
-              Vêtements
-            </button>
-            <button 
-              onClick={() => setSizeTab('shoes')}
-              style={{ flex: 1, padding: '8px 0', background: 'none', border: 'none', borderBottom: sizeTab === 'shoes' ? `2px solid ${colors.coral}` : 'none', color: sizeTab === 'shoes' ? colors.coral : colors.textSecondary, fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
-            >
-              Chaussures
-            </button>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {(sizeTab === 'clothes' ? initData?.clothingSizes : initData?.shoeSizes || [])?.map((s: any) => {
-              const active = filters.sizes?.includes(s.value);
-              return (
-                <button 
-                  key={s.value}
-                  onClick={() => onToggleArrayFilter('sizes', s.value)}
-                  style={{ 
-                    padding: '4px 10px', 
-                    borderRadius: '15px', 
-                    border: active ? 'none' : `1px solid ${colors.border}`,
-                    backgroundColor: active ? colors.coral : colors.bgSecondary,
-                    color: active ? colors.bgSecondary : colors.textSecondary,
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {s.label}
+                  <Scale size={14} />
+                  {unit.label}
                 </button>
               );
             })}
@@ -264,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* État */}
         <div style={{ marginBottom: '20px' }}>
-          <SectionLabel>État</SectionLabel>
+          <SectionLabel>État du produit</SectionLabel>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {initData?.conditions?.map((cond: any) => {
               const active = filters.condition === cond.value;
@@ -322,7 +292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Toggle Switches (bottom) */}
         <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
-            { key: 'with_media', label: 'Annonces avec photos-vidéos uniquement', icon: <Camera size={14} strokeWidth={2} /> }
+            { key: 'with_media', label: 'Annonces avec photos uniquement', icon: <Camera size={14} strokeWidth={2} /> }
           ].map((item) => (
             <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ backgroundColor: colors.darkNavy, color: colors.bgSecondary, padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

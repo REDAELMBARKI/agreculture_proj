@@ -79,88 +79,89 @@ class AnnouncementSeeder extends Seeder
 
     private function createCategories(): void
     {
-        // Create 8 top-level super categories with their sub-categories
+        // Create top-level agriculture super categories with their sub-categories
         $superCategories = [
             [
-                'name' => 'Jouets', 'slug' => 'jouets', 'icon' => 'gamepad-2',
-                'image' => 'https://images.unsplash.com/photo-1531346727404-cc74a445f02c?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Crops', 'slug' => 'crops', 'icon' => 'leaf',
+                'image' => 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Jouets éducatifs', 'slug' => 'jouets-educatifs'],
-                    ['name' => 'Peluches', 'slug' => 'peluches'],
-                    ['name' => 'Jeux de construction', 'slug' => 'jeux-construction'],
-                    ['name' => 'Figurines', 'slug' => 'figurines'],
-                    ['name' => 'Véhicules', 'slug' => 'vehicules'],
+                    ['name' => 'Cereals', 'slug' => 'cereals'],
+                    ['name' => 'Fruits', 'slug' => 'fruits'],
+                    ['name' => 'Vegetables', 'slug' => 'vegetables'],
+                    ['name' => 'Legumes', 'slug' => 'legumes'],
                 ]
             ],
             [
-                'name' => 'Vêtements', 'slug' => 'vetements', 'icon' => 'shirt',
-                'image' => 'https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Livestock', 'slug' => 'livestock', 'icon' => 'cow',
+                'image' => 'https://images.unsplash.com/photo-1547496502-affa22d38842?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'T-shirts', 'slug' => 't-shirts'],
-                    ['name' => 'Pantalons', 'slug' => 'pantalons'],
-                    ['name' => 'Robes', 'slug' => 'robes'],
-                    ['name' => 'Costumes traditionnels', 'slug' => 'costumes-traditionnels'],
-                    ['name' => 'Pyjamas', 'slug' => 'pyjamas'],
+                    ['name' => 'Cattle', 'slug' => 'cattle'],
+                    ['name' => 'Poultry', 'slug' => 'poultry'],
+                    ['name' => 'Sheep & Goats', 'slug' => 'sheep-goats'],
+                    ['name' => 'Honeybees', 'slug' => 'honeybees'],
                 ]
             ],
             [
-                'name' => 'Livres', 'slug' => 'livres', 'icon' => 'book-open',
-                'image' => 'https://images.unsplash.com/photo-1491843351663-8511e81d312a?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Seeds', 'slug' => 'seeds', 'icon' => 'sprout',
+                'image' => 'https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Contes marocains', 'slug' => 'contes-marocains'],
-                    ['name' => 'Livres éducatifs', 'slug' => 'livres-educatifs'],
-                    ['name' => 'Coloriages', 'slug' => 'coloriages'],
-                    ['name' => 'Histoires', 'slug' => 'histoires'],
+                    ['name' => 'Crop Seeds', 'slug' => 'crop-seeds'],
+                    ['name' => 'Vegetable Seeds', 'slug' => 'vegetable-seeds'],
+                    ['name' => 'Fruit Seeds', 'slug' => 'fruit-seeds'],
                 ]
             ],
             [
-                'name' => 'Mobilier', 'slug' => 'mobilier', 'icon' => 'package',
-                'image' => 'https://images.unsplash.com/photo-1533091902244-f9a912da2a5e?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Equipment', 'slug' => 'equipment', 'icon' => 'tractor',
+                'image' => 'https://images.unsplash.com/photo-1530268576344-966953713f01?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Lits bébé', 'slug' => 'lits-bebe'],
-                    ['name' => 'Chambres enfant', 'slug' => 'chambres-enfant'],
-                    ['name' => 'Tables et chaises', 'slug' => 'tables-chaises'],
-                    ['name' => 'Rangements', 'slug' => 'rangements'],
+                    ['name' => 'Tractors', 'slug' => 'tractors'],
+                    ['name' => 'Harvesters', 'slug' => 'harvesters'],
+                    ['name' => 'Plows', 'slug' => 'plows'],
+                    ['name' => 'Tools', 'slug' => 'tools'],
                 ]
             ],
             [
-                'name' => 'Bébé', 'slug' => 'bebe', 'icon' => 'baby',
-                'image' => 'https://images.unsplash.com/photo-1522771935876-2497116a7a9e?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Land', 'slug' => 'land', 'icon' => 'map',
+                'image' => 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Poussettes', 'slug' => 'poussettes'],
-                    ['name' => 'Porte-bébés', 'slug' => 'porte-bebes'],
-                    ['name' => 'Allaitement', 'slug' => 'allaitement'],
-                    ['name' => 'Doudous', 'slug' => 'doudous'],
+                    ['name' => 'Farm Land', 'slug' => 'farm-land'],
+                    ['name' => 'Orchards', 'slug' => 'orchards'],
+                    ['name' => 'Grazing Land', 'slug' => 'grazing-land'],
                 ]
             ],
             [
-                'name' => 'Jeux', 'slug' => 'jeux', 'icon' => 'dice-5',
-                'image' => 'https://images.unsplash.com/photo-1558023784-f8343393cb06?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Services', 'slug' => 'services', 'icon' => 'handshake',
+                'image' => 'https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Jeux de société', 'slug' => 'jeux-societe'],
-                    ['name' => 'Jeux d\'extérieur', 'slug' => 'jeux-exterieur'],
-                    ['name' => 'Puzzles', 'slug' => 'puzzles'],
-                    ['name' => 'Jeux vidéo', 'slug' => 'jeux-video'],
+                    ['name' => 'Consulting', 'slug' => 'consulting'],
+                    ['name' => 'Labor', 'slug' => 'labor'],
+                    ['name' => 'Transportation', 'slug' => 'transportation'],
                 ]
             ],
             [
-                'name' => 'Chaussures', 'slug' => 'chaussures', 'icon' => 'footprints',
-                'image' => 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Fertilizers', 'slug' => 'fertilizers', 'icon' => 'flask',
+                'image' => 'https://images.unsplash.com/photo-1628352081506-83c43123ed6d?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Chaussures sport', 'slug' => 'chaussures-sport'],
-                    ['name' => 'Chaussures cuir', 'slug' => 'chaussures-cuir'],
-                    ['name' => 'Sandales', 'slug' => 'sandales'],
-                    ['name' => 'Bottes', 'slug' => 'bottes'],
+                    ['name' => 'Organic Fertilizers', 'slug' => 'organic-fertilizers'],
+                    ['name' => 'Chemical Fertilizers', 'slug' => 'chemical-fertilizers'],
+                    ['name' => 'Pesticides', 'slug' => 'pesticides'],
                 ]
             ],
             [
-                'name' => 'Activités', 'slug' => 'activites', 'icon' => 'palette',
-                'image' => 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=800',
+                'name' => 'Irrigation', 'slug' => 'irrigation', 'icon' => 'water',
+                'image' => 'https://images.unsplash.com/photo-1563513330620-64295f748493?auto=format&fit=crop&q=80&w=800',
                 'subcategories' => [
-                    ['name' => 'Peinture', 'slug' => 'peinture'],
-                    ['name' => 'Musique', 'slug' => 'musique'],
-                    ['name' => 'Sport', 'slug' => 'sport'],
-                    ['name' => 'Loisirs créatifs', 'slug' => 'loisirs-creatifs'],
+                    ['name' => 'Drip Systems', 'slug' => 'drip-systems'],
+                    ['name' => 'Sprinklers', 'slug' => 'sprinklers'],
+                    ['name' => 'Pumps', 'slug' => 'pumps'],
+                ]
+            ],
+            [
+                'name' => 'Organic', 'slug' => 'organic', 'icon' => 'check-circle',
+                'image' => 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
+                'subcategories' => [
+                    ['name' => 'Organic Produce', 'slug' => 'organic-produce'],
+                    ['name' => 'Eco-friendly Supplies', 'slug' => 'eco-supplies'],
                 ]
             ],
         ];
@@ -202,16 +203,15 @@ class AnnouncementSeeder extends Seeder
         $categories = Category::whereNotNull('parent_id')->get();
         $users = User::whereIn("id" , [1,6])->get();
 
-        // Realistic Moroccan kids product names
+        // Realistic Agriculture product names
         $productNames = [
-            'Jouet Educatif Enfant Maroc', 'Vêtement Traditionnel Enfant', 'Livre Contes Marocains',
-            'Lit Bébé Design Marocain', 'Poussette Luxe', 'Jeu de Société Arabe',
-            'Chaussures Enfant Cuir', 'Kit Activité Créative', 'Tablette Éducative Enfant',
-            'Vélo Enfant Sécurisé', 'Costume Traditionnel Maroc', 'Puzzle Géographie Maroc',
-            'Sac à Dos École Maroc', 'Jouet Bois Artisanal', 'Robe Enfant Soie',
-            'Livre Histoire Maroc', 'Meuble Chambre Enfant', 'Jeu Construction Maroc',
-            'Chaussures Sport Enfant', 'Activité Peinture Maroc', 'Jouet Peluche Animaux',
-            'Vêtement Sport Enfant', 'Livre Coloriage Maroc'
+            'Blé Tendre de Qualité', 'Tomates Cerises Bio', 'Bétail Bovin Sélectionné',
+            'Tracteur Massey Ferguson', 'Semences de Maïs Hybride', 'Engrais NPK 15-15-15',
+            'Système d\'Irrigation Goutte à Goutte', 'Terrain Agricole 5 Hectares',
+            'Moutons de Race Sardi', 'Poulets de Chair Fermiers', 'Miel Pur de l\'Atlas',
+            'Pommes de Terre de Saison', 'Huile d\'Olive Vierge', 'Matériel de Récolte',
+            'Conseils en Agronomie', 'Main d\'œuvre Saisonnière', 'Pesticides Bio',
+            'Oignons Rouges de Meknès', 'Citrons Frais du Souss', 'Fourrage pour Bétail'
         ];
 
         // Create 20 products distributed across categories
@@ -224,16 +224,15 @@ class AnnouncementSeeder extends Seeder
             $product = Product::factory()->create([
                 'title' => $productName,
                 'slug' => Str::slug($productName),
-                'description' => 'Produit de qualité pour enfants au Maroc. ' . fake()->sentence(),
-                'price' => fake()->randomFloat(2, 50, 500),
+                'description' => 'Produit agricole de qualité supérieure au Maroc. ' . fake()->sentence(),
+                'price' => fake()->randomFloat(2, 100, 5000),
                 'listing_mode' => $mode,
-                'status' => 'draft', // Set status to draft by default
+                'status' => 'published',
                 'user_id' => $user->id,
                 'super_category_id' => $parentCategory->id,
                 'views_count' => fake()->numberBetween(10, 1000),
                 'favorites_count' => fake()->numberBetween(0, 50),
-                'condition' => fake()->randomElement(['Neuf', 'Très bon état', 'Bon état']),
-                'age_range' => fake()->randomElement(['0-2 ans', '2-5 ans', '5-8 ans', '8-12 ans']),
+                'condition' => fake()->randomElement(['Excellent', 'Bon état', 'Standard']),
                 'contact_phone' => '06' . fake()->numerify('########'),
             ]);
 

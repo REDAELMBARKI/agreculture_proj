@@ -44,7 +44,7 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getPopularProducts(array $filters): Collection
     {
         $query = $this->product->select([
-            'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+            'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
             'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'categories:id,name,slug', 'address', 'thumbnail', 'gallery'])
@@ -52,10 +52,6 @@ class HomepageRepository implements HomepageRepositoryInterface
             ->whereIn('status', ['published', 'draft', 'sell', 'donate'])
             ->orderBy('views_count', 'desc')
             ->limit(10);
-
-        if (!empty($filters['age'])) {
-            $query->where('age_range', $filters['age']);
-        }
 
         if (!empty($filters['category_id'])) {
             $query->where('super_category_id', $filters['category_id']);
@@ -67,7 +63,7 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getNewArrivals(): Collection
     {
         return $this->product->select([
-            'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+            'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
             'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'categories:id,name,slug', 'address', 'thumbnail', 'gallery'])
@@ -81,7 +77,7 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getProductsByCategory(int $categoryId, int $limit = 10): Collection
     {
         return $this->product->select([
-            'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+            'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
             'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'categories:id,name,slug', 'address', 'thumbnail', 'gallery'])
@@ -100,7 +96,7 @@ class HomepageRepository implements HomepageRepositoryInterface
         
         foreach ($categories as $category) {
             $products = $this->product->select([
-                'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+                'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
                 'views_count', 'favorites_count', 'created_at', 'user_id'
             ])
                 ->with(['user:id,name', 'categories:id,name,slug', 'address', 'thumbnail', 'gallery'])
@@ -155,7 +151,7 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getNearbyProducts(string $city): Collection
     {
         return Product::select([
-            'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+            'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
             'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'addresses' => function ($query) use ($city) {
@@ -175,8 +171,8 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getFreeItems(): Collection
     {
         return Product::select([
-            'id', 'title', 'slug', 'age_range', 'condition', 'views_count',
-            'favorites_count', 'created_at', 'user_id'
+            'id', 'title', 'slug', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
+            'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'categories:id,name,slug'])
             ->where('listing_mode', 'donate')
@@ -189,7 +185,7 @@ class HomepageRepository implements HomepageRepositoryInterface
     public function getBoostedListings(): Collection
     {
         return Product::select([
-            'id', 'title', 'slug', 'price', 'listing_mode', 'age_range', 'condition',
+            'id', 'title', 'slug', 'price', 'listing_mode', 'condition', 'region', 'harvest_date', 'quantity', 'quantity_unit',
             'views_count', 'favorites_count', 'created_at', 'user_id'
         ])
             ->with(['user:id,name', 'categories:id,name,slug', 'thumbnail'])

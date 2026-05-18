@@ -21,21 +21,20 @@ class ProductFactory extends Factory
         $listingModes = ['sell', 'donate'];
         $listingTypes = ['single', 'collection'];
         $statuses = ['sell', 'donate', 'reserved', 'sold', 'donated'];
-        $conditions = ['new', 'like_new', 'good', 'fair'];
-        $genders = ['boy', 'girl', 'unisex'];
-        $ageRanges = ['0-3m', '3-6m', '6-12m', '1-2y', '2-3y', '3-5y', '5-7y', '7-10y', '10-12y'];
-        $brands = ['Nike', 'Adidas', 'H&M', 'Zara', 'GAP', 'Carter\'s', 'Mothercare', 'Next', 'Primark'];
-        $seasons = ['spring', 'summer', 'autumn', 'winter'];
+        $conditions = ['fresh', 'dried', 'processed', 'standard'];
+        $brands = ['John Deere', 'Massey Ferguson', 'New Holland', 'Kubota', 'Claas', 'Fendt', 'Case IH'];
+        $seasons = ['spring', 'summer', 'autumn', 'winter', 'year-round'];
         $handoverMethods = ['pickup', 'delivery', 'both'];
+        $quantityUnits = ['kg', 'ton', 'hectare', 'litre', 'unit'];
 
         $listingMode = fake()->randomElement($listingModes);
-        $price = $listingMode === 'sell' ? fake()->randomFloat(2, 5, 150) : null;
+        $price = $listingMode === 'sell' ? fake()->randomFloat(2, 50, 5000) : null;
 
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'listing_mode' => $listingMode,
             'listing_type' => fake()->randomElement($listingTypes),
-            'title' => fake()->words(3, true) . ' - ' . fake()->randomElement(['Kids', 'Children', 'Baby', 'Toddler']),
+            'title' => fake()->words(3, true) . ' - ' . fake()->randomElement(['Crops', 'Livestock', 'Equipment', 'Harvest']),
             'description' => fake()->sentences(3, true),
             'price' => $price,
             'currency' => 'MAD',
@@ -43,12 +42,14 @@ class ProductFactory extends Factory
             'handover_method' => fake()->randomElement($handoverMethods),
             'status' => fake()->randomElement($statuses),
             'condition' => fake()->randomElement($conditions),
-            'gender' => fake()->randomElement($genders),
-            'age_range' => fake()->randomElement($ageRanges),
+            'quantity' => fake()->randomFloat(2, 1, 100),
+            'quantity_unit' => fake()->randomElement($quantityUnits),
+            'harvest_date' => fake()->dateTimeBetween('-6 months', '+6 months'),
+            'region' => fake()->randomElement(['Gharb', 'Haouz', 'Souss', 'Oriental', 'Loukkos']),
             'brand' => fake()->randomElement($brands),
             'season' => fake()->randomElement($seasons),
-            'sizes' => fake()->randomElements(['XS', 'S', 'M', 'L', 'XL', '2T', '3T', '4T'], rand(1, 3)),
-            'colors' => fake()->randomElements(['red', 'blue', 'green', 'yellow', 'pink', 'purple', 'orange', 'black', 'white'], rand(1, 3)),
+            'sizes' => null,
+            'colors' => null,
             'views_count' => fake()->numberBetween(0, 1000),
             'favorites_count' => fake()->numberBetween(0, 50),
             'created_at' => fake()->dateTimeBetween('-3 months', 'now'),

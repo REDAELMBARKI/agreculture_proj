@@ -21,22 +21,15 @@ export function Admin_Inventory() {
 
   const navigate = useNavigate();
   const importantItemOptions = [
-    "shirt",
-    "t-shirt",
-    "trouser",
-    "jacket",
-    "jeans",
-    "dress",
-    "shoes",
-    "sneakers",
-    "bag",
-    "laptop",
-    "phone",
-    "book",
-    "furniture",
-    "toy",
-    "kitchen",
-    "sports",
+    "crops",
+    "livestock",
+    "seeds",
+    "equipment",
+    "land",
+    "services",
+    "fertilizers",
+    "water",
+    "organic",
     "other",
   ];
 
@@ -61,8 +54,6 @@ export function Admin_Inventory() {
             category: item.category.toLowerCase(),
             quantity: item.quantity,
             condition: item.condition,
-            recommended_age: item.recommended_age,
-            gender: item.gender,
             listed_date: item.created_at,
             image: item.image_url
           }));
@@ -163,10 +154,10 @@ export function Admin_Inventory() {
             <thead>
               <tr>
                 <th>Listing ID</th>
-                <th>User ID</th>
+                <th>Farmer ID</th>
                 <th>Item</th>
                 <th>Category</th>
-                <th>Size</th>
+                <th>Quantity</th>
                 <th>Image</th>
                 <th>Date Listed</th>
               </tr>
@@ -179,10 +170,10 @@ export function Admin_Inventory() {
                   return (
                     <tr key={index}>
                       <td>{item.inventory_ID}</td>
-                      <td>{item.donor_ID || "Unknown"}</td>
+                      <td>{item.farmer_ID || item.user_id || "Unknown"}</td>
                       <td>{item.item}</td>
                       <td>{item.category}</td>
-                      <td>{item.size}</td>
+                      <td>{item.quantity}</td>
                       <td>
                         {imgUrl ? (
                           <img

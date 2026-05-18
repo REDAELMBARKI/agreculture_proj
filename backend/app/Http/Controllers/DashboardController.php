@@ -127,26 +127,26 @@ class DashboardController extends Controller
             ->get();
 
         $counts = [
-            'Clothes' => 0,
-            'Shoes' => 0,
-            'Accessories' => 0,
+            'Crops' => 0,
+            'Livestock' => 0,
+            'Other' => 0,
         ];
 
         foreach ($products as $product) {
             $categoryName = strtolower((string) ($product->superCategory?->name ?? ''));
-            if (str_contains($categoryName, 'shoe')) {
-                $counts['Shoes']++;
-            } elseif (str_contains($categoryName, 'cloth') || str_contains($categoryName, 'wear')) {
-                $counts['Clothes']++;
+            if (str_contains($categoryName, 'crop') || str_contains($categoryName, 'récolte')) {
+                $counts['Crops']++;
+            } elseif (str_contains($categoryName, 'live') || str_contains($categoryName, 'bétail')) {
+                $counts['Livestock']++;
             } else {
-                $counts['Accessories']++;
+                $counts['Other']++;
             }
         }
 
         return response()->json([
-            ['category' => 'Clothes', 'count' => $counts['Clothes']],
-            ['category' => 'Shoes', 'count' => $counts['Shoes']],
-            ['category' => 'Accessories', 'count' => $counts['Accessories']],
+            ['category' => 'Crops', 'count' => $counts['Crops']],
+            ['category' => 'Livestock', 'count' => $counts['Livestock']],
+            ['category' => 'Other', 'count' => $counts['Other']],
         ]);
     }
 

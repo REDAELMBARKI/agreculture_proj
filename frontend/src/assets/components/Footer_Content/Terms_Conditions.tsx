@@ -8,7 +8,7 @@ export function Terms_Conditions() {
         <div className="terms-conditions-container">
           <h2>Terms and Conditions</h2>
           <p>
-            Welcome to TinyTrove Marketplace. By accessing or using our website, you
+            Welcome to AgriMarket Marketplace. By accessing or using our website, you
             agree to comply with and be bound by the following terms and
             conditions. Please read them carefully.
           </p>
@@ -38,14 +38,14 @@ export function Terms_Conditions() {
           <h3>4. Intellectual Property</h3>
           <p>
             All content on the website, including text, graphics, logos, and
-            images, is the property of TinyTrove Marketplace and is protected by
+            images, is the property of AgriMarket Marketplace and is protected by
             intellectual property laws. You may not use any content from the
             website without our prior written permission.
           </p>
 
           <h3>5. Limitation of Liability</h3>
           <p>
-            To the fullest extent permitted by law, TinyTrove Marketplace shall not
+            To the fullest extent permitted by law, AgriMarket Marketplace shall not
             be liable for any direct, indirect, incidental, special,
             consequential, or punitive damages arising out of or related to your
             use of the website.

@@ -11,6 +11,15 @@ import {
   ShieldCheck,
   Mail,
   Palette,
+  Leaf,
+  Sprout,
+  Tractor,
+  Map,
+  Handshake,
+  FlaskConical as Flask,
+  Droplets as Water,
+  CheckCircle,
+  Beef as Cow,
 } from "lucide-react";
 import {
   Shop as Store,
@@ -216,14 +225,15 @@ function Home() {
 
   const getCategoryIcon = (categoryName: string, size = 20) => {
     const name = categoryName.toLowerCase();
-    if (name.includes('jouet') || name.includes('toy')) return <Gamepad size={size} />;
-    if (name.includes('vêtement') || name.includes('cloth')) return <TShirt size={size} />;
-    if (name.includes('livre') || name.includes('book')) return <Book size={size} />;
-    if (name.includes('mobilier') || name.includes('furniture')) return <Home2 size={size} />;
-    if (name.includes('bébé') || name.includes('baby')) return <UserRounded size={size} />;
-    if (name.includes('jeu') || name.includes('game')) return <Gamepad size={size} />;
-    if (name.includes('chaussure') || name.includes('shoe')) return <Walking size={size} />;
-    if (name.includes('activité') || name.includes('activit') || name.includes('art')) return <Palette size={size} />;
+    if (name.includes('crop') || name.includes('récolte')) return <Leaf size={size} />;
+    if (name.includes('livestock') || name.includes('bétail')) return <Cow size={size} />;
+    if (name.includes('seed') || name.includes('semence')) return <Sprout size={size} />;
+    if (name.includes('equipment') || name.includes('matériel')) return <Tractor size={size} />;
+    if (name.includes('land') || name.includes('terrain')) return <Map size={size} />;
+    if (name.includes('service')) return <Handshake size={size} />;
+    if (name.includes('fertilizer') || name.includes('engrais')) return <Flask size={size} />;
+    if (name.includes('irrigation') || name.includes('eau')) return <Water size={size} />;
+    if (name.includes('organic') || name.includes('bio')) return <CheckCircle size={size} />;
     return <Box size={size} />;
   };
 
@@ -271,8 +281,8 @@ function Home() {
     return (
       <main className="home loading-state" style={{ backgroundColor: colors.bgPrimary }}>
         <div className="loading-content">
-          <div className="pulse-logo">TT</div>
-          <p style={{ color: colors.textSecondary }}>Preparing treasures...</p>
+          <div className="pulse-logo">AM</div>
+          <p style={{ color: colors.textSecondary }}>Preparing fresh listings...</p>
         </div>
       </main>
     );
@@ -365,7 +375,7 @@ function Home() {
             <UsersGroupRounded size={24} iconContext={{ color: colors.coral }} />
             <div>
               <strong>{homepageData?.stats?.total_users?.toLocaleString() || 0}</strong>
-              <span>Active Parents</span>
+              <span>Active Farmers</span>
             </div>
           </div>
           
@@ -375,8 +385,8 @@ function Home() {
       {/* Shop by Category Tabs */}
       <section className="shop-by-tabs-section tt-container">
         <div className="section-header-editorial">
-          <h2 className="editorial-title">Shop by Category</h2>
-          <p>Find exactly what they need, sorted by category.</p>
+          <h2 className="editorial-title">Browse Agriculture Categories</h2>
+          <p>Everything you need for your farm, sorted by category.</p>
         </div>
 
         <div className="tabs-wrapper">
@@ -606,7 +616,7 @@ function Home() {
       <section className="testimonials-redesign tt-container">
         <div className="section-header-editorial centered">
           <h2 className="editorial-title">Trust Reviews</h2>
-          <p>Join thousands of families making a difference.</p>
+          <p>Join thousands of farmers making a difference.</p>
         </div>
         <div className="testimonials-grid-redesign">
           {homepageData?.recent_reviews?.slice(0, 3).map((review) => (
@@ -614,10 +624,10 @@ function Home() {
               <div className="rating-stars">
                 {[...Array(review.rating || 5)].map((_, i) => <Star key={i} size={14} fill={colors.coral} color={colors.coral} />)}
               </div>
-              <p>"{review.comment || 'Great experience with this community. Found perfect outfits for my toddler!'}"</p>
+              <p>"{review.comment || 'Great experience with this agricultural community. Found high quality seeds for my farm!'}"</p>
               <div className="reviewer">
                 <img src={review.reviewer?.avatar || `https://ui-avatars.com/api/?name=${review.reviewer?.name || 'U'}`} alt={review.reviewer?.name} />
-                <strong>{review.reviewer?.name || 'Happy Customer'}</strong>
+                <strong>{review.reviewer?.name || 'Happy Farmer'}</strong>
               </div>
             </div>
           ))}
@@ -629,8 +639,8 @@ function Home() {
         <div className="tt-container">
           <div className="newsletter-box" style={{ backgroundColor: colors.primary, color: colors.bgPrimary }}>
             <div className="newsletter-content">
-              <h2 className="editorial-title" style={{ color: colors.bgPrimary }}>Join the TinyTrove Newsletter</h2>
-              <p>Get weekly curated treasures delivered to your inbox.</p>
+              <h2 className="editorial-title" style={{ color: colors.bgPrimary }}>Join the AgriMarket Newsletter</h2>
+              <p>Get weekly curated agricultural listings delivered to your inbox.</p>
               <form className="newsletter-form">
                 <div className="input-with-icon">
                   <Mail size={18} />
@@ -640,7 +650,7 @@ function Home() {
               </form>
             </div>
             <div className="newsletter-decor">
-              <ShoppingBag size={120} opacity={0.1} />
+              <Leaf size={120} opacity={0.1} />
             </div>
           </div>
         </div>
@@ -651,8 +661,8 @@ function Home() {
         <div className="tt-container">
           <div className="footer-grid">
             <div className="footer-brand">
-              <h3 className="editorial-title">TinyTrove</h3>
-              <p>The marketplace for pre-loved kids' gear. Build a sustainable future for the next generation.</p>
+              <h3 className="editorial-title">AgriMarket</h3>
+              <p>The marketplace for local agricultural products. Build a sustainable food future together.</p>
             </div>
             <div className="footer-links">
               <h4>Explore</h4>
@@ -672,7 +682,7 @@ function Home() {
             </div>
           </div>
           <div className="footer-bottom" style={{ borderTop: `1px solid ${colors.border}` }}>
-            <p>&copy; 2026 TinyTrove UK. All rights reserved.</p>
+            <p>&copy; 2026 AgriMarket Morocco. All rights reserved.</p>
             <div className="footer-legal">
               <Link to="/terms">Terms</Link>
               <Link to="/privacy">Privacy</Link>

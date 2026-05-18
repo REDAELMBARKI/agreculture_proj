@@ -110,7 +110,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
           <h3 style={{ fontSize: '20px', fontWeight: '800', color: colors.textPrimary, marginBottom: '12px' }}>{product.title}</h3>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <span style={{ padding: '5px 12px', backgroundColor: colors.bgTertiary, borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: colors.textSecondary }}>{product.condition}</span>
-            <span style={{ padding: '5px 12px', backgroundColor: colors.bgTertiary, borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: colors.textSecondary }}>{product.age_range}</span>
+            {product.region && <span style={{ padding: '5px 12px', backgroundColor: colors.bgTertiary, borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: colors.textSecondary }}>{product.region}</span>}
           </div>
           <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ fontSize: '24px', fontWeight: '900', color: colors.coral }}>
@@ -258,7 +258,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = memo(({ product, view, g
         <h3 style={{ fontSize: '15px', fontWeight: '800', color: colors.textPrimary, marginBottom: '10px', height: '40px', overflow: 'hidden' }}>{product.title}</h3>
         <div style={{ display: 'flex', gap: '6px', marginBottom: '15px' }}>
           <span style={{ fontSize: '10px', padding: '4px 8px', backgroundColor: colors.bgTertiary, borderRadius: '6px', color: colors.textSecondary, fontWeight: '700' }}>{product.condition}</span>
-          <span style={{ fontSize: '10px', padding: '4px 8px', backgroundColor: colors.bgTertiary, borderRadius: '6px', color: colors.textSecondary, fontWeight: '700' }}>{product.age_range}</span>
+          {product.region && <span style={{ fontSize: '10px', padding: '4px 8px', backgroundColor: colors.bgTertiary, borderRadius: '6px', color: colors.textSecondary, fontWeight: '700' }}>{product.region}</span>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
           <div style={{ fontSize: '20px', fontWeight: '900', color: product.listing_mode === 'sell' ? colors.coral : colors.success }}>

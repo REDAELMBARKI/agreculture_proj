@@ -8,8 +8,7 @@ export function Accessibility() {
         <div className="terms-conditions-container">
           <h2>Accessibility Statement</h2>
           <p>
-            TinyTrove Marketplace is committed to making our website usable for as many
-            people as possible, including users with disabilities.
+            AgriMarket Marketplace is committed to ensuring digital accessibility for all users, including farmers, buyers, and agricultural professionals.
           </p>
 
           <h3>1. Our Goal</h3>
@@ -27,9 +26,8 @@ export function Accessibility() {
 
           <h3>3. Feedback</h3>
           <p>
-            If you encounter a barrier while using the marketplace, please contact us
-            through our support channels with the page URL and a short description of
-            the issue so we can address it.
+            If you experience any difficulty accessing any part of the AgriMarket
+            Marketplace website, please contact our support team.
           </p>
         </div>
       </main>

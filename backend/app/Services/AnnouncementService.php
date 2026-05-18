@@ -82,13 +82,12 @@ class AnnouncementService
             'product_id'      => $product->id,
             'item_name'       => $product->title,
             'item_condition'  => $product->condition,
-            'item_gender'     => $product->gender,
-            'recommended_age' => $product->age_range,
             'item_brand'      => $product->brand,
             'item_season'     => $product->season,
-            'item_quantity'   => 1,
-            'item_sizes'      => $product->sizes,
-            'item_colors'     => $product->colors,
+            'item_quantity'   => $data['quantity'] ?? 1,
+            'item_quantity_unit' => $data['quantity_unit'] ?? 'kg',
+            'harvest_date'    => $data['harvest_date'] ?? null,
+            'region'          => $data['region'] ?? null,
         ];
 
         $this->announcementRepository->updateProductItem($product->id, $itemData);
@@ -147,12 +146,12 @@ class AnnouncementService
         return [
             'categories' => $categories,
             'cities' => $cities,
-            'ageRanges' => $attributes->get('ageRanges', []),
-            'clothingSizes' => $attributes->get('clothingSizes', []),
-            'shoeSizes' => $attributes->get('shoeSizes', []),
+            'regions' => $attributes->get('regions', []),
+            'quantityUnits' => $attributes->get('quantityUnits', []),
+            'harvestSeasons' => $attributes->get('harvestSeasons', []),
+            'soilTypes' => $attributes->get('soilTypes', []),
             'conditions' => $attributes->get('conditions', []),
             'listingTypes' => $attributes->get('listingTypes', []),
-            'materials' => $attributes->get('materials', []),
             'colors' => $attributes->get('colors', []),
         ];
     }

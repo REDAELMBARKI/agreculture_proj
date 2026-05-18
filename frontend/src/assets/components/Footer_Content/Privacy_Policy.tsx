@@ -8,7 +8,7 @@ export function Privacy_Policy() {
         <div className="privacy-policy-container">
           <h2>Privacy Policy</h2>
           <p>
-            At TinyTrove Marketplace, we are committed to protecting your privacy.
+            At AgriMarket Marketplace, we are committed to protecting your privacy.
             This Privacy Policy outlines how we collect, use, and safeguard your
             personal information when you use our website.
           </p>

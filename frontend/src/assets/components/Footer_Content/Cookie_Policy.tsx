@@ -8,7 +8,7 @@ export function Cookie_Policy() {
         <div className="cookie-policy-container">
           <h2>Cookie Policy</h2>
           <p>
-            At TinyTrove Marketplace, we use cookies to enhance your browsing
+            At AgriMarket Marketplace, we use cookies to enhance your browsing
             experience on our website. This Cookie Policy explains what cookies
             are, how we use them, and your choices regarding their use.
           </p>

@@ -106,7 +106,7 @@ function Header() {
       <div className="top_navbar" style={{ borderBottom: `1px solid ${colors.border}` }}>
         <div className="brand">
           <Link to="/" className="brand_logo" style={{ color: colors.textPrimary }}>
-            TinyTrove<Leaf size={24} weight="BoldDuotone" style={{ marginLeft: '8px', color: colors.primary }} />
+            AgriMarket<Leaf size={24} weight="BoldDuotone" style={{ marginLeft: '8px', color: colors.primary }} />
           </Link>
         </div>
 

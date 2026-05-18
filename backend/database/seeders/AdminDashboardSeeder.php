@@ -32,28 +32,28 @@ class AdminDashboardSeeder extends Seeder
         User::where('role_id', '!=', 12)->delete(); // Keep main admin
 
         // 1. Create Users with distributed dates
-        $donors = [];
+        $sellers = [];
         for ($i = 1; $i <= 15; $i++) {
-            $donors[] = User::create([
-                'name' => "Donor $i",
-                'email' => "donor$i@example.com",
+            $sellers[] = User::create([
+                'name' => "Farmer $i",
+                'email' => "farmer$i@example.com",
                 'password' => Hash::make('password'),
                 'role_id' => 10,
                 'created_at' => Carbon::now()->subDays(rand(1, 30)),
             ]);
         }
 
-        // 2. Create Charities and their Staff
-        $charitiesData = [
-            ['name' => 'Morocco Aid', 'email' => 'contact@moroccoaid.org', 'contact' => 'Ahmed'],
-            ['name' => 'Kids Future', 'email' => 'info@kidsfuture.ma', 'contact' => 'Sanaa'],
-            ['name' => 'Atlas Care', 'email' => 'help@atlascare.com', 'contact' => 'Youssef'],
+        // 2. Create Agriculture Organizations and their Staff
+        $organizationsData = [
+            ['name' => 'Green Fields Coop', 'email' => 'contact@greenfields.org', 'contact' => 'Ahmed'],
+            ['name' => 'Sustainable Agri', 'email' => 'info@sustainableagri.ma', 'contact' => 'Sanaa'],
+            ['name' => 'Atlas Farming', 'email' => 'help@atlasfarming.com', 'contact' => 'Youssef'],
         ];
 
-        foreach ($charitiesData as $index => $data) {
+        foreach ($organizationsData as $index => $data) {
             $staff = User::create([
                 'name' => "Staff " . $data['name'],
-                'email' => "staff$index@charity.com",
+                'email' => "staff$index@agri.com",
                 'password' => Hash::make('password'),
                 'role_id' => 11,
                 'created_at' => Carbon::now()->subDays(rand(10, 40)),
@@ -61,7 +61,7 @@ class AdminDashboardSeeder extends Seeder
 
             Charity::create([
                 'name' => $data['name'],
-                'address' => 'Morocco Street ' . ($index + 1),
+                'address' => 'Agriculture Zone ' . ($index + 1),
                 'email' => $data['email'],
                 'contact_person' => $data['contact'],
                 'user_id' => $staff->id,
@@ -93,17 +93,17 @@ class AdminDashboardSeeder extends Seeder
             $createdAt = Carbon::now()->subDays(rand(0, 30));
 
             $product = Product::create([
-                'user_id' => fake()->randomElement($donors)->id,
+                'user_id' => fake()->randomElement($sellers)->id,
                 'super_category_id' => $categories->random()->id,
                 'listing_mode' => $mode,
                 'listing_type' => 'single',
-                'title' => ($mode == 'donate' ? "Donation " : "Sale ") . $i,
-                'description' => "This is a test product for testing the admin dashboard charts and tables.",
-                'price' => $mode == 'sell' ? rand(50, 1000) : null,
+                'title' => ($mode == 'donate' ? "Agri Donation " : "Agri Sale ") . $i,
+                'description' => "This is a test agricultural product for testing the marketplace and dashboard.",
+                'price' => $mode == 'sell' ? rand(100, 5000) : null,
                 'status' => $status,
-                'condition' => fake()->randomElement(['New', 'Used', 'Like New']),
-                'gender' => fake()->randomElement(['Boy', 'Girl', 'Unisex']),
-                'age_range' => fake()->randomElement(['0-3m', '1-3y', '5-8y']),
+                'condition' => fake()->randomElement(['Fresh', 'Standard', 'Processed']),
+                'gender' => null,
+                'age_range' => null,
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt,
             ]);
@@ -111,11 +111,11 @@ class AdminDashboardSeeder extends Seeder
             // Add Product Items (Inventory)
             ProductItem::create([
                 'product_id' => $product->id,
-                'item_name' => "Item for " . $product->title,
-                'item_quantity' => rand(1, 5),
+                'item_name' => "Unit for " . $product->title,
+                'item_quantity' => rand(1, 100),
                 'item_condition' => $product->condition,
-                'recommended_age' => $product->age_range,
-                'item_gender' => $product->gender,
+                'recommended_age' => null,
+                'item_gender' => null,
                 'created_at' => $createdAt,
             ]);
 

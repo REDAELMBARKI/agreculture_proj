@@ -84,23 +84,22 @@ const My_Announcements: React.FC = () => {
   };
 
   const filteredProducts = products.filter((p) => {
-    const matchesMode = filter === "all" || p.listing_mode === filter;
     const matchesStatus = statusFilter === "all" || p.status === statusFilter;
-    return matchesMode && matchesStatus;
+    return matchesStatus;
   });
 
   return (
     <main className="my-announcements" style={{ backgroundColor: colors.bgPrimary, minHeight: '100vh', padding: '20px' }}>
       <div className="records-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <div className="header-left">
-          <h2 style={{ color: colors.textPrimary }}>My Announcements</h2>
-          <p className="subtitle" style={{ color: colors.textSecondary }}>Manage your items for sale</p>
+          <h2 style={{ color: colors.textPrimary }}>My Harvest Listings</h2>
+          <p className="subtitle" style={{ color: colors.textSecondary }}>Manage your agricultural products</p>
         </div>
 
         <div className="return-right">
           <Link to="/add_announcement" className="post_btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '8px', backgroundColor: colors.primary, color: colors.bgSecondary, textDecoration: 'none' }}>
             <Plus size={18} strokeWidth={2} />
-            Post New Item
+            Post New Harvest
           </Link>
         </div>
       </div>

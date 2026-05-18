@@ -22,59 +22,59 @@ class BannerSeeder extends Seeder
         $banners = [
             [
                 'type' => 'split',
-                'title' => 'How TinyTrove Works',
-                'subtitle' => 'Every item sold extends its life and supports children in need.',
+                'title' => 'How AgriMarket Works',
+                'subtitle' => 'Connecting farmers and buyers for a sustainable agricultural future.',
                 'image_url' => 'https://images.unsplash.com/photo-1513159419869-623ae1b1a620?auto=format&fit=crop&q=80&w=800',
-                'badge_text' => 'Circular Kids',
+                'badge_text' => 'Agri Economy',
                 'cta_text' => 'Learn more about our mission',
-                'cta_link' => '/how-it-works',
+                'cta_link' => '/about',
                 'steps' => [
                     [
                         'num' => '01',
-                        'title' => 'Gather Gear',
-                        'description' => 'Find gently used outfits and toys your kids have outgrown.'
+                        'title' => 'List Your Products',
+                        'description' => 'Easily list your crops, livestock, or equipment for sale or trade.'
                     ],
                     [
                         'num' => '02',
-                        'title' => 'Choose Your Path',
-                        'description' => 'Sell them for cash or donate them instantly to a verified cause.'
+                        'title' => 'Connect Directly',
+                        'description' => 'Buyers and sellers communicate directly to negotiate terms and delivery.'
                     ],
                     [
                         'num' => '03',
-                        'title' => 'Make an Impact',
-                        'description' => 'Every item sold extends its life and supports children in need.'
+                        'title' => 'Grow Together',
+                        'description' => 'Strengthen local food chains and get fair prices for your hard work.'
                     ]
                 ],
                 'sort_order' => 1,
             ],
             [
                 'type' => 'simple',
-                'title' => 'Donate Clothes',
-                'subtitle' => 'Give your children\'s outgrown clothes a second life and help families in need.',
-                'image_url' => 'https://images.unsplash.com/photo-1532622722611-b3345861abbd?auto=format&fit=crop&q=80&w=1200',
-                'badge_text' => 'Impact',
-                'cta_text' => 'Start Donating',
-                'cta_link' => '/donate',
+                'title' => 'Farm to Table',
+                'subtitle' => 'Get fresh, local produce directly from the source.',
+                'image_url' => 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=1200',
+                'badge_text' => 'Fresh',
+                'cta_text' => 'Shop Produce',
+                'cta_link' => '/category/crops',
                 'sort_order' => 2,
             ],
             [
                 'type' => 'simple',
-                'title' => 'Sell Your Items',
-                'subtitle' => 'Turn your gently used kids\' gear into cash while helping other parents find quality items.',
+                'title' => 'List Your Harvest',
+                'subtitle' => 'Reach more buyers and grow your farming business with our digital marketplace.',
                 'image_url' => 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=1200',
-                'badge_text' => 'Resell',
-                'cta_text' => 'List an Item',
-                'cta_link' => '/sell',
+                'badge_text' => 'Sell',
+                'cta_text' => 'Add Announcement',
+                'cta_link' => '/add_announcement',
                 'sort_order' => 3,
             ],
             [
                 'type' => 'simple',
-                'title' => 'Safety & Quality First',
-                'subtitle' => 'Our community depends on trust. Every item listed is reviewed to ensure it meets our quality standards.',
+                'title' => 'Quality Seeds & Tools',
+                'subtitle' => 'Access the best inputs to ensure a successful growing season.',
                 'image_url' => 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&q=80&w=1200',
-                'badge_text' => 'Trusted',
-                'cta_text' => 'Our Quality Promise',
-                'cta_link' => '/quality-standards',
+                'badge_text' => 'Inputs',
+                'cta_text' => 'Browse Equipment',
+                'cta_link' => '/category/equipment',
                 'sort_order' => 4,
             ]
         ];

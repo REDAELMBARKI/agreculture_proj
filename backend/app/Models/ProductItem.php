@@ -14,18 +14,20 @@ class ProductItem extends Model
         'product_id',
         'item_name',
         'item_condition',
-        'item_gender',
-        'recommended_age',
+        'item_quantity',
+        'item_quantity_unit',
+        'harvest_date',
+        'region',
         'item_brand',
         'item_material',
         'item_season',
-        'item_quantity',
         'item_sizes',
         'item_colors',
     ];
 
     protected $casts = [
-        'item_quantity' => 'integer',
+        'item_quantity' => 'decimal:2',
+        'harvest_date' => 'date',
         'item_sizes' => 'array',
         'item_colors' => 'array',
     ];
