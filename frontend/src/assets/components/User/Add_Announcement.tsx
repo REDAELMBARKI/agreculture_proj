@@ -20,7 +20,6 @@ import {
   CheckCircle,
   Wheat,
   Beef as Cow,
-  Calendar,
   Scale,
 } from "lucide-react";
 import {
@@ -47,6 +46,10 @@ import {
   FormHelperText,
   InputLabel,
   Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CloseIcon from "@mui/icons-material/Close";
@@ -243,6 +246,9 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   const [product, setProduct] = useState<Product | undefined>(propProduct || location.state?.product);
   const isEditMode = !!product || (!!userSlug && !!announcementSlug);
   const user: User = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = localStorage.getItem("token");
+  const isAuthenticated = !!token && !!user?.id;
+  const [authDialogOpen, setAuthDialogOpen] = useState<boolean>(!isAuthenticated);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch product if slugs are present and no product in state
@@ -542,6 +548,12 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
   };
 
   const handleUpload = async (index: number, file: File) => {
+    if (!isAuthenticated) {
+      setAuthDialogOpen(true);
+      setStatus({ type: "error", message: "Connectez-vous pour ajouter des photos." });
+      return;
+    }
+
     // Set slot to uploading
     setUploadSlots(prev => {
       const next = [...prev];
@@ -555,23 +567,29 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
       formData.append('mediable_type', 'product');
       // Set collection based on slot index (0 is thumbnail, others gallery)
       formData.append('collection', index === 0 ? 'thumbnail' : 'gallery');
+      const token = localStorage.getItem("token");
 
       const response = await api.post(ziggyRoute('media.upload'), formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json'
-        }
+        headers: {
+          Accept: 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
-      if (response.data.status === 'success') {
+      const data = response.data;
+      const isSuccess = data?.status === 'success' || data?.success === true;
+      const url = data?.url ?? data?.media?.url ?? data?.data?.url ?? null;
+      const mediaId = data?.mediaId ?? data?.media?.id ?? data?.data?.mediaId ?? data?.data?.id ?? null;
+
+      if (isSuccess && url && mediaId) {
         setUploadSlots(prev => {
           const next = [...prev];
-          next[index] = { status: 'done', url: response.data.url, id: response.data.mediaId };
+          next[index] = { status: 'done', url, id: mediaId };
           return next;
         });
         clearFieldError('photos');
       } else {
-        throw new Error(response.data.message || 'Upload failed');
+        throw new Error(data?.message || 'Upload failed');
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.errors 
@@ -579,6 +597,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
         : (error.response?.data?.message || error.message || 'Upload failed');
       
       console.error('Full upload error details:', error.response?.data || error);
+      setStatus({ type: 'error', message: errorMessage });
       
       setUploadSlots(prev => {
         const next = [...prev];
@@ -613,7 +632,12 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     const slot = uploadSlots[indexToRemove];
     if (slot.id) {
       try {
-        await api.delete(ziggyRoute('media.delete-temporary', { mediaId: slot.id }));
+        const token = localStorage.getItem("token");
+        await api.delete(ziggyRoute('media.delete-temporary', { mediaId: slot.id }), {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
       } catch (error) {
         console.error('Failed to delete temporary media:', error);
       }
@@ -628,6 +652,7 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
 
   const submitAnnouncement = async () => {
     if (!user?.id) {
+      setAuthDialogOpen(true);
       setStatus({ type: "error", message: "Connectez-vous d'abord." });
       return;
     }
@@ -950,27 +975,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
               </Grid>
             </Grid>
 
-            {/* Harvest Date */}
-            <Box sx={{ width: '100%' }}>
-              <TextField
-                fullWidth
-                label="Date de récolte"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={form.harvest_date}
-                onChange={(e) => updateField("harvest_date", e.target.value)}
-                error={!!fieldErrors.harvest_date}
-                helperText={fieldErrors.harvest_date}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Calendar size={20} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-
             {/* Region */}
             <Box sx={{ width: '100%' }}>
               <CustomSelect
@@ -1167,6 +1171,40 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
 
   return (
     <Container maxWidth={false} sx={{ py: 0, px: 0 }}>
+      <Dialog open={authDialogOpen} onClose={() => {}} fullWidth maxWidth="xs">
+        <DialogTitle sx={{ fontWeight: 800 }}>
+          Connexion requise
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ color: "#475569", mb: 2 }}>
+            Connectez-vous pour publier une annonce et ajouter des photos.
+          </Typography>
+          <Button fullWidth variant="outlined" sx={{ mb: 1.5 }} onClick={() => {}}>
+            Se connecter avec Google
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ bgcolor: "#3b82f6", "&:hover": { bgcolor: "#2563eb" } }}
+            onClick={() => {
+              window.location.assign("/login");
+            }}
+          >
+            Se connecter avec email
+          </Button>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            variant="text"
+            onClick={() => {
+              window.location.assign("/");
+            }}
+          >
+            Retour
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Grid container spacing={0} sx={{ width: '100%', m: 0 }}>
         {/* Left Column - Form (70%) - Sticky left edge, no padding */}
         <Grid item xs={12} md={8.4} sx={{ 

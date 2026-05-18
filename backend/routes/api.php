@@ -85,6 +85,11 @@ Route::post('/remote-sessions', function (Request $request) {
     ]);
 })->name('remote-sessions');
 
+// Media upload routes (temporary uploads for the SPA)
+Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+Route::post('/media/upload-multiple', [MediaController::class, 'uploadMultiple'])->name('media.upload-multiple');
+Route::get('/media/file/{media}', [MediaController::class, 'file'])->name('media.file');
+
 
 // --- Authenticated Routes ---
 Route::middleware('auth:sanctum')->group(function () {
@@ -95,9 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{user:slug}', [UserProfileController::class, 'update'])->name('user.update');
     Route::put('/user/{id}', [UserProfileController::class, 'update']); // Legacy/Direct ID support
 
-    // Media upload routes
-    Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
-    Route::post('/media/upload-multiple', [MediaController::class, 'uploadMultiple'])->name('media.upload-multiple');
+    // Media management routes
     Route::post('/media/link-to-announcement', [MediaController::class, 'linkToAnnouncement'])->name('media.link-to-announcement');
     Route::delete('/media/temporary/{mediaId}', [MediaController::class, 'deleteTemporary'])->name('media.delete-temporary');
     Route::post('/media/cleanup-temporary', [MediaController::class, 'cleanupTemporary'])->name('media.cleanup-temporary');

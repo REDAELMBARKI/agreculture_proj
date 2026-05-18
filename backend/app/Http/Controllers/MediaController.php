@@ -16,7 +16,7 @@ class MediaController extends Controller
     {
         try {
             $validated = $request->validate([
-                'image' => ['required', 'image', 'max:4096'],
+                'image' => ['required', 'image', 'max:10240'],
                 'collection' => ['nullable', 'string', 'in:thumbnail,gallery'],
                 'mediable_type' => ['required', 'string', 'in:product,user,category'],
             ]);
@@ -58,7 +58,7 @@ class MediaController extends Controller
                 'status' => 'success',
                 'message' => 'Image uploaded successfully.',
                 'mediaId' => $media->id,
-                'url' => $media->url,
+                'url' => url('/api/media/file/' . $media->id),
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -80,7 +80,7 @@ class MediaController extends Controller
     {
         $validated = $request->validate([
             'images' => ['required', 'array', 'max:8'],
-            'images.*' => ['required', 'image', 'max:4096'],
+            'images.*' => ['required', 'image', 'max:10240'],
         ]);
 
         if (!$request->hasFile('images')) {
@@ -111,7 +111,7 @@ class MediaController extends Controller
 
             $uploadedMedia[] = [
                 'mediaId' => $media->id,
-                'url' => $media->url,
+                'url' => url('/api/media/file/' . $media->id),
                 'fileName' => $media->file_name,
             ];
         }
@@ -149,6 +149,21 @@ class MediaController extends Controller
             'status' => 'success',
             'message' => 'Media linked successfully.',
         ]);
+    }
+
+    public function file(Media $media)
+    {
+        $disk = $media->disk ?: 'public';
+        $path = $media->path;
+
+        if (empty($path) || !Storage::disk($disk)->exists($path)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
+        }
+
+        return Storage::disk($disk)->response($path);
     }
 
     // Delete temporary media

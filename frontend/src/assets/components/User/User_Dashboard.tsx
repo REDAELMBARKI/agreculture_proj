@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../../../services/api";
-import route from "../../../utils/route";
 import { filterSellListings } from "../../../utils/sellOnly";
 import "../../../css/user.css";
 
@@ -13,32 +12,43 @@ export default function User_Dashboard() {
 
   const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [allListings, setAllListings] = useState<ProductRow[]>([]);
+  const [loadingListings, setLoadingListings] = useState<boolean>(true);
   const [recentFilter, setRecentFilter] = useState<"all" | "sale">("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const parsedUser = storedUser
-      ? (JSON.parse(storedUser) as Record<string, unknown>)
-      : { id: 0, name: "Guest", donor: {} };
+    const token = localStorage.getItem("token");
+    if (!storedUser || !token) {
+      navigate("/login");
+      return;
+    }
+
+    const parsedUser = JSON.parse(storedUser) as Record<string, unknown>;
+    const uid = (parsedUser?.id || parsedUser?.user_ID) as number | undefined;
+    if (!uid) {
+      navigate("/login");
+      return;
+    }
     setUser(parsedUser);
   }, [id, navigate]);
 
   useEffect(() => {
     const uid = (user?.id || user?.user_ID) as number | undefined;
-    if (!uid) return;
+    const userSlug = (user?.slug as string | undefined) ?? undefined;
+    const userKey = userSlug || (uid ? String(uid) : "");
+    if (!userKey) return;
 
+    setLoadingListings(true);
     api
-      .get<{ status: string; products: ProductRow[] }>(route("user.announcements", { user: uid }).toString())
-      .then((annRes) => {
-        const ann =
-          annRes.data.status === "success" && Array.isArray(annRes.data.products)
-            ? annRes.data.products
-            : [];
-        setAllListings(filterSellListings(ann));
+      .get(`/api/user/${userKey}/announcements`)
+      .then((res) => {
+        const products = res.data?.products?.data || res.data?.products || [];
+        setAllListings(filterSellListings(Array.isArray(products) ? products : []));
       })
-      .catch((err) => console.error("Listings fetch error:", err));
+      .catch((err) => console.error("Listings fetch error:", err))
+      .finally(() => setLoadingListings(false));
   }, [user]);
 
   const displayedRows = useMemo(() => {
@@ -64,6 +74,26 @@ export default function User_Dashboard() {
     const base = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, "") || "http://127.0.0.1:8000";
     return `${base}/storage/${clean}`;
   };
+
+  const stats = useMemo(() => {
+    const total = allListings.length;
+    const active = allListings.filter((p) => {
+      const status = String(p.status ?? "").toLowerCase();
+      return status === "sell" || status === "published" || status === "reserved";
+    }).length;
+    const sold = allListings.filter((p) => String(p.status ?? "").toLowerCase() === "sold").length;
+    const views = allListings.reduce((sum, p) => sum + Number(p.views_count ?? 0), 0);
+    const favorites = allListings.reduce((sum, p) => sum + Number(p.favorites_count ?? 0), 0);
+    const latest = [...allListings]
+      .sort((a, b) => {
+        const ta = a.created_at ? new Date(String(a.created_at)).getTime() : 0;
+        const tb = b.created_at ? new Date(String(b.created_at)).getTime() : 0;
+        return tb - ta;
+      })
+      .slice(0, 5);
+
+    return { total, active, sold, views, favorites, latest };
+  }, [allListings]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -110,6 +140,55 @@ export default function User_Dashboard() {
 
             <main className="dashboard-main">
               <h2>Welcome, {(user.name as string) ?? (user.user_name as string) ?? "Guest"}</h2>
+              <div className="stats-container">
+                <div className="stat-card">
+                  <p className="stat-number">{loadingListings ? "…" : stats.total}</p>
+                  <p>Total listings</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-number">{loadingListings ? "…" : stats.active}</p>
+                  <p>Active</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-number">{loadingListings ? "…" : stats.views}</p>
+                  <p>Total views</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-number">{loadingListings ? "…" : stats.favorites}</p>
+                  <p>Favorites</p>
+                </div>
+              </div>
+
+              <div style={{ padding: "1.5rem 2rem" }}>
+                <h3 style={{ margin: "0 0 0.75rem" }}>Recent activity</h3>
+                {loadingListings ? (
+                  <p>Loading activity...</p>
+                ) : stats.latest.length > 0 ? (
+                  <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                    {stats.latest.map((p) => {
+                      const slug = (p.slug as string | undefined) ?? "";
+                      const title = (p.title as string | undefined) ?? "—";
+                      const created = p.created_at ? new Date(String(p.created_at)).toLocaleDateString() : "—";
+                      const status = (p.status as string | undefined) ?? "—";
+                      return (
+                        <li key={String(p.id)}>
+                          <span style={{ fontWeight: 600 }}>{title}</span>{" "}
+                          <span style={{ color: "#64748b" }}>({status}, {created})</span>{" "}
+                          {slug ? (
+                            <Link to={`/announcements/${slug}`} style={{ marginLeft: 6 }}>
+                              View
+                            </Link>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p>
+                    No activity yet. <Link to="/add_announcement">Post your first announcement</Link>.
+                  </p>
+                )}
+              </div>
             </main>
           </div>
         </div>
