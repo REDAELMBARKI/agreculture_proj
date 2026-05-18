@@ -9,7 +9,7 @@
   margin: 0 0 1rem;
   font-size: 1.15rem;
   font-weight: 600;
-  color: #7c2d12;
+  color: #1A4D2E;
 }
 
 .impact-loading {
@@ -58,15 +58,15 @@
   background: #fff;
   border-radius: 12px;
   padding: 1.25rem 1.35rem;
-  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.18);
-  border: 1px solid rgba(234, 88, 12, 0.2);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.12);
+  border: 1px solid rgba(26, 77, 46, 0.2);
 }
 
 .impact-card__title {
   margin: 0 0 1rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #9a3412;
+  color: #1A4D2E;
 }
 
 /* Top metric cards */
@@ -86,8 +86,8 @@
   background: #fff;
   border-radius: 12px;
   padding: 1.1rem 1.2rem;
-  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.18);
-  border: 1px solid rgba(234, 88, 12, 0.22);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.12);
+  border: 1px solid rgba(26, 77, 46, 0.22);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 

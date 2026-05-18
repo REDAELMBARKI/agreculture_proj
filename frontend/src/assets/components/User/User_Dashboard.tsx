@@ -335,15 +335,27 @@ export default function User_Dashboard() {
         </div>
       </div>
 
-      <div className="listing-history full-width">
-        <div className="recent-toolbar">
-          <h3>Recent announcements</h3>
-          <label className="recent-filter-label">
-            <span>Show</span>
+      <div className="listing-history full-width" style={{ width: "95%", margin: "20px auto", padding: "0 2rem" }}>
+        <div className="recent-toolbar" style={{ padding: "0 0 1.5rem 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h3 style={{ margin: 0, fontSize: "1.35rem", fontWeight: 700, color: "#1e293b" }}>Recent announcements</h3>
+          <label className="recent-filter-label" style={{ display: "flex", alignItems: "center", gap: "0.75rem", color: "#475569", fontWeight: 500 }}>
+            <span style={{ fontSize: "0.95rem" }}>Show</span>
             <select
               className="recent-filter-select"
               value={recentFilter}
               onChange={(e) => setRecentFilter(e.target.value as "all" | "sale")}
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: "8px",
+                border: "1px solid #cbd5e1",
+                backgroundColor: "#fff",
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                outline: "none",
+                transition: "border-color 0.2s ease",
+              }}
+              onFocus={(e) => e.target.style.borderColor = "#1A4D2E"}
+              onBlur={(e) => e.target.style.borderColor = "#cbd5e1"}
             >
               <option value="all">All listings</option>
               <option value="sale">For sale only</option>
@@ -351,73 +363,285 @@ export default function User_Dashboard() {
           </label>
         </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Title</th>
-              <th>Quantity / Specs</th>
-              <th>Image</th>
-              <th>Date</th>
-              <th>Category</th>
-              <th>Phone</th>
-              <th>Status</th>
-              <th>Region / Pickup</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {displayedRows.length > 0 ? (
-              displayedRows.map((d) => {
-                const rowId = d.id as number;
-                const title = (d.title as string) ?? "—";
-                const quantity = d.quantity ? `${d.quantity} ${d.quantity_unit || 'kg'}` : "—";
-                const url = thumbUrl(d);
-                const created = d.created_at ? new Date(String(d.created_at)).toLocaleDateString() : "—";
-                const cat = (d.super_category as { name?: string } | undefined)?.name ?? "—";
-                const status = (d.status as string) ?? "—";
-                const pickup = (d.pickup_address as string) ?? (d.region as string) ?? "—";
-                const phone = (d.contact_phone as string) ?? "—";
-
-                return (
-                  <tr key={rowId}>
-                    <td>Sale</td>
-                    <td>{title}</td>
-                    <td>{quantity}</td>
-                    <td>
-                      {url ? (
-                        <img
-                          src={url}
-                          alt=""
-                          style={{
-                            width: "50px",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            setModalImage(url);
-                            setModalOpen(true);
-                          }}
-                        />
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                    <td>{created}</td>
-                    <td>{cat}</td>
-                    <td>{phone}</td>
-                    <td>{status}</td>
-                    <td>{pickup}</td>
-                  </tr>
-                );
-              })
-            ) : (
+        <div style={{ 
+          overflowX: "auto", 
+          borderRadius: "16px", 
+          border: "1px solid #e2e8f0", 
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+          backgroundColor: "#fff"
+        }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead style={{ backgroundColor: "#1A4D2E" }}>
               <tr>
-                <td colSpan={9}>Nothing to show for this filter yet.</td>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Type</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Title</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Quantity</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Image</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Date</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Category</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Phone</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Status</th>
+                <th style={{ 
+                  padding: "1rem 1.25rem", 
+                  textAlign: "left", 
+                  color: "#fff", 
+                  fontWeight: 600, 
+                  fontSize: "0.875rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
+                }}>Region</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {displayedRows.length > 0 ? (
+                displayedRows.map((d, index) => {
+                  const rowId = d.id as number;
+                  const title = (d.title as string) ?? "—";
+                  const quantity = d.quantity ? `${d.quantity} ${d.quantity_unit || 'kg'}` : "—";
+                  const url = thumbUrl(d);
+                  const created = d.created_at ? new Date(String(d.created_at)).toLocaleDateString() : "—";
+                  const cat = (d.super_category as { name?: string } | undefined)?.name ?? "—";
+                  const status = (d.status as string) ?? "—";
+                  const pickup = (d.pickup_address as string) ?? (d.region as string) ?? "—";
+                  const phone = (d.contact_phone as string) ?? "—";
+                  const listingMode = (d.listing_mode as string | undefined) ?? "sell";
+                  
+                  const getStatusColor = (s: string) => {
+                    const statusLower = s.toLowerCase();
+                    if (statusLower === "published" || statusLower === "sell") return "#1A4D2E";
+                    if (statusLower === "sold") return "#16a34a";
+                    if (statusLower === "reserved") return "#ca8a04";
+                    if (statusLower === "donated") return "#059669";
+                    if (statusLower === "closed") return "#64748b";
+                    return "#1A4D2E";
+                  };
+                  const getStatusBg = (s: string) => {
+                    const statusLower = s.toLowerCase();
+                    if (statusLower === "published" || statusLower === "sell") return "#e8f3ec";
+                    if (statusLower === "sold") return "#dcfce7";
+                    if (statusLower === "reserved") return "#fef9c3";
+                    if (statusLower === "donated") return "#d1fae5";
+                    if (statusLower === "closed") return "#f1f5f9";
+                    return "#e8f3ec";
+                  };
+                  const getModeText = (m: string) => {
+                    const modeLower = m.toLowerCase();
+                    if (modeLower === "sell") return "For Sale";
+                    if (modeLower === "donate") return "For Donation";
+                    return "Listing";
+                  };
+                  const getModeColor = (m: string) => {
+                    const modeLower = m.toLowerCase();
+                    if (modeLower === "sell") return "#1A4D2E";
+                    if (modeLower === "donate") return "#059669";
+                    return "#1A4D2E";
+                  };
+                  const getModeBg = (m: string) => {
+                    const modeLower = m.toLowerCase();
+                    if (modeLower === "sell") return "#e8f3ec";
+                    if (modeLower === "donate") return "#d1fae5";
+                    return "#e8f3ec";
+                  };
+
+                  return (
+                    <tr 
+                      key={rowId} 
+                      style={{ 
+                        backgroundColor: index % 2 === 0 ? "#fff" : "#f8fafc",
+                        transition: "background-color 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f1f5f9";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = index % 2 === 0 ? "#fff" : "#f8fafc";
+                      }}
+                    >
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0" }}>
+                        <span style={{
+                          padding: "0.375rem 0.75rem",
+                          borderRadius: "999px",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          backgroundColor: getModeBg(listingMode),
+                          color: getModeColor(listingMode),
+                        }}>
+                          {getModeText(listingMode)}
+                        </span>
+                      </td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", fontWeight: 500, color: "#1e293b", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>{quantity}</td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0" }}>
+                        {url ? (
+                          <img
+                            src={url}
+                            alt=""
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                              objectFit: "cover",
+                              borderRadius: "10px",
+                              cursor: "pointer",
+                              border: "2px solid #e2e8f0",
+                              transition: "all 0.2s ease"
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.transform = "scale(1.1)";
+                              e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.transform = "scale(1)";
+                              e.target.style.boxShadow = "none";
+                            }}
+                            onClick={() => {
+                              setModalImage(url);
+                              setModalOpen(true);
+                            }}
+                          />
+                        ) : (
+                          <div style={{
+                            width: "60px",
+                            height: "60px",
+                            backgroundColor: "#f1f5f9",
+                            borderRadius: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#94a3b8",
+                            fontSize: "1.5rem"
+                          }}>
+                            <i className="fa-solid fa-image"></i>
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>{created}</td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>{cat}</td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>
+                        <a href={`tel:${phone}`} style={{ color: "#1A4D2E", textDecoration: "none", fontWeight: 500 }}>
+                          <i className="fa-solid fa-phone" style={{ marginRight: "0.375rem" }}></i>
+                          {phone}
+                        </a>
+                      </td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0" }}>
+                        <span style={{
+                          padding: "0.375rem 0.75rem",
+                          borderRadius: "999px",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          backgroundColor: getStatusBg(status),
+                          color: getStatusColor(status),
+                        }}>
+                          {status}
+                        </span>
+                      </td>
+                      <td style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #e2e8f0", color: "#475569", maxWidth: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pickup}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={9} style={{ 
+                    padding: "3rem 2rem", 
+                    textAlign: "center", 
+                    color: "#64748b",
+                    backgroundColor: "#f8fafc"
+                  }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem" }}>
+                      <i className="fa-solid fa-inbox" style={{ fontSize: "2.5rem", color: "#94a3b8" }}></i>
+                      <p style={{ margin: 0, fontSize: "1rem" }}>Nothing to show for this filter yet.</p>
+                      <Link 
+                        to="/add_announcement" 
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.625rem 1.25rem",
+                          backgroundColor: "#1A4D2E",
+                          color: "#fff",
+                          fontWeight: 600,
+                          borderRadius: "8px",
+                          textDecoration: "none",
+                          marginTop: "0.5rem",
+                          transition: "background-color 0.2s ease"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#144023"}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#1A4D2E"}
+                      >
+                        <i className="fa-solid fa-plus"></i>
+                        Post your first announcement
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {modalOpen && modalImage ? (
