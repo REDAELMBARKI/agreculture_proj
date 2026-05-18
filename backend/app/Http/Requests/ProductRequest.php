@@ -36,7 +36,6 @@ class ProductRequest extends FormRequest
             'condition'         => 'nullable|string',
             'quantity'          => 'nullable|numeric|min:0',
             'quantity_unit'     => 'nullable|string',
-            'harvest_date'      => 'nullable|date',
             'region'            => 'nullable|string',
             'brand'             => 'nullable|string',
             'season'            => 'nullable|string',

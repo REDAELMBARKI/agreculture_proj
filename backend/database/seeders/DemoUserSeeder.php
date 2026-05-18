@@ -24,13 +24,13 @@ class DemoUserSeeder extends Seeder
         Product::factory()->count(5)->create([
             'user_id' => $demoUser->id,
             'listing_mode' => 'sell',
-            'status' => 'sell',
+            'status' => 'published',
         ]);
 
         Product::factory()->count(5)->create([
             'user_id' => $demoUser->id,
             'listing_mode' => 'donate',
-            'status' => 'donate',
+            'status' => 'published',
         ]);
 
         Product::factory()->count(3)->create([

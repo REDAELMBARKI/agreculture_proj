@@ -227,6 +227,10 @@ class UserImpactDemoSeeder extends Seeder
                 $created = $now->copy()->subDays($row['days_ago'])->setTime(10, 30, 0);
                 $phoneSuffix = str_pad((string) (($idx % 90) + 10), 2, '0', STR_PAD_LEFT);
                 $randomCity = \App\Models\City::inRandomOrder()->first();
+                $status = $row['status'];
+                if (in_array($status, ['sell', 'donate'], true)) {
+                    $status = 'published';
+                }
                 $product = Product::query()->create([
                     'user_id' => $donor->id,
                     'super_category_id' => $row['super']->id,

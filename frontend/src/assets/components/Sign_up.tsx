@@ -53,19 +53,19 @@ function DonorSignUp() {
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("role", String(user.role_id));
 
+        const normalizedRoleName = String(user.role || user.role_slug || "user").toLowerCase();
+        localStorage.setItem("admin", String(normalizedRoleName === "admin"));
+
         // Notify other components (like Header) about login
-        window.dispatchEvent(new Event('auth-change'));
+        globalThis.dispatchEvent(new Event('auth-change'));
 
         setMessage("Signup successful! Redirecting...");
         
-        const roleName = user.role || "user";
         setTimeout(() => {
-          if (roleName === "Admin") {
+          if (normalizedRoleName === "admin") {
             navigate("/");
-          } else if (roleName === "User") {
-            navigate("/user_dashboard");
           } else {
-            navigate("/");
+            navigate("/user_dashboard");
           }
         }, 1500);
       }

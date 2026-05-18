@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
                 $product = Product::factory()->create([
                     'user_id' => $testUser->id,
                     'listing_mode' => 'sell',
-                    'status' => 'sell',
+                    'status' => 'published',
                     'title' => $title,
                     'slug' => Str::slug($title).'-'.$idx,
                     'super_category_id' => $superCategories->random()->id,

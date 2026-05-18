@@ -76,18 +76,20 @@ class AdminDashboardSeeder extends Seeder
             $categories = Category::all();
         }
 
-        $statuses = ['donate', 'sell', 'reserved', 'sold', 'donated', 'closed'];
+        $statuses = ['published', 'draft', 'reserved', 'sold', 'donated', 'closed'];
         
         for ($i = 1; $i <= 50; $i++) {
             $mode = ($i % 2 == 0) ? 'donate' : 'sell';
             $status = fake()->randomElement($statuses);
             
-            // Ensure status makes sense for mode
-            if ($mode == 'donate' && $status == 'sold') $status = 'donated';
-            if ($mode == 'sell' && $status == 'donated') $status = 'sold';
-            // Default to mode status if not specific
-            if ($status != 'reserved' && $status != 'sold' && $status != 'donated' && $status != 'closed') {
-                $status = $mode;
+            if ($mode == 'donate' && in_array($status, ['sold', 'reserved'])) {
+                $status = 'donated';
+            }
+            if ($mode == 'sell' && $status === 'donated') {
+                $status = 'sold';
+            }
+            if (!in_array($status, ['reserved', 'sold', 'donated', 'closed', 'published', 'draft'])) {
+                $status = 'published';
             }
             
             $createdAt = Carbon::now()->subDays(rand(0, 30));

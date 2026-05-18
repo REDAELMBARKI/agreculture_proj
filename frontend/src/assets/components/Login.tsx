@@ -28,7 +28,6 @@ export default function Login() {
         const token = data?.data?.token || data?.token || null;
         const user = data?.data?.user || data?.user;
 
-
         // For Debug- log user object to verify role
         console.log("Logged in user object:", user);
         console.log("Token:", token);
@@ -38,24 +37,19 @@ export default function Login() {
         }
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("role", String(user.role_id));
-        localStorage.setItem("admin", String(user.role_id === 1));
 
-        const role = String(user.role_id);
+        const normalizedRoleName = String(user.role || user.role_slug || "user").toLowerCase();
+        localStorage.setItem("admin", String(normalizedRoleName === "admin"));
 
         // Notify other components (like Header) about login
-        window.dispatchEvent(new Event('auth-change'));
+        globalThis.dispatchEvent(new Event('auth-change'));
 
-        const roleName = user.role || "user";
-
-        if (roleName === "Admin") {
-          navigate("/");
-        } else if (roleName === "Moderator") {
+        if (normalizedRoleName === "admin") {
+          navigate("/admin_dashboard");
+        } else if (normalizedRoleName === "moderator") {
           navigate("/moderator_dashboard");
-        } else if (roleName === "User") {
-          navigate("/user_dashboard");
         } else {
-          console.log("Unknown role:", roleName);
-          setError("Login failed: Unknown role assigned to account");
+          navigate("/user_dashboard");
         }
       } else {
         // show server error message

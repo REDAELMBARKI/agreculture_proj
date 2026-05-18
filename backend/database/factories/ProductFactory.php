@@ -20,7 +20,7 @@ class ProductFactory extends Factory
     {
         $listingModes = ['sell', 'donate'];
         $listingTypes = ['single', 'collection'];
-        $statuses = ['sell', 'donate', 'reserved', 'sold', 'donated'];
+        $statuses = ['published', 'draft', 'reserved', 'sold', 'donated', 'closed'];
         $conditions = ['fresh', 'dried', 'processed', 'standard'];
         $brands = ['John Deere', 'Massey Ferguson', 'New Holland', 'Kubota', 'Claas', 'Fendt', 'Case IH'];
         $seasons = ['spring', 'summer', 'autumn', 'winter', 'year-round'];
@@ -48,6 +48,7 @@ class ProductFactory extends Factory
             'region' => fake()->randomElement(['Gharb', 'Haouz', 'Souss', 'Oriental', 'Loukkos']),
             'brand' => fake()->randomElement($brands),
             'season' => fake()->randomElement($seasons),
+            'contact_phone' => '+2126' . fake()->numerify('########'),
             'sizes' => null,
             'colors' => null,
             'views_count' => fake()->numberBetween(0, 1000),

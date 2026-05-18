@@ -29,12 +29,20 @@ class AuthController extends Controller
                 $avatarUrl = asset('storage/'.ltrim($user->avatar_path, '/'));
             }
 
+            $roleName = 'user';
+            $roleSlug = null;
+            if ($user->role) {
+                $roleSlug = $user->role->slug ?? null;
+                $roleName = $user->role->name ?? $roleSlug ?? 'user';
+            }
+
             $userData = [
                 'id' => $user->id,
                 'user_name' => $user->name,
                 'user_email' => $user->email,
                 'role_id' => $user->role_id,
-                'role' => $user->role ? $user->role->name : 'User', // Include role name
+                'role' => $roleName,
+                'role_slug' => $roleSlug,
                 'avatar_url' => $avatarUrl,
             ];
 
@@ -64,7 +72,7 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'fullName' => 'required|string|max:255',
             'email'    => 'required|email',
             'password' => 'required|string|min:6',
         ]);
@@ -83,19 +91,27 @@ class AuthController extends Controller
             'name' => $request->fullName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => 10,
+            'role_id' => 2,
         ]);
 
         $user->load('role');
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $roleName = 'user';
+        $roleSlug = null;
+        if ($user->role) {
+            $roleSlug = $user->role->slug ?? null;
+            $roleName = $user->role->name ?? $roleSlug ?? 'user';
+        }
+
         $userData = [
             'id' => $user->id,
             'user_name' => $user->name,
             'user_email' => $user->email,
             'role_id' => $user->role_id,
-            'role' => $user->role ? $user->role->name : 'User',
+            'role' => $roleName,
+            'role_slug' => $roleSlug,
         ];
 
         return response()->json([
@@ -137,8 +153,16 @@ class AuthController extends Controller
         $user = $request->user();
         $user->load('role');
         
+        $roleName = 'user';
+        $roleSlug = null;
+        if ($user->role) {
+            $roleSlug = $user->role->slug ?? null;
+            $roleName = $user->role->name ?? $roleSlug ?? 'user';
+        }
+
         $userData = $user->toArray();
-        $userData['role'] = $user->role ? $user->role->name : null;
+        $userData['role'] = $roleName;
+        $userData['role_slug'] = $roleSlug;
 
         return response()->json([
             'status' => 'success',

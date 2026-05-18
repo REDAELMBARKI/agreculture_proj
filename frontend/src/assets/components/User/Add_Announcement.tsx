@@ -120,7 +120,6 @@ interface FormState {
   material: string;
   quantity: string;
   quantity_unit: string;
-  harvest_date: string;
   region: string;
   brand: string;
   season: string;
@@ -303,7 +302,6 @@ export default function Add_Announcement({ product: propProduct }: AddAnnounceme
     listing_type: "single",
     quantity: "",
     quantity_unit: "kg",
-    harvest_date: "",
     region: "",
     brand: "",
     condition: "",
