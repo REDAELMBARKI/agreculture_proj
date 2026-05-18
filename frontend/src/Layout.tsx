@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import React, { useEffect, Suspense, lazy } from "react";
 import axios from "axios";
+import FakeReload from "./FakeReload";
 
 // Headers & Footer
 import Header from "./assets/components/Header.jsx";
@@ -124,41 +125,43 @@ export default function Layout() {
         (useAltHeader ? <Header_alt size="small" /> : <Header />)}
 
       {/* Suspense wrapper for lazy-loaded routes */}
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          {/* Main pages */}
-          <Route path="/" element={<Home />} />
-          <Route path="/sign_up" element={<Sign_up />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/faq_chatbot" element={<FAQChatBot />} />
-          <Route path="/announcements" element={<Marketplace />} />
-          <Route path="/announcements/:announcementSlug" element={<Product_Details />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/chat/:conversationSlug" element={<ChatPage />} />
-          {/* Admin */}
-          <Route path="/admin_dashboard" element={<Admin_Dashboard />} />
-          <Route path="/data_reports" element={<Data_Reports />} />
-          <Route path="/view_users" element={<View_Users />} />
-          <Route path="/admin_inventory" element={<Admin_Inventory />} />
+      <FakeReload>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            {/* Main pages */}
+            <Route path="/" element={<Home />} />
+            <Route path="/sign_up" element={<Sign_up />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/faq_chatbot" element={<FAQChatBot />} />
+            <Route path="/announcements" element={<Marketplace />} />
+            <Route path="/announcements/:announcementSlug" element={<Product_Details />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat/:conversationSlug" element={<ChatPage />} />
+            {/* Admin */}
+            <Route path="/admin_dashboard" element={<Admin_Dashboard />} />
+            <Route path="/data_reports" element={<Data_Reports />} />
+            <Route path="/view_users" element={<View_Users />} />
+            <Route path="/admin_inventory" element={<Admin_Inventory />} />
 
-          {/* User */}
-          <Route path="/user_dashboard" element={<User_Dashboard />} />
-          <Route path="/my_profile" element={<My_Profile />} />
-          <Route path="/my_announcements" element={<My_Announcements />} />
-          <Route path="/add_announcement" element={<Add_Announcement />} />
-          <Route path="/users/:userSlug/announcements/:announcementSlug" element={<Add_Announcement />} />
+            {/* User */}
+            <Route path="/user_dashboard" element={<User_Dashboard />} />
+            <Route path="/my_profile" element={<My_Profile />} />
+            <Route path="/my_announcements" element={<My_Announcements />} />
+            <Route path="/add_announcement" element={<Add_Announcement />} />
+            <Route path="/users/:userSlug/announcements/:announcementSlug" element={<Add_Announcement />} />
 
-          {/* Footer items */}
-          <Route path="/terms_conditions" element={<Terms_Conditions />} />
-          <Route path="/privacy_policy" element={<Privacy_Policy />} />
-          <Route path="/cookie_policy" element={<Cookie_Policy />} />
-          <Route path="/accessibility" element={<Accessibility />} />
+            {/* Footer items */}
+            <Route path="/terms_conditions" element={<Terms_Conditions />} />
+            <Route path="/privacy_policy" element={<Privacy_Policy />} />
+            <Route path="/cookie_policy" element={<Cookie_Policy />} />
+            <Route path="/accessibility" element={<Accessibility />} />
 
-          {/* Catch all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+            {/* Catch all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </FakeReload>
 
       {/* Footer */}
       {!hideHeaderFooter && <Footer />}
